@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jirha:*)",
+      "Bash(~/bin/jirha:*)",
+      "Bash(bash scripts/setup.sh:*)",
+      "Edit(.claude/**)",
+      "Write(.claude/**)",
+      "Skill(update-config)",
+      "Skill(update-config:*)"
+    ]
+  }
+}

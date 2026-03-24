@@ -1,0 +1,948 @@
+#!/usr/bin/env python3
+"""Jira helper for RHDH documentation work."""
+
+import os
+import sys
+from pathlib import Path
+
+# Re-exec under the repo venv if not already running from it
+_script = Path(__file__).resolve()
+_repo_root = _script.parent.parent
+_venv_python = _repo_root / 'venv' / 'bin' / 'python'
+if _venv_python.is_file() and Path(sys.executable).resolve() != _venv_python.resolve():
+    os.execv(str(_venv_python), [str(_venv_python), str(_script)] + sys.argv[1:])
+
+import json
+import re
+import argparse
+import subprocess
+from collections import Counter
+from datetime import datetime, date, timedelta
+
+# Load .env from repo root
+_env_file = _repo_root / '.env'
+if _env_file.is_file():
+    for line in _env_file.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith('#') and '=' in line:
+            k, v = line.split('=', 1)
+            os.environ[k.strip()] = v.strip()
+
+SERVER = 'https://redhat.atlassian.net'
+EMAIL = os.environ.get('JIRA_EMAIL')
+if not EMAIL:
+    sys.exit('Error: JIRA_EMAIL not set. Add it to .env or export it.')
+
+# Custom field IDs
+CF_STORY_POINTS = 'customfield_10028'
+CF_RN_TEXT = 'customfield_10783'
+CF_RN_STATUS = 'customfield_10807'
+CF_RN_TYPE = 'customfield_10785'
+CF_GIT_PR = 'customfield_10875'
+CF_TEAM = 'customfield_10001'
+CF_SPRINT = 'customfield_10020'
+TEAM_RHDH_DOCS_ID = 'ec74d716-af36-4b3c-950f-f79213d08f71-3319'
+
+# Jira conventions (see docs/jira-reference.md)
+DEFAULT_COMPONENT = 'Documentation'
+DEFAULT_TEAM = 'RHDH Documentation'
+SP_VALUES = (1, 3, 5, 8, 13)
+
+# Status display ordering
+STATUS_ORDER = {'New': 0, 'In Progress': 1, 'Review': 2, 'Closed': 3}
+
+
+def _status_sort_key(s):
+    return STATUS_ORDER.get(s, len(STATUS_ORDER))
+
+
+SWIMLANES = [
+    ('Blocker', lambda i: str(i.fields.priority) == 'Blocker'),
+    ('AEM migration', lambda i: 'CQreview_pre-migration' in (i.fields.labels or []) or
+        any(c.name == 'AEM Migration' for c in (i.fields.components or []))),
+    ('Test-day', lambda i: bool(set(i.fields.labels or []) & {'test-day', 'rhdh-testday'})),
+    ('Customer', lambda i: bool(set(i.fields.labels or []) & {'customer', 'RHDH-Customer'})),
+    ('Must-have', lambda i: 'must-have' in (i.fields.labels or [])),
+    ('Nice-to-have', lambda i: 'nice-to-have' in (i.fields.labels or [])),
+    ('Critical', lambda i: str(i.fields.priority) == 'Critical'),
+    ('Doc sprint (lower priority)', lambda i: str(i.fields.issuetype) != 'Sub-task' and 'Review' not in i.fields.summary),
+    ('Reviews', lambda i: str(i.fields.issuetype) == 'Sub-task' and 'Review' in i.fields.summary),
+    ('Other', lambda i: True),
+]
+
+
+def _assign_swimlanes(issues):
+    """Assign each issue to its first matching swimlane. Returns dict of name -> issue list."""
+    result = {name: [] for name, _ in SWIMLANES}
+    for issue in issues:
+        for name, match_fn in SWIMLANES:
+            if match_fn(issue):
+                result[name].append(issue)
+                break
+    return result
+
+
+def _assignee_name(issue):
+    """Return assignee display name or 'Unassigned'."""
+    return issue.fields.assignee.displayName if issue.fields.assignee else 'Unassigned'
+
+
+def _assignee_filter(team=False):
+    """Return JQL fragment: team-wide or current user."""
+    if team:
+        return f'Team = "{TEAM_RHDH_DOCS_ID}"'
+    return 'assignee = currentUser()'
+
+
+_REVIEW_SUMMARIES = ('[DOC] Peer Review', '[DOC] Technical Review')
+REVIEW_FILTER = ''.join(f' AND summary !~ "{s}"' for s in _REVIEW_SUMMARIES)
+
+
+def _warn_in_progress_no_sprint(jira, team=False):
+    """Print warning for In Progress issues not in current sprint."""
+    scope = _assignee_filter(team)
+    issues = jira.search_issues(
+        f'{scope} AND status = "In Progress" AND sprint not in openSprints(){REVIEW_FILTER}',
+        maxResults=50,
+        fields=f'summary,status,priority,assignee,{CF_STORY_POINTS},{CF_SPRINT}')
+    if not issues:
+        return
+    print('\n## WARNING: In Progress but not in current sprint\n')
+    for issue in issues:
+        sp = _issue_sp(issue)
+        sp_str = f' {int(sp)}SP' if sp else ''
+        assignee_str = ''
+        if team:
+            assignee_str = f' @{_assignee_name(issue)}'
+        sprints = getattr(issue.fields, CF_SPRINT, None) or []
+        future = [s for s in sprints if getattr(s, 'state', '') == 'future']
+        closed = [s for s in sprints if getattr(s, 'state', '') == 'closed']
+        if future:
+            tag = f'FUTURE ({future[0].name})'
+        elif closed:
+            tag = f'STALE (last: {closed[-1].name}, {len(closed)} prev sprints)'
+        else:
+            tag = 'BACKLOG (no sprint)'
+        print(f'- {issue.key}{sp_str}{assignee_str} [{tag}] — {issue.fields.summary}')
+        print(f'  {SERVER}/browse/{issue.key}')
+
+
+def get_jira():
+    from jira import JIRA
+    token = os.environ.get('JIRA_API_TOKEN')
+    if not token:
+        sys.exit('Error: JIRA_API_TOKEN not set')
+    return JIRA(server=SERVER, basic_auth=(EMAIL, token))
+
+
+def _parse_jira_date(iso_str):
+    """Parse Jira ISO date string (may end with Z) to date."""
+    return datetime.fromisoformat(iso_str.replace('Z', '+00:00')).date()
+
+
+def _issue_sp(issue):
+    """Get story points for an issue, or 0."""
+    return getattr(issue.fields, CF_STORY_POINTS, None) or 0
+
+
+# SP tier mapping for comparison
+_SP_TIERS = dict(zip(SP_VALUES, range(len(SP_VALUES))))
+_TIER_TO_SP = dict(enumerate(SP_VALUES))
+_ADOC_TIER_THRESHOLDS = [(30, 0), (150, 1), (400, 2), (800, 3)]
+_IMAGE_EXTS = ('.png', '.svg', '.jpg', '.gif')
+
+
+def _pr_metrics(files, commits):
+    """Compute PR metrics and return (tier, reason) for SP assessment."""
+    adoc_files = [f for f in files if f['path'].endswith('.adoc')]
+    adoc_lines = sum(f['additions'] + f['deletions'] for f in adoc_files)
+    new_adoc = sum(1 for f in adoc_files if f['deletions'] == 0 and f['additions'] > 5)
+    assemblies = sum(1 for f in adoc_files
+                     if '/assemblies/' in f['path'] or f['path'].startswith('assemblies/'))
+    images = sum(1 for f in files if f['path'].endswith(_IMAGE_EXTS))
+    mechanical_files = sum(1 for f in adoc_files if f['additions'] + f['deletions'] <= 4)
+    is_mechanical = len(adoc_files) > 3 and mechanical_files / len(adoc_files) > 0.8
+
+    # Reason parts
+    adds = sum(f['additions'] for f in files)
+    dels = sum(f['deletions'] for f in files)
+    parts = [f'{len(adoc_files)} .adoc files', f'+{adds}/-{dels} lines']
+    for val, label in [(new_adoc, 'new topics'), (assemblies, 'assemblies'), (images, 'images')]:
+        if val:
+            parts.append(f'{val} {label}')
+    if is_mechanical:
+        parts.append('mechanical')
+
+    # Tier from content volume
+    tier = 4
+    for threshold, t in _ADOC_TIER_THRESHOLDS:
+        if adoc_lines < threshold:
+            tier = t
+            break
+
+    # Complexity bumps
+    if sum([new_adoc >= 2, assemblies >= 2, images >= 3, commits >= 6]) >= 2:
+        tier = min(tier + 1, 4)
+    if is_mechanical:
+        tier = max(tier - 1, 0)
+
+    return tier, ', '.join(parts)
+
+
+def _assess_pr_sp(pr_url):
+    """Assess suggested SP from a GitHub PR URL. Returns (sp, reason, pr_number) or None."""
+    m = re.match(r'https://github\.com/([^/]+/[^/]+)/pull/(\d+)', pr_url)
+    if not m:
+        return None
+    repo, number = m.group(1), m.group(2)
+    try:
+        result = subprocess.run(
+            ['gh', 'pr', 'view', number, '--repo', repo,
+             '--json', 'additions,deletions,changedFiles,commits,files'],
+            capture_output=True, text=True, timeout=15)
+        if result.returncode != 0:
+            return None
+        data = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+
+    tier, reason = _pr_metrics(data.get('files', []), len(data.get('commits', [])))
+    return _TIER_TO_SP[tier], reason, number
+
+
+def cmd_list(args):
+    """List issues assigned to me."""
+    jira = get_jira()
+    jql = args.jql or 'assignee = currentUser() ORDER BY updated DESC'
+    if args.open:
+        jql = 'assignee = currentUser() AND status != Closed ORDER BY updated DESC'
+    issues = jira.search_issues(jql, maxResults=args.max)
+    for issue in issues:
+        sp = _issue_sp(issue)
+        sp_str = f' [{int(sp)}SP]' if sp else ''
+        print(f'{issue.key:20s} [{issue.fields.status}]{sp_str} {issue.fields.summary}')
+
+
+_SHOW_CUSTOM_FIELDS = [
+    ('SP', CF_STORY_POINTS, lambda v: str(int(v)) if v else 'unset'),
+    ('PR', CF_GIT_PR, lambda v: v or 'unset'),
+    ('RN Status', CF_RN_STATUS, lambda v: v or 'unset'),
+    ('RN Type', CF_RN_TYPE, lambda v: v or 'unset'),
+    ('RN Text', CF_RN_TEXT, lambda v: v or 'unset'),
+]
+
+
+def cmd_show(args):
+    """Show issue details."""
+    jira = get_jira()
+    cf_ids = ','.join(cf for _, cf, _ in _SHOW_CUSTOM_FIELDS)
+    issue = jira.issue(args.key, fields=f'summary,status,priority,description,comment,issuetype,{cf_ids}')
+
+    for label, attr in [('Key', 'key'), ('Summary', 'summary'), ('Status', 'status'),
+                        ('Priority', 'priority'), ('Type', 'issuetype')]:
+        val = getattr(issue, attr, None) or getattr(issue.fields, attr, None)
+        print(f'{label + ":":<12}{val}')
+    for label, cf, fmt in _SHOW_CUSTOM_FIELDS:
+        print(f'{label + ":":<12}{fmt(getattr(issue.fields, cf, None))}')
+    print(f'{"Link:":<12}{SERVER}/browse/{issue.key}')
+
+    desc = issue.fields.description or '(empty)'
+    print(f'\nDescription:\n{desc[:1000]}')
+
+    if issue.fields.comment and issue.fields.comment.comments:
+        print(f'\nComments ({len(issue.fields.comment.comments)}):')
+        for c in issue.fields.comment.comments[-3:]:
+            print(f'  {c.author.displayName}: {c.body[:200]}')
+
+
+def _resolve_sp(args, jira):
+    """Resolve --sp value. Returns (float_val, change_msg) or None."""
+    if not args.sp:
+        return None
+    if args.sp == 'auto':
+        pr_url = args.pr or getattr(jira.issue(args.key, fields=CF_GIT_PR).fields, CF_GIT_PR, None)
+        if not pr_url:
+            sys.exit('Error: --sp auto requires a PR URL (use --pr or set it on the issue first).')
+        result = _assess_pr_sp(pr_url)
+        if not result:
+            sys.exit(f'Error: could not assess SP from PR: {pr_url}')
+        sp_val, reason, _ = result
+        return float(sp_val), f'Story points: {sp_val} (auto: {reason})'
+    sp_val = int(args.sp)
+    if sp_val not in _SP_TIERS:
+        sys.exit(f'Error: SP must be {", ".join(str(s) for s in SP_VALUES)}, or "auto".')
+    return float(sp_val), f'Story points: {sp_val}'
+
+
+def _modify_label(labels, label, add=True):
+    """Add or remove a label. Returns change message or None."""
+    if add:
+        if label in labels:
+            return None
+        labels.append(label)
+        return f'Label added: {label}'
+    if label not in labels:
+        return None
+    labels.remove(label)
+    return f'Label removed: {label}'
+
+
+def _resolve_labels(jira, key, fields, add_label, remove_label):
+    """Handle --add-label and --remove-label. Mutates fields, returns changes list."""
+    if not add_label and not remove_label:
+        return []
+    labels = fields.get('labels') or list(jira.issue(key, fields='labels').fields.labels or [])
+    changes = []
+    for label, add in [(add_label, True), (remove_label, False)]:
+        if not label:
+            continue
+        change = _modify_label(labels, label, add)
+        if change:
+            changes.append(change)
+        else:
+            print(f'{key} {"already has" if add else "does not have"} label {label}')
+    if changes:
+        fields['labels'] = labels
+    return changes
+
+
+def _build_fields(args, jira):
+    """Build Jira fields dict and changes list from args. Returns (fields, changes)."""
+    fields = {}
+    changes = []
+
+    # Simple scalar fields
+    simple = [
+        ('summary', 'summary', lambda v: (v, f'Summary: {v}')),
+        ('pr', CF_GIT_PR, lambda v: (v, f'PR: {v}')),
+        ('priority', 'priority', lambda v: ({'name': v}, f'Priority: {v}')),
+    ]
+    for attr, field_key, transform in simple:
+        val = getattr(args, attr, None)
+        if val:
+            fval, msg = transform(val)
+            fields[field_key] = fval
+            changes.append(msg)
+
+    # Description (text or file)
+    if args.desc:
+        fields['description'] = args.desc
+        changes.append('Description updated')
+    elif args.desc_file:
+        with open(args.desc_file) as f:
+            fields['description'] = f.read()
+        changes.append('Description updated from file')
+
+    # Story points
+    sp = _resolve_sp(args, jira)
+    if sp:
+        fields[CF_STORY_POINTS] = sp[0]
+        changes.append(sp[1])
+
+    # Component (append, not replace)
+    if args.component:
+        existing = [{'name': c.name} for c in jira.issue(args.key, fields='components').fields.components]
+        if not any(c['name'] == args.component for c in existing):
+            existing.append({'name': args.component})
+            fields['components'] = existing
+            changes.append(f'Component: {args.component}')
+        else:
+            print(f'{args.key} already has component {args.component}')
+
+    # Team (ID lookup)
+    if args.team:
+        ref = jira.search_issues(f'Team = "{args.team}"', maxResults=1, fields=CF_TEAM)
+        if not ref:
+            sys.exit(f'Error: Could not find team "{args.team}"')
+        fields[CF_TEAM] = {'id': getattr(ref[0].fields, CF_TEAM).id}
+        changes.append(f'Team: {args.team}')
+
+    # Labels
+    changes += _resolve_labels(jira, args.key, fields, args.add_label, args.remove_label)
+
+    return fields, changes
+
+
+def _build_comment(args, changes):
+    """Assemble comment text from changes list and user-provided comment. Returns str or None."""
+    parts = []
+    if changes:
+        parts.append('Updated:\n- ' + '\n- '.join(changes))
+    if args.comment_file:
+        with open(args.comment_file) as f:
+            parts.append(f.read())
+    if args.comment:
+        parts.append(args.comment)
+    return '\n\n'.join(parts) if parts else None
+
+
+def _find_sprint_id(jira, sprint_name=None):
+    """Find sprint ID by name or return active sprint."""
+    if not sprint_name:
+        sprint = _get_active_sprint(jira)
+        return sprint['id'] if sprint else None
+    issues = jira.search_issues(
+        'assignee = currentUser() AND sprint in openSprints()',
+        maxResults=1, fields=CF_SPRINT)
+    if not issues:
+        return None
+    for s in (getattr(issues[0].fields, CF_SPRINT, None) or []):
+        if sprint_name.lower() in s.name.lower():
+            return s.id
+    return None
+
+
+def cmd_update(args):
+    """Update one or more fields on an issue, with optional comment."""
+    jira = get_jira()
+    fields, changes = _build_fields(args, jira)
+
+    # Link
+    if args.link_to:
+        jira.create_issue_link(args.link_type, args.key, args.link_to)
+        changes.append(f'Linked —[{args.link_type}]→ {args.link_to}')
+
+    # Sprint
+    sprint_name = args.sprint
+    if sprint_name is not None:
+        sprint_id = _find_sprint_id(jira, sprint_name or None)
+        if not sprint_id:
+            sys.exit(f'Error: Could not find sprint "{sprint_name or "active"}"')
+        jira.add_issues_to_sprint(sprint_id, [args.key])
+        changes.append(f'Sprint: {sprint_name or "active"}')
+
+    comment = _build_comment(args, changes)
+
+    if not fields and not comment and sprint_name is None and not args.link_to:
+        sys.exit('Error: nothing to update.')
+
+    if fields:
+        jira.issue(args.key).update(fields=fields)
+        for c in changes:
+            print(f'  {c}')
+
+    if comment:
+        jira.add_comment(args.key, comment)
+        print(f'Updated {args.key} with comment')
+    else:
+        print(f'Updated {args.key}')
+
+
+def _find_close_transition(jira, issue):
+    """Find a close/done transition ID for an issue, or None."""
+    return next(
+        (t['id'] for t in jira.transitions(issue) if t['name'].lower() in ('close', 'closed', 'done')), None)
+
+
+def cmd_close_subtasks(args):
+    """Close open subtasks of closed parent tasks."""
+    jira = get_jira()
+    closed = jira.search_issues(
+        'assignee = currentUser() AND status = Closed AND type not in (Sub-task)',
+        maxResults=50)
+    count = 0
+    for parent in closed:
+        for st in parent.fields.subtasks:
+            st_issue = jira.issue(st.key)
+            if str(st_issue.fields.status) == 'Closed':
+                continue
+            count += 1
+            if args.dry_run:
+                print(f'Would close {st_issue.key}: {st_issue.fields.summary}')
+                continue
+            close_id = _find_close_transition(jira, st_issue)
+            if close_id:
+                jira.transition_issue(st_issue, close_id)
+                print(f'Closed {st_issue.key}: {st_issue.fields.summary}')
+            else:
+                print(f'No close transition for {st_issue.key}')
+    if count == 0:
+        print('No open subtasks found under closed parents.')
+
+
+def _get_active_sprint(jira):
+    """Return active sprint info dict or None: {id, name, start, end, board_id, remaining_days, total_days}."""
+    issues = jira.search_issues(
+        'assignee = currentUser() AND sprint in openSprints()',
+        maxResults=1, fields=CF_SPRINT)
+    if not issues:
+        return None
+    sprint_data = getattr(issues[0].fields, CF_SPRINT, None) or []
+    for s in sprint_data:
+        if getattr(s, 'state', '') == 'active':
+            start = _parse_jira_date(s.startDate)
+            end = _parse_jira_date(s.endDate)
+            today = date.today()
+            return {
+                'id': s.id,
+                'name': s.name,
+                'start': start,
+                'end': end,
+                'board_id': getattr(s, 'boardId', None),
+                'remaining_days': _business_days(today, end),
+                'total_days': _business_days(start, end),
+            }
+    return None
+
+
+def _historical_velocities(jira, board_id):
+    """Return list of (name, closed_sp, days, velocity) for last 3 Documentation sprints."""
+    if not board_id:
+        return []
+    try:
+        closed_sprints = jira.sprints(board_id, state='closed')
+        doc_sprints = [s for s in closed_sprints if DEFAULT_COMPONENT in s.name][-3:]
+        result = []
+        for s in doc_sprints:
+            s_start = _parse_jira_date(s.startDate)
+            s_end = _parse_jira_date(s.endDate)
+            s_days = _business_days(s_start, s_end)
+            s_issues = jira.search_issues(
+                f'assignee = currentUser() AND sprint = {s.id} AND status = Closed',
+                maxResults=200, fields=CF_STORY_POINTS)
+            s_closed_sp = sum(_issue_sp(i) for i in s_issues)
+            s_vel = s_closed_sp / s_days if s_days else 0
+            result.append((s.name, int(s_closed_sp), s_days, s_vel))
+        return result
+    except Exception:
+        return []
+
+
+def _blended_velocity(hist_velocities, current_velocity, elapsed_days, total_days):
+    """Blend historical and current velocity, weighted by sprint progress."""
+    if not hist_velocities:
+        return current_velocity
+    hist_avg = sum(v for _, _, _, v in hist_velocities) / len(hist_velocities)
+    elapsed_pct = elapsed_days / total_days if total_days else 0
+    if elapsed_pct < 0.25:
+        return 0.9 * hist_avg + 0.1 * current_velocity
+    elif elapsed_pct < 0.5:
+        return 0.7 * hist_avg + 0.3 * current_velocity
+    else:
+        return 0.4 * hist_avg + 0.6 * current_velocity
+
+
+def _business_days(start, end):
+    """Count weekdays (Mon-Fri) between two dates, inclusive of end."""
+    return sum(1 for i in range((end - start).days + 1) if (start + timedelta(days=i)).weekday() < 5)
+
+
+def _format_issue_line(issue, team=False):
+    """Format a single issue as a markdown list item."""
+    sp = _issue_sp(issue)
+    sp_str = f' {int(sp)}SP' if sp else ''
+    labels = issue.fields.labels or []
+    label_str = f' [{", ".join(labels)}]' if labels else ''
+    assignee_str = ''
+    if team:
+        assignee_str = f' @{_assignee_name(issue)}'
+    return f'- {issue.key}{sp_str}{assignee_str}{label_str} — {issue.fields.summary}'
+
+
+def _print_swimlanes(swimlane_issues, team=False):
+    """Print swimlane sections and return (total_by_status, sp_by_status) dicts."""
+    total_by_status = {}
+    sp_by_status = {}
+    for name, _ in SWIMLANES:
+        lane_issues = swimlane_issues[name]
+        if not lane_issues:
+            continue
+        lane_total_sp = sum(_issue_sp(i) for i in lane_issues)
+        lane_closed_sp = sum(_issue_sp(i) for i in lane_issues if str(i.fields.status) == 'Closed')
+        lane_pct = (lane_closed_sp / lane_total_sp * 100) if lane_total_sp else 0
+        print(f'\n## {name} — {int(lane_closed_sp)}/{int(lane_total_sp)} SP ({lane_pct:.0f}%)\n')
+
+        by_status = {}
+        for issue in lane_issues:
+            status = str(issue.fields.status)
+            by_status.setdefault(status, []).append(issue)
+
+        for status in sorted(by_status.keys(), key=_status_sort_key):
+            print(f'### {status}')
+            for issue in by_status[status]:
+                print(_format_issue_line(issue, team))
+                total_by_status[status] = total_by_status.get(status, 0) + 1
+                sp_by_status[status] = sp_by_status.get(status, 0) + _issue_sp(issue)
+            print()
+    return total_by_status, sp_by_status
+
+
+def _drop_candidates(swimlane_issues):
+    """Return candidate issues to drop, sorted by priority (lowest first) then status."""
+    candidates = []
+    for name, _ in reversed(SWIMLANES):
+        for issue in swimlane_issues[name]:
+            if str(issue.fields.status) == 'Closed':
+                continue
+            summary = issue.fields.summary or ''
+            if any(r in summary for r in _REVIEW_SUMMARIES):
+                continue
+            sp = _issue_sp(issue)
+            candidates.append((_status_sort_key(str(issue.fields.status)), name, issue, sp))
+    candidates.sort(key=lambda x: x[0])
+    return candidates
+
+
+def _print_risk_assessment(jira, sprint, closed_sp, remaining_sp, swimlane_issues):
+    """Print risk assessment section if applicable."""
+    if not sprint or not sprint['remaining_days'] or remaining_sp <= 0:
+        return
+    remaining_days = sprint['remaining_days']
+    total_days = sprint['total_days']
+    elapsed_days = total_days - remaining_days
+    current_velocity = closed_sp / elapsed_days if elapsed_days > 0 else 0
+
+    hist_velocities = _historical_velocities(jira, sprint.get('board_id'))
+    velocity = _blended_velocity(hist_velocities, current_velocity, elapsed_days, total_days)
+
+    projected_sp = velocity * remaining_days
+    shortfall = remaining_sp - projected_sp
+
+    print('\n## Risk Assessment')
+    print(f'**Current sprint velocity:** {current_velocity:.1f} SP/day ({int(closed_sp)} SP in {elapsed_days} days)')
+    if hist_velocities:
+        hist_avg = sum(v for _, _, _, v in hist_velocities) / len(hist_velocities)
+        print('**Historical velocity (last 3 sprints):**')
+        for name, sp, days, vel in hist_velocities:
+            print(f'  - {name}: {sp} SP in {days} days = {vel:.1f} SP/day')
+        print(f'  - Average: {hist_avg:.1f} SP/day')
+    print(f'**Blended velocity:** {velocity:.1f} SP/day')
+    print(f'**Projected:** {projected_sp:.0f} SP completable in {remaining_days} remaining days')
+
+    if shortfall <= 0:
+        print(f'**Status:** ON TRACK — projected to complete {int(projected_sp)} SP, {int(remaining_sp)} SP remaining')
+        return
+
+    print(f'**Status:** AT RISK — {int(shortfall)} SP shortfall ({int(remaining_sp)} SP remaining, ~{int(projected_sp)} SP projected)')
+    print(f'\n### Suggested issues to remove ({int(shortfall)}+ SP to cut):')
+    cut_sp = 0
+    for _, lane, issue, sp in _drop_candidates(swimlane_issues):
+        if cut_sp >= shortfall:
+            break
+        sp_str = f' {int(sp)}SP' if sp else ''
+        print(f'- {issue.key}{sp_str} [{lane}] [{issue.fields.status}] — {issue.fields.summary}')
+        cut_sp += sp
+
+
+def cmd_sprint_status(args):
+    """Show sprint status grouped by priority swimlanes."""
+    jira = get_jira()
+    issues = jira.search_issues(
+        f'{_assignee_filter(args.team)} AND sprint in openSprints() ORDER BY status ASC',
+        maxResults=200,
+        fields=f'summary,status,priority,labels,issuetype,components,assignee,{CF_STORY_POINTS},{CF_SPRINT}')
+
+    sprint = _get_active_sprint(jira)
+    if sprint:
+        print(f'# {sprint["name"]}')
+        print(f'**Dates:** {sprint["start"]} → {sprint["end"]}  '
+              f'**Working days:** {sprint["remaining_days"]} remaining / {sprint["total_days"]} total')
+
+    swimlane_issues = _assign_swimlanes(issues)
+    total_by_status, sp_by_status = _print_swimlanes(swimlane_issues, args.team)
+
+    # Summary
+    total_sp = sum(sp_by_status.values())
+    closed_sp = sp_by_status.get('Closed', 0)
+    pct = (closed_sp / total_sp * 100) if total_sp else 0
+    parts = ', '.join(f'{c} {s}' for s, c in sorted(total_by_status.items(), key=lambda x: _status_sort_key(x[0])))
+    sp_parts = ', '.join(f'{int(sp)} {s}' for s, sp in sorted(sp_by_status.items(), key=lambda x: _status_sort_key(x[0])) if sp)
+    print(f'**Total:** {sum(total_by_status.values())} issues — {parts}')
+    print(f'**SP:** {int(total_sp)} total — {sp_parts}')
+    print(f'**Progress:** {int(closed_sp)}/{int(total_sp)} SP ({pct:.0f}%)')
+
+    _print_risk_assessment(jira, sprint, closed_sp, total_sp - closed_sp, swimlane_issues)
+    _warn_in_progress_no_sprint(jira, args.team)
+
+
+def cmd_transition(args):
+    """Transition an issue, or list available transitions if no status given."""
+    jira = get_jira()
+    issue = jira.issue(args.key)
+    transitions = jira.transitions(issue)
+    if not args.status:
+        print(f'{issue.key} [{issue.fields.status}] — available transitions:')
+        for t in transitions:
+            print(f"  {t['name']}")
+        return
+    match = next((t for t in transitions if t['name'].lower() == args.status.lower()), None)
+    if not match:
+        names = ', '.join(t['name'] for t in transitions)
+        sys.exit(f"Error: '{args.status}' not available. Options: {names}")
+    jira.transition_issue(issue, match['id'])
+    print(f'Transitioned {args.key} to {match["name"]}')
+
+
+def cmd_create(args):
+    """Create a new issue."""
+    jira = get_jira()
+    fields = {
+        'project': {'key': args.project},
+        'summary': args.summary,
+        'issuetype': {'name': args.type},
+    }
+    if args.component:
+        fields['components'] = [{'name': args.component}]
+    if args.priority:
+        fields['priority'] = {'name': args.priority}
+    if args.parent:
+        fields['parent'] = {'key': args.parent}
+    if args.file:
+        with open(args.file) as f:
+            fields['description'] = f.read()
+    elif args.desc:
+        fields['description'] = args.desc
+
+    issue = jira.create_issue(fields=fields)
+    print(f'Created {issue.key}: {args.summary}')
+    print(f'{SERVER}/browse/{issue.key}')
+
+
+def _print_hygiene_report(issue_gaps, team=False):
+    """Print hygiene report for issues with missing metadata."""
+    if not issue_gaps:
+        print('All issues have complete metadata.')
+        return
+    sorted_issues = sorted(issue_gaps.values(), key=lambda x: -len(x['missing']))
+    print(f'Found {len(sorted_issues)} issues with incomplete metadata:\n')
+    for entry in sorted_issues:
+        issue = entry['issue']
+        missing = entry['missing']
+        sp = _issue_sp(issue)
+        sp_str = f' {int(sp)}SP' if sp else ''
+        priority = getattr(issue.fields, 'priority', None) or 'unset'
+        components = ', '.join(c.name for c in (issue.fields.components or [])) or 'none'
+        assignee_str = ''
+        if team:
+            assignee_str = f' @{_assignee_name(issue)}'
+        print(f'{issue.key}{sp_str}{assignee_str} [{issue.fields.status}] [{priority}] — {issue.fields.summary}')
+        print(f'  {SERVER}/browse/{issue.key}')
+        print(f'  Components: {components}')
+        print(f'  Missing: {", ".join(missing)}')
+        print()
+
+    gap_counts = Counter(m for e in sorted_issues for m in e['missing'])
+    print('Summary:')
+    for gap, count in gap_counts.most_common():
+        print(f'  {gap}: {count} issues')
+    print(f'  Total: {len(sorted_issues)} issues need attention')
+
+
+def _find_sp_mismatches(jira, scope, max_results):
+    """Scan issues for SP mismatches against linked PRs. Returns (mismatches, confirmed, skipped)."""
+    sp_issues = jira.search_issues(
+        f'{scope} AND status not in (Closed, Resolved) AND "Story Points" is not EMPTY'
+        f'{REVIEW_FILTER}',
+        maxResults=max_results,
+        fields=f'summary,status,assignee,{CF_STORY_POINTS},{CF_GIT_PR}')
+
+    mismatches, confirmed, skipped = [], 0, 0
+    for issue in sp_issues:
+        pr_url = getattr(issue.fields, CF_GIT_PR, None)
+        if not pr_url:
+            skipped += 1
+            continue
+        current_sp = int(_issue_sp(issue))
+        if current_sp not in _SP_TIERS:
+            skipped += 1
+            continue
+        result = _assess_pr_sp(pr_url)
+        if not result:
+            skipped += 1
+            continue
+        suggested_sp, reason, pr_number = result
+        if abs(_SP_TIERS[current_sp] - _SP_TIERS[suggested_sp]) >= 2:
+            mismatches.append({
+                'key': issue.key, 'summary': issue.fields.summary,
+                'current_sp': current_sp, 'suggested_sp': suggested_sp,
+                'reason': reason, 'pr_url': pr_url, 'pr_number': pr_number,
+                'assignee': _assignee_name(issue),
+            })
+        else:
+            confirmed += 1
+    return mismatches, confirmed, skipped
+
+
+def _parse_sp_choice(choice, mismatches):
+    """Parse user choice for SP reassessment. Returns (apply_indices, overrides)."""
+    if choice in ('a', 'all'):
+        return set(range(len(mismatches))), {}
+    apply_indices = set()
+    overrides = {}
+    for part in choice.split(','):
+        part = part.strip()
+        m = re.match(r'(\d+)=(\d+)', part)
+        if m:
+            idx, sp_val = int(m.group(1)) - 1, int(m.group(2))
+            if sp_val in _SP_TIERS and 0 <= idx < len(mismatches):
+                apply_indices.add(idx)
+                overrides[idx] = sp_val
+        elif part.isdigit():
+            idx = int(part) - 1
+            if 0 <= idx < len(mismatches):
+                apply_indices.add(idx)
+    return apply_indices, overrides
+
+
+def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
+    """Reassess story points from linked PRs and optionally apply changes."""
+    print('\n## SP Reassessment (from PRs)\n')
+    mismatches, confirmed, skipped = _find_sp_mismatches(jira, scope, max_results)
+
+    if not mismatches:
+        print(f'No SP mismatches found. ({confirmed} confirmed, {skipped} skipped/no PR)')
+        return
+
+    print('### Mismatches found:\n')
+    for i, m in enumerate(mismatches, 1):
+        assignee_str = f' @{m["assignee"]}' if team else ''
+        print(f'{i}. {m["key"]} {m["current_sp"]}SP → suggested {m["suggested_sp"]}SP{assignee_str}')
+        print(f'   {m["reason"]}')
+        print(f'   {SERVER}/browse/{m["key"]}')
+        print(f'   {m["pr_url"]}')
+        print()
+    print(f'({confirmed} confirmed, {skipped} skipped/no PR)\n')
+
+    if dry_run:
+        return
+
+    try:
+        choice = input('Apply changes? [a]ll / [n]one / [1,2,...] individual / [1=5] override: ').strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        print('\nSkipped.')
+        return
+    if not choice or choice in ('n', 'none'):
+        print('No changes applied.')
+        return
+
+    apply_indices, overrides = _parse_sp_choice(choice, mismatches)
+    for idx in sorted(apply_indices):
+        m = mismatches[idx]
+        new_sp = overrides.get(idx, m['suggested_sp'])
+        comment = f'SP reassessed from PR #{m["pr_number"]}: {m["reason"]}'
+        jira.issue(m['key']).update(fields={CF_STORY_POINTS: float(new_sp)})
+        jira.add_comment(m['key'], f'Updated SP: {m["current_sp"]} → {new_sp}\n\n{comment}')
+        print(f'  → {m["key"]}: {m["current_sp"]}SP → {new_sp}SP')
+    print(f'\nApplied {len(apply_indices)} change(s).')
+
+
+def cmd_hygiene(args):
+    """List all issues with missing metadata and summarize what needs fixing."""
+    jira = get_jira()
+    scope = _assignee_filter(args.team)
+    base = f'{scope} AND status not in (Closed, Resolved){REVIEW_FILTER}'
+    fields_base = f'summary,status,priority,assignee,components,{CF_STORY_POINTS}'
+    checks = [
+        ('component', f'{base} AND component not in ({DEFAULT_COMPONENT}, "AEM Migration")', fields_base),
+        ('team', f'{base} AND Team is EMPTY', fields_base),
+        ('priority', f'{base} AND priority is EMPTY', fields_base),
+        ('SP', f'{base} AND "Story Points" is EMPTY AND priority != Undefined '
+         f'AND type not in (Epic, Feature)', f'{fields_base},issuetype'),
+        ('description', f'{base} AND description is EMPTY', fields_base),
+    ]
+
+    issue_gaps = {}
+    for gap_name, jql, fields in checks:
+        issues = jira.search_issues(jql, maxResults=args.max, fields=fields)
+        for issue in issues:
+            if issue.key not in issue_gaps:
+                issue_gaps[issue.key] = {'issue': issue, 'missing': []}
+            issue_gaps[issue.key]['missing'].append(gap_name)
+
+    _warn_in_progress_no_sprint(jira, args.team)
+    _print_hygiene_report(issue_gaps, args.team)
+
+    if args.check_sp:
+        _sp_reassessment(jira, scope, args.max, args.team, args.dry_run)
+
+
+def cmd_jql(args):
+    """Run an arbitrary JQL query."""
+    jira = get_jira()
+    issues = jira.search_issues(args.query, maxResults=args.max)
+    for issue in issues:
+        print(f'{issue.key:20s} [{issue.fields.status}] {issue.fields.summary}')
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Jira helper for RHDH docs')
+    sub = parser.add_subparsers(dest='command', required=True)
+
+    # Query commands
+    p = sub.add_parser('list', help='List my issues')
+    p.add_argument('--open', action='store_true', help='Only open issues')
+    p.add_argument('--jql', help='Custom JQL query')
+    p.add_argument('--max', type=int, default=50)
+    p.set_defaults(func=cmd_list)
+
+    p = sub.add_parser('show', help='Show issue details')
+    p.add_argument('key', help='Issue key')
+    p.set_defaults(func=cmd_show)
+
+    p = sub.add_parser('jql', help='Run arbitrary JQL')
+    p.add_argument('query', help='JQL query string')
+    p.add_argument('--max', type=int, default=50)
+    p.set_defaults(func=cmd_jql)
+
+    p = sub.add_parser('hygiene', help='List issues with missing metadata')
+    p.add_argument('--max', type=int, default=50)
+    p.add_argument('--team', action='store_true', help='Report for entire RHDH Documentation team')
+    p.add_argument('--check-sp', action='store_true', help='Reassess SP from linked PRs')
+    p.add_argument('--dry-run', action='store_true', help='Show SP mismatches without prompting')
+    p.set_defaults(func=cmd_hygiene)
+
+    p = sub.add_parser('sprint-status', help='Sprint status by priority swimlanes')
+    p.add_argument('--team', action='store_true', help='Report for entire RHDH Documentation team')
+    p.set_defaults(func=cmd_sprint_status)
+
+    p = sub.add_parser('update', help='Update fields on an issue with comment')
+    p.add_argument('key', help='Issue key')
+    p.add_argument('--summary', '-s', help='New summary/title')
+    p.add_argument('--desc', help='Description text')
+    p.add_argument('--desc-file', help='Read description from file')
+    sp_help = ', '.join(str(s) for s in SP_VALUES)
+    p.add_argument('--sp', help=f'Story points ({sp_help}, or "auto" to assess from linked PR)')
+    p.add_argument('--pr', help='Git Pull Request URL')
+    p.add_argument('--priority', choices=['Blocker', 'Critical', 'Major', 'Normal', 'Minor'],
+                   help='Priority')
+    p.add_argument('--component', help=f'Add component (e.g., {DEFAULT_COMPONENT})')
+    p.add_argument('--team', help=f'Set team (e.g., "{DEFAULT_TEAM}")')
+    p.add_argument('--add-label', help='Add a label')
+    p.add_argument('--remove-label', help='Remove a label')
+    p.add_argument('--link-to', help='Link to another issue key')
+    p.add_argument('--link-type', default='relates to',
+                   help='Link type (default: "relates to")')
+    p.add_argument('--sprint', nargs='?', const='', default=None,
+                   help='Add to sprint (default: active sprint, or specify name)')
+    p.add_argument('--comment', '-c', help='Comment explaining the changes')
+    p.add_argument('--comment-file', '-f', help='Read comment from file')
+    p.set_defaults(func=cmd_update)
+
+    # Workflow commands
+    p = sub.add_parser('transition', help='Transition issue (or list transitions if no status)')
+    p.add_argument('key', help='Issue key')
+    p.add_argument('status', nargs='?', help='Target status (omit to list available)')
+    p.set_defaults(func=cmd_transition)
+
+    # Issue management
+    p = sub.add_parser('create', help='Create a new issue')
+    p.add_argument('project', help='Project key (e.g., RHIDP, RHDHBUG)')
+    p.add_argument('summary', help='Issue summary')
+    p.add_argument('--type', default='Task', help='Issue type (default: Task)')
+    p.add_argument('--component', help='Component name')
+    p.add_argument('--priority', help='Priority name')
+    p.add_argument('--parent', help='Parent issue key (for sub-tasks)')
+    p.add_argument('--desc', help='Description text')
+    p.add_argument('--file', '-f', help='Read description from file')
+    p.set_defaults(func=cmd_create)
+
+    p = sub.add_parser('close-subtasks', help='Close open subtasks of closed parents')
+    p.add_argument('--dry-run', action='store_true', help='Show what would be closed')
+    p.set_defaults(func=cmd_close_subtasks)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == '__main__':
+    main()

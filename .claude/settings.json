@@ -7,7 +7,13 @@
       "Edit(.claude/**)",
       "Write(.claude/**)",
       "Skill(update-config)",
-      "Skill(update-config:*)"
+      "Skill(update-config:*)",
+      "Bash(python3 -c \":*)",
+      "Bash(pip install:*)",
+      "Bash(scripts/import-jobs:*)"
+    ],
+    "additionalDirectories": [
+      "//.claude"
     ]
   }
 }

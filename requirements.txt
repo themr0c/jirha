@@ -1,1 +1,2 @@
 jira>=3.5
+openpyxl>=3.1

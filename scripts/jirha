@@ -323,7 +323,7 @@ def cmd_show(args):
 
     # Description
     desc = f.description or '(empty)'
-    print(f'\nDescription:\n{desc[:1000]}')
+    print(f'\nDescription:\n{desc}')
 
     # Comments
     if f.comment and f.comment.comments:
@@ -331,7 +331,7 @@ def cmd_show(args):
         if args.comments:
             print(f'\nComments ({len(comments)}):')
             for c in comments:
-                print(f'  {c.author.displayName}: {c.body[:500]}')
+                print(f'  {c.author.displayName}: {c.body}')
         else:
             print(f'\nComments ({len(comments)}):')
             for c in comments[-3:]:

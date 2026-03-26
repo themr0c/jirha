@@ -378,8 +378,8 @@ def cmd_list(args):
             name = t['name']
             for env_name in ['preview', 'stage']:
                 job = t.get('jobs', {}).get(env_name, {})
-                state = job.get('state', 'N/A')
-                branch = job.get('gitBranch', 'N/A')
+                state = job.get('state', 'N/A') or 'N/A'
+                branch = job.get('gitBranch', 'N/A') or 'N/A'
                 # Get content dir from build config
                 if env_name == args.env or args.env == 'preview':
                     config = get_build_config(page, t['uuid'], env_name)

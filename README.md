@@ -40,3 +40,15 @@ pantheon-cli publish --version 1.9 --exec --rebuild-first                 # publ
 ```
 
 Dry-run by default — use `--exec` to apply changes. Run `pantheon-cli --help` for all options. See [docs/pantheon-reference.md](docs/pantheon-reference.md) for architecture details and gotchas.
+
+### visual-diff
+
+Visual diff between stage and preview docs builds. Scrapes title links from the splash pages, screenshots each title in both environments, and generates an HTML report with side-by-side comparisons and diff overlays.
+
+```bash
+visual-diff urls --version 1.9                                            # list stage/preview URLs
+visual-diff diff --version 1.9 --output /tmp/rhdh-1.9-diff/              # generate diff report
+visual-diff diff --version 1.9 --title "About" --output /tmp/rhdh-diff/  # diff a single title
+```
+
+Requires VPN and Kerberos (same as `pantheon-cli`).

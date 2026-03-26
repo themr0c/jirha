@@ -99,6 +99,28 @@ def open_browser(fresh=False, headless=False):
     return p, browser, page
 
 
+def _full_page_screenshot(page, path):
+    """Take a full-page screenshot, scrolling first to trigger lazy loading."""
+    # Scroll to bottom to load all content
+    page.evaluate("""() => {
+        return new Promise((resolve) => {
+            let totalHeight = 0;
+            const distance = 1000;
+            const timer = setInterval(() => {
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+                if (totalHeight >= document.body.scrollHeight) {
+                    clearInterval(timer);
+                    window.scrollTo(0, 0);
+                    resolve();
+                }
+            }, 100);
+        });
+    }""")
+    time.sleep(1)
+    page.screenshot(path=str(path), full_page=True)
+
+
 def slugify(name):
     """Convert a title name to a filesystem-safe slug."""
     slug = name.lower().replace(' ', '_')
@@ -309,14 +331,14 @@ def cmd_diff(args):
                 time.sleep(3)
                 _dismiss_overlays(page)
                 stage_path = output_dir / f"{slug}_stage.png"
-                page.screenshot(path=str(stage_path), full_page=True)
+                _full_page_screenshot(page, stage_path)
 
                 # Screenshot preview
                 page.goto(p_url, wait_until="networkidle", timeout=60000)
                 time.sleep(3)
                 _dismiss_overlays(page)
                 preview_path = output_dir / f"{slug}_preview.png"
-                page.screenshot(path=str(preview_path), full_page=True)
+                _full_page_screenshot(page, preview_path)
 
                 # Compare
                 diff_path = output_dir / f"{slug}_diff.png"

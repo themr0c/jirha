@@ -57,8 +57,8 @@ def _dismiss_overlays(page):
 def scrape_title_links(page, url, product, version):
     """Scrape title links from a splash page. Returns list of (name, href).
 
-    Links on the splash page point to /html/ (multi-page). We rewrite them
-    to /html-single/ for screenshot comparison.
+    Uses the /html/ (multi-page) links from the splash page, which produce
+    shorter pages better suited for full-page screenshots.
     """
     page.goto(url, wait_until="networkidle", timeout=60000)
     time.sleep(3)
@@ -75,9 +75,7 @@ def scrape_title_links(page, url, product, version):
         }
         return results;
     }""", pattern)
-    # Rewrite /html/ to /html-single/ for single-page view
-    rewrite = f"/{product}/{version}/html-single/"
-    return [(l['name'], l['href'].replace(pattern, rewrite)) for l in links]
+    return [(l['name'], l['href']) for l in links]
 
 
 def open_browser(fresh=False, headless=False):
@@ -100,25 +98,57 @@ def open_browser(fresh=False, headless=False):
 
 
 def _full_page_screenshot(page, path):
-    """Take a full-page screenshot, scrolling first to trigger lazy loading."""
-    # Scroll to bottom to load all content
+    """Take a full-page screenshot.
+
+    Red Hat docs pages use a fixed-height layout with a scrollable inner
+    container (#app-content). We expand all scrollable containers to their
+    full scroll height, resize the viewport to match, take the screenshot,
+    then restore everything.
+    """
+    # Scroll the main content container to trigger lazy loading
     page.evaluate("""() => {
+        const container = document.querySelector('#app-content') || document.body;
         return new Promise((resolve) => {
             let totalHeight = 0;
             const distance = 1000;
             const timer = setInterval(() => {
-                window.scrollBy(0, distance);
+                container.scrollBy(0, distance);
                 totalHeight += distance;
-                if (totalHeight >= document.body.scrollHeight) {
+                if (totalHeight >= container.scrollHeight) {
                     clearInterval(timer);
-                    window.scrollTo(0, 0);
+                    container.scrollTo(0, 0);
                     resolve();
                 }
             }, 100);
         });
     }""")
     time.sleep(1)
-    page.screenshot(path=str(path), full_page=True)
+
+    # Expand scrollable containers and get full height
+    full_height = page.evaluate("""() => {
+        // Find the tallest scrollable container
+        let maxH = document.documentElement.scrollHeight;
+        for (const el of document.querySelectorAll('*')) {
+            if (el.scrollHeight > el.clientHeight + 50) {
+                el.style.overflow = 'visible';
+                el.style.maxHeight = 'none';
+                el.style.height = 'auto';
+                maxH = Math.max(maxH, el.scrollHeight);
+            }
+        }
+        // Also expand html/body
+        document.documentElement.style.overflow = 'visible';
+        document.documentElement.style.height = 'auto';
+        document.body.style.overflow = 'visible';
+        document.body.style.height = 'auto';
+        return Math.max(maxH, document.documentElement.scrollHeight, document.body.scrollHeight);
+    }""")
+
+    # Resize viewport to full content height
+    page.set_viewport_size({"width": 1400, "height": full_height})
+    time.sleep(0.5)
+    page.screenshot(path=str(path))
+    page.set_viewport_size({"width": 1400, "height": 900})
 
 
 def slugify(name):
@@ -327,14 +357,14 @@ def cmd_diff(args):
 
             try:
                 # Screenshot stage
-                page.goto(s_url, wait_until="networkidle", timeout=60000)
+                page.goto(s_url, wait_until="networkidle", timeout=120000)
                 time.sleep(3)
                 _dismiss_overlays(page)
                 stage_path = output_dir / f"{slug}_stage.png"
                 _full_page_screenshot(page, stage_path)
 
                 # Screenshot preview
-                page.goto(p_url, wait_until="networkidle", timeout=60000)
+                page.goto(p_url, wait_until="networkidle", timeout=120000)
                 time.sleep(3)
                 _dismiss_overlays(page)
                 preview_path = output_dir / f"{slug}_preview.png"

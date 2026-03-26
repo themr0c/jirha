@@ -10,10 +10,14 @@
       "Skill(update-config:*)",
       "Bash(python3 -c \":*)",
       "Bash(pip install:*)",
+      "Bash(pantheon-cli:*)",
+      "Bash(~/bin/pantheon-cli:*)",
       "Bash(scripts/import-jobs:*)"
     ],
     "additionalDirectories": [
-      "//.claude"
+      "//.claude",
+      "/home/ffloreth/.claude",
+      "/home/ffloreth/src/gh/themr0c"
     ]
   }
 }

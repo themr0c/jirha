@@ -1,0 +1,802 @@
+#!/usr/bin/env python3
+"""Pantheon CLI for docs publishing operations.
+
+Automate Pantheon build configuration and rebuilds via the Reef API.
+Requires a valid Kerberos ticket (kinit) and VPN access.
+"""
+
+import os
+import sys
+from pathlib import Path
+
+# Re-exec under the repo venv if not already running from it
+_script = Path(__file__).resolve()
+_repo_root = _script.parent.parent
+_venv_python = _repo_root / 'venv' / 'bin' / 'python'
+if _venv_python.is_file() and Path(sys.executable).resolve() != _venv_python.resolve():
+    os.execv(str(_venv_python), [str(_venv_python), str(_script)] + sys.argv[1:])
+
+import time
+import json
+import shutil
+import argparse
+import subprocess
+
+# Load .env from repo root
+_env_file = _repo_root / '.env'
+if _env_file.is_file():
+    for line in _env_file.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith('#') and '=' in line:
+            k, v = line.split('=', 1)
+            os.environ[k.strip()] = v.strip()
+
+from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
+
+# Constants
+PANTHEON_URL = "https://pantheon.cee.redhat.com/"
+REEF_API = "https://reef.corp.redhat.com/api"
+SESSION_DIR = "/tmp/pantheon-session"
+
+
+# ---------------------------------------------------------------------------
+# Kerberos check
+# ---------------------------------------------------------------------------
+
+def check_kerberos():
+    """Warn if no valid Kerberos ticket is found."""
+    try:
+        result = subprocess.run(
+            ["klist", "-s"], capture_output=True, timeout=5
+        )
+        if result.returncode != 0:
+            print("WARNING: No valid Kerberos ticket found. Run 'kinit' first.")
+            print("         SSO login may fail without a ticket.\n")
+    except FileNotFoundError:
+        print("WARNING: 'klist' not found. Cannot verify Kerberos ticket.\n")
+
+
+# ---------------------------------------------------------------------------
+# Browser / Auth layer
+# ---------------------------------------------------------------------------
+
+def reef_get(page, endpoint):
+    """GET request to Reef API via browser XHR."""
+    url = f"{REEF_API}/{endpoint}"
+    response = page.evaluate("""(url) => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.withCredentials = true;
+            xhr.onload = () => resolve({status: xhr.status, body: xhr.responseText});
+            xhr.onerror = () => reject('XHR error: ' + xhr.statusText);
+            xhr.send();
+        });
+    }""", url)
+    if response['status'] != 200:
+        raise RuntimeError(
+            f"Reef GET {endpoint}: HTTP {response['status']}: "
+            f"{response['body'][:200]}"
+        )
+    return json.loads(response['body'])
+
+
+def _check_authenticated(page):
+    """Check if the current session is authenticated with Pantheon."""
+    try:
+        return page.evaluate("""() => {
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://pantheon.cee.redhat.com/auth/check_login', true);
+                xhr.withCredentials = true;
+                xhr.onload = () => resolve(xhr.status);
+                xhr.onerror = () => resolve(0);
+                xhr.send();
+            });
+        }""") == 200
+    except Exception:
+        return False
+
+
+def _sso_login(page, email):
+    """Complete the SSO login form: remove overlays, enter email, click SSO."""
+    # Force-remove cookie overlays
+    page.evaluate(
+        "() => document.querySelectorAll('.truste_box_overlay, .truste_cm_outerdiv, "
+        ".truste_overlay, [class*=\"truste\"], #teconsent').forEach(e => e.remove())"
+    )
+    time.sleep(1)
+
+    username = page.locator("#username-verification")
+    if username.count() > 0 and username.first.is_visible():
+        print(f"  Entering email: {email}")
+        username.first.fill(email)
+        time.sleep(0.5)
+        next_btn = page.locator("#login-show-step2")
+        if next_btn.count() > 0 and next_btn.first.is_visible():
+            next_btn.first.click()
+            time.sleep(2)
+        sso_btn = page.locator("#rh-sso-flow")
+        if sso_btn.count() > 0 and sso_btn.first.is_visible():
+            print("  Clicking 'Log in with company single sign-on'...")
+            sso_btn.first.click()
+            time.sleep(5)
+            return True
+    return False
+
+
+def login_and_wait(page, email):
+    """Navigate to Pantheon, automate SSO login, wait for auth."""
+    print("Navigating to Pantheon...")
+    page.goto(PANTHEON_URL, wait_until="domcontentloaded", timeout=60000)
+    time.sleep(5)
+
+    if _check_authenticated(page):
+        print("Already authenticated (session still valid).")
+        return True
+
+    # Wait for page to settle, then remove cookie overlays
+    time.sleep(3)
+    try:
+        page.evaluate(
+            "() => document.querySelectorAll('.truste_box_overlay, .truste_cm_outerdiv, "
+            ".truste_overlay, [class*=\"truste\"], #teconsent').forEach(e => e.remove())"
+        )
+    except Exception:
+        time.sleep(2)
+    time.sleep(1)
+
+    # Click Login via JS to bypass any remaining overlays
+    clicked = page.evaluate("""() => {
+        const links = document.querySelectorAll('a');
+        for (const a of links) {
+            const text = a.textContent.trim();
+            if (text === 'Login' || text === 'Log in') { a.click(); return true; }
+        }
+        return false;
+    }""")
+    if clicked:
+        print("Clicking Login...")
+        time.sleep(5)
+
+    # Complete SSO login form
+    if 'sso.redhat.com' in page.url:
+        _sso_login(page, email)
+
+    # Wait for SSO redirect back to Pantheon
+    print("  Waiting for SSO to complete...")
+    for i in range(60):
+        time.sleep(2)
+        if 'pantheon.cee.redhat.com' in page.url:
+            if _check_authenticated(page):
+                print("Authenticated!")
+                return True
+        if (i + 1) % 10 == 0:
+            print(f"  Still waiting... ({(i+1)*2}s)")
+
+    print("ERROR: Login timed out. Complete SSO manually in the browser window.")
+    for i in range(60):
+        time.sleep(2)
+        try:
+            if _check_authenticated(page):
+                print("Authenticated!")
+                return True
+        except Exception:
+            pass
+
+    print("ERROR: Login timed out after 4 minutes.")
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Reef service wrappers
+# ---------------------------------------------------------------------------
+
+def get_titles(page, product, version):
+    """Get all titles for a product/version."""
+    data = reef_get(
+        page,
+        f"lightblue/get_titles?combineBrewed=false&lang=en-US"
+        f"&product={product}&version={version}"
+    )
+    return data['data']['products'][0]['versions'][0]['titles']
+
+
+def get_build_config(page, uuid, env="preview"):
+    """Get current build config for a title."""
+    data = reef_get(
+        page,
+        f"lightblue/get_title_build_config?uuid={uuid}&lang=en-US&environment={env}"
+    )
+    return data.get('data', {})
+
+
+def update_build_config(page, uuid, env, branch, content_dir, content_type="book"):
+    """Update build config via Angular reefService.
+
+    Note: The update API expects snake_case field names (content_directory,
+    content_type), while the GET response uses camelCase.
+    """
+    result = page.evaluate("""([uuid, lang, env, branch, dir, contentType]) => {
+        return new Promise((resolve) => {
+            const injector = angular.element(document.body).injector();
+            const reef = injector.get('reefService');
+            reef.updateTitleEnvBuildConfig(uuid, lang, env, {
+                branch: branch,
+                content_directory: dir,
+                content_type: contentType
+            }).then(function(r) {
+                resolve({ok: true, data: JSON.stringify(r.data || r).substring(0, 300)});
+            }).catch(function(err) {
+                resolve({ok: false, status: err.status,
+                         error: JSON.stringify(err.data || err).substring(0, 300)});
+            });
+        });
+    }""", [uuid, "en-US", env, branch, content_dir, content_type])
+    if not result['ok']:
+        raise RuntimeError(
+            f"Update failed (HTTP {result.get('status')}): {result.get('error')}"
+        )
+    return result
+
+
+def toggle_job(page, job_name, enable):
+    """Enable or disable a Jenkins job.
+
+    toggleJenkinsJob(name, disabled) — second arg is 'disabled' boolean,
+    so to enable pass disabled=false, to disable pass disabled=true.
+    """
+    disabled = not enable
+    result = page.evaluate("""([jobName, disabled]) => {
+        return new Promise((resolve) => {
+            const injector = angular.element(document.body).injector();
+            const reef = injector.get('reefService');
+            try {
+                const r = reef.toggleJenkinsJob(jobName, disabled);
+                if (r && typeof r.then === 'function') {
+                    r.then(function(resp) {
+                        resolve({ok: true});
+                    }).catch(function(err) {
+                        resolve({ok: false,
+                                 error: JSON.stringify(err && err.data || err).substring(0, 300)});
+                    });
+                } else {
+                    resolve({ok: true});
+                }
+            } catch(e) {
+                resolve({ok: false, error: e.message});
+            }
+        });
+    }""", [job_name, disabled])
+    return result
+
+
+def start_build(page, job_name):
+    """Trigger a Jenkins build via reefService.startJenkinsJob."""
+    result = page.evaluate("""(jobName) => {
+        return new Promise((resolve) => {
+            const injector = angular.element(document.body).injector();
+            const reef = injector.get('reefService');
+            try {
+                const r = reef.startJenkinsJob({jobName: jobName});
+                if (r && typeof r.then === 'function') {
+                    r.then(function(resp) {
+                        resolve({ok: true});
+                    }).catch(function(err) {
+                        resolve({ok: false,
+                                 error: JSON.stringify(err && err.data || err).substring(0, 300)});
+                    });
+                } else {
+                    resolve({ok: true});
+                }
+            } catch(e) {
+                resolve({ok: false, error: e.message});
+            }
+        });
+    }""", job_name)
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Title filtering
+# ---------------------------------------------------------------------------
+
+def filter_titles(titles, patterns):
+    """Filter titles by case-insensitive substring match.
+
+    patterns is a list of strings. A title matches if any pattern is a
+    substring of the title name. If patterns is None or contains 'all',
+    all titles are returned.
+    """
+    if not patterns or 'all' in patterns:
+        return titles
+    return [
+        t for t in titles
+        if any(p.lower() in t['name'].lower() for p in patterns)
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Browser context manager
+# ---------------------------------------------------------------------------
+
+def open_pantheon(args):
+    """Launch browser, authenticate, navigate to titles page. Returns (browser, page)."""
+    if args.fresh and os.path.exists(SESSION_DIR):
+        shutil.rmtree(SESSION_DIR)
+
+    p = sync_playwright().start()
+    browser = p.firefox.launch_persistent_context(
+        SESSION_DIR,
+        headless=False,
+        viewport={"width": 1400, "height": 900},
+        ignore_https_errors=True,
+        firefox_user_prefs={
+            "network.negotiate-auth.trusted-uris": ".redhat.com,.cee.redhat.com",
+        },
+    )
+    page = browser.pages[0] if browser.pages else browser.new_page()
+
+    if not login_and_wait(page, args.email):
+        browser.close()
+        p.stop()
+        sys.exit(1)
+
+    titles_url = (
+        f"{PANTHEON_URL}#/titles/{args.product}/{args.version}"
+    )
+    page.goto(titles_url, wait_until="domcontentloaded", timeout=60000)
+    time.sleep(5)
+    try:
+        page.wait_for_selector("[ng-repeat*='title']", timeout=30000)
+    except PWTimeout:
+        print("ERROR: Could not load titles page.")
+        browser.close()
+        p.stop()
+        sys.exit(1)
+    time.sleep(2)
+    print("Titles page loaded.\n")
+
+    return p, browser, page
+
+
+# ---------------------------------------------------------------------------
+# Subcommand: list
+# ---------------------------------------------------------------------------
+
+def cmd_list(args):
+    """List titles for a product/version."""
+    p, browser, page = open_pantheon(args)
+
+    try:
+        titles = get_titles(page, args.product, args.version)
+        titles = filter_titles(titles, args.title)
+        print(f"{'Name':<70} {'Env':<8} {'State':<10} {'Branch':<30} {'Content Dir'}")
+        print("-" * 160)
+
+        for t in titles:
+            name = t['name']
+            for env_name in ['preview', 'stage']:
+                job = t.get('jobs', {}).get(env_name, {})
+                state = job.get('state', 'N/A')
+                branch = job.get('gitBranch', 'N/A')
+                # Get content dir from build config
+                if env_name == args.env or args.env == 'preview':
+                    config = get_build_config(page, t['uuid'], env_name)
+                    content_dir = config.get('contentDirectory', 'N/A')
+                else:
+                    content_dir = ''
+                print(f"{name:<70} {env_name:<8} {state:<10} {branch:<30} {content_dir}")
+    finally:
+        browser.close()
+        p.stop()
+
+
+# ---------------------------------------------------------------------------
+# Subcommand: update
+# ---------------------------------------------------------------------------
+
+def cmd_update(args):
+    """Update build configuration for titles."""
+    if not args.branch and not args.directory and not args.enable:
+        print("ERROR: Specify at least --branch, --directory, or --enable.")
+        sys.exit(1)
+
+    p, browser, page = open_pantheon(args)
+
+    try:
+        titles = get_titles(page, args.product, args.version)
+        titles = filter_titles(titles, args.title)
+        print(f"Found {len(titles)} matching titles\n")
+
+        if not titles:
+            print("No titles match the filter.")
+            return
+
+        # Analyze what needs to change
+        updates = []
+        for t in titles:
+            config = get_build_config(page, t['uuid'], args.env)
+            job = t.get('jobs', {}).get(args.env, {})
+            job_name = job.get('jobName', '')
+            state = job.get('state', '')
+
+            current_branch = config.get('branch', '')
+            current_dir = config.get('contentDirectory', '')
+            content_type = config.get('contentType', 'book')
+
+            new_branch = args.branch or current_branch
+            new_dir = args.directory or current_dir
+
+            needs_config = (new_branch != current_branch or new_dir != current_dir)
+            needs_enable = (args.enable and state == 'DISABLED')
+
+            if needs_config or needs_enable:
+                updates.append({
+                    'name': t['name'],
+                    'uuid': t['uuid'],
+                    'current_branch': current_branch,
+                    'current_dir': current_dir,
+                    'new_branch': new_branch,
+                    'new_dir': new_dir,
+                    'content_type': content_type,
+                    'job_name': job_name,
+                    'needs_config': needs_config,
+                    'needs_enable': needs_enable,
+                    'state': state,
+                })
+
+        if not updates:
+            print("All titles are already up to date.")
+            return
+
+        # Show plan
+        print(f"{'=' * 60}")
+        print(f"{'[DRY RUN] ' if not args.exec else ''}Updates for {len(updates)} titles:")
+        print(f"{'=' * 60}")
+
+        for t in updates:
+            print(f"\n  {t['name']}")
+            if t['needs_config']:
+                if t['current_branch'] != t['new_branch']:
+                    print(f"    branch: {t['current_branch']} -> {t['new_branch']}")
+                if t['current_dir'] != t['new_dir']:
+                    print(f"    dir:    {t['current_dir']} -> {t['new_dir']}")
+            if t['needs_enable']:
+                print(f"    enable: DISABLED -> ENABLED")
+
+        if not args.exec:
+            print(f"\nDry run. Use --exec to apply changes.")
+            return
+
+        # Execute
+        success = 0
+        fail = 0
+        for i, t in enumerate(updates):
+            print(f"\n[{i+1}/{len(updates)}] {t['name']}")
+
+            try:
+                if t['needs_config']:
+                    update_build_config(
+                        page, t['uuid'], args.env,
+                        t['new_branch'], t['new_dir'], t['content_type']
+                    )
+                    print("  Config updated")
+
+                if t['needs_enable']:
+                    result = toggle_job(page, t['job_name'], True)
+                    if result.get('ok'):
+                        print("  Enabled")
+                    else:
+                        print(f"  Enable failed: {result.get('error')}")
+
+                if args.rebuild and t['job_name']:
+                    result = start_build(page, t['job_name'])
+                    if result.get('ok'):
+                        print("  Rebuild triggered")
+                    else:
+                        print(f"  Rebuild failed: {result.get('error')}")
+
+                success += 1
+            except Exception as e:
+                print(f"  ERROR: {e}")
+                fail += 1
+
+            time.sleep(1)
+
+        print(f"\n{'=' * 60}")
+        print(f"Done. Success: {success}, Failed: {fail}")
+    finally:
+        browser.close()
+        p.stop()
+
+
+# ---------------------------------------------------------------------------
+# Subcommand: rebuild
+# ---------------------------------------------------------------------------
+
+def cmd_rebuild(args):
+    """Trigger rebuilds for titles."""
+    p, browser, page = open_pantheon(args)
+
+    try:
+        titles = get_titles(page, args.product, args.version)
+        titles = filter_titles(titles, args.title)
+        print(f"Found {len(titles)} matching titles\n")
+
+        # Collect jobs
+        jobs = []
+        for t in titles:
+            job = t.get('jobs', {}).get(args.env, {})
+            job_name = job.get('jobName', '')
+            state = job.get('state', '')
+            if not job_name:
+                continue
+            needs_enable = (args.enable and state == 'DISABLED')
+            jobs.append({
+                'name': t['name'],
+                'job_name': job_name,
+                'state': state,
+                'needs_enable': needs_enable,
+            })
+
+        disabled = [j for j in jobs if j['needs_enable']]
+        print(f"Jobs to rebuild: {len(jobs)}")
+        if disabled:
+            print(f"Jobs to enable:  {len(disabled)}")
+
+        if not args.exec:
+            print(f"\nDry run. Titles that would be rebuilt:")
+            for j in jobs:
+                enable_tag = " [ENABLE]" if j['needs_enable'] else ""
+                print(f"  {j['name']} ({j['state']}){enable_tag}")
+            print(f"\nUse --exec to apply.")
+            return
+
+        # Enable disabled jobs
+        if disabled:
+            print(f"\nEnabling {len(disabled)} disabled jobs...")
+            for j in disabled:
+                result = toggle_job(page, j['job_name'], True)
+                status = "OK" if result.get('ok') else f"FAIL: {result.get('error')}"
+                print(f"  {j['name']}: {status}")
+                time.sleep(1)
+
+        # Trigger rebuilds
+        print(f"\nTriggering {len(jobs)} rebuilds...")
+        success = 0
+        fail = 0
+        for j in jobs:
+            result = start_build(page, j['job_name'])
+            if result.get('ok'):
+                print(f"  {j['name']}: triggered")
+                success += 1
+            else:
+                print(f"  {j['name']}: FAIL: {result.get('error')}")
+                fail += 1
+            time.sleep(1)
+
+        # Wait for completion if requested
+        if args.wait and success > 0:
+            print(f"\nWaiting for builds to complete (timeout: {args.timeout}s)...")
+            deadline = time.time() + args.timeout
+            pending = {j['name'] for j in jobs if j['job_name']}
+
+            while pending and time.time() < deadline:
+                time.sleep(10)
+                fresh_titles = get_titles(page, args.product, args.version)
+                for t in fresh_titles:
+                    if t['name'] in pending:
+                        job = t.get('jobs', {}).get(args.env, {})
+                        state = job.get('state', '')
+                        if state in ('SUCCESS', 'FAILURE', 'DISABLED'):
+                            status = "OK" if state == 'SUCCESS' else state
+                            print(f"  {t['name']}: {status}")
+                            pending.discard(t['name'])
+
+                remaining = len(pending)
+                if remaining > 0:
+                    elapsed = int(time.time() - (deadline - args.timeout))
+                    print(f"  ... {remaining} still building ({elapsed}s)")
+
+            if pending:
+                print(f"\nTIMEOUT: {len(pending)} builds did not complete:")
+                for name in sorted(pending):
+                    print(f"  {name}")
+
+        print(f"\nDone. Triggered: {success}, Failed: {fail}")
+    finally:
+        browser.close()
+        p.stop()
+
+
+# ---------------------------------------------------------------------------
+# Subcommand: publish
+# ---------------------------------------------------------------------------
+
+def cmd_publish(args):
+    """Enable and rebuild stage builds for a release."""
+    # Override env to stage
+    args.env = 'stage'
+    args.enable = True
+
+    if not args.exec:
+        print("Publish operates on STAGE environment.")
+        print("This will enable all stage jobs and trigger rebuilds.\n")
+
+    if args.rebuild_first:
+        args.wait = getattr(args, 'wait', False)
+        args.timeout = getattr(args, 'timeout', 300)
+        cmd_rebuild(args)
+    else:
+        # Just list what would be published
+        p, browser, page = open_pantheon(args)
+        try:
+            titles = get_titles(page, args.product, args.version)
+            titles = filter_titles(titles, args.title)
+
+            disabled = []
+            for t in titles:
+                job = t.get('jobs', {}).get('stage', {})
+                if job.get('state') == 'DISABLED':
+                    disabled.append(t['name'])
+
+            print(f"Titles: {len(titles)}")
+            print(f"Disabled stage jobs: {len(disabled)}")
+
+            if not args.exec:
+                if disabled:
+                    print(f"\nWould enable:")
+                    for name in disabled:
+                        print(f"  {name}")
+                print(f"\nUse --exec to enable. Add --rebuild-first to also trigger builds.")
+                return
+
+            # Enable disabled stage jobs
+            if disabled:
+                print(f"\nEnabling {len(disabled)} stage jobs...")
+                for t in titles:
+                    job = t.get('jobs', {}).get('stage', {})
+                    if job.get('state') == 'DISABLED':
+                        job_name = job.get('jobName', '')
+                        if job_name:
+                            result = toggle_job(page, job_name, True)
+                            status = "OK" if result.get('ok') else f"FAIL"
+                            print(f"  {t['name']}: {status}")
+                            time.sleep(1)
+
+            print("\nDone. Stage jobs enabled.")
+            print("Use --rebuild-first to also trigger builds.")
+        finally:
+            browser.close()
+            p.stop()
+
+
+# ---------------------------------------------------------------------------
+# Main / argparse
+# ---------------------------------------------------------------------------
+
+def main():
+    # Common options shared across all subcommands via parent parser
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument(
+        "--product", default="red_hat_developer_hub",
+        help="Pantheon product slug (default: red_hat_developer_hub)"
+    )
+    common.add_argument(
+        "--version", required=True,
+        help="Product version (e.g., 1.9, 1.10)"
+    )
+    common.add_argument(
+        "--env", choices=["preview", "stage"], default="preview",
+        help="Environment (default: preview)"
+    )
+    common.add_argument(
+        "--title", action="append", dest="title",
+        help="Filter titles by substring (repeatable; default: all)"
+    )
+    common.add_argument(
+        "--exec", action="store_true", dest="exec",
+        help="Execute changes (default is dry-run)"
+    )
+    common.add_argument(
+        "--fresh", action="store_true",
+        help="Clear browser session and re-authenticate"
+    )
+    common.add_argument(
+        "--email", default=os.environ.get('JIRA_EMAIL', ''),
+        help="SSO email (default: from JIRA_EMAIL in .env)"
+    )
+
+    parser = argparse.ArgumentParser(
+        description="Pantheon CLI for docs publishing operations",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Prerequisites:
+  - Valid Kerberos ticket (run 'kinit' first)
+  - VPN connection to Red Hat network
+  - Playwright Firefox (installed via setup.sh)
+
+Examples:
+  pantheon-cli list --version 1.9
+  pantheon-cli update --version 1.9 --env preview --branch release-1.10
+  pantheon-cli update --version 1.9 --env preview --branch release-1.10 --exec
+  pantheon-cli rebuild --version 1.9 --env preview --exec --enable
+  pantheon-cli publish --version 1.9 --exec --rebuild-first
+""",
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # list
+    subparsers.add_parser(
+        "list", parents=[common],
+        help="List titles for a product/version"
+    )
+
+    # update
+    p_update = subparsers.add_parser(
+        "update", parents=[common],
+        help="Update build configuration"
+    )
+    p_update.add_argument("--branch", help="Target branch")
+    p_update.add_argument("--directory", help="Content directory")
+    p_update.add_argument(
+        "--enable", action="store_true", help="Enable disabled jobs"
+    )
+    p_update.add_argument(
+        "--rebuild", action="store_true", help="Trigger rebuild after update"
+    )
+
+    # rebuild
+    p_rebuild = subparsers.add_parser(
+        "rebuild", parents=[common],
+        help="Trigger rebuilds"
+    )
+    p_rebuild.add_argument(
+        "--enable", action="store_true", help="Enable disabled jobs first"
+    )
+    p_rebuild.add_argument(
+        "--wait", action="store_true", help="Wait for builds to complete"
+    )
+    p_rebuild.add_argument(
+        "--timeout", type=int, default=300,
+        help="Max seconds to wait per build (default: 300)"
+    )
+
+    # publish
+    p_publish = subparsers.add_parser(
+        "publish", parents=[common],
+        help="Enable and rebuild stage builds"
+    )
+    p_publish.add_argument(
+        "--rebuild-first", action="store_true",
+        help="Trigger rebuilds after enabling"
+    )
+    p_publish.add_argument(
+        "--wait", action="store_true", help="Wait for builds to complete"
+    )
+    p_publish.add_argument(
+        "--timeout", type=int, default=300,
+        help="Max seconds to wait per build (default: 300)"
+    )
+
+    args = parser.parse_args()
+
+    if not args.email:
+        sys.exit(
+            "Error: No email configured. Set JIRA_EMAIL in .env or use --email."
+        )
+
+    check_kerberos()
+
+    handlers = {
+        'list': cmd_list,
+        'update': cmd_update,
+        'rebuild': cmd_rebuild,
+        'publish': cmd_publish,
+    }
+    handlers[args.command](args)
+
+
+if __name__ == "__main__":
+    main()

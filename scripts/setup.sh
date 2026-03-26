@@ -11,9 +11,16 @@ if [[ ! -f venv/bin/activate ]] || [[ requirements.txt -nt venv/bin/activate ]];
   touch venv/bin/activate
 fi
 
-# Create ~/bin/jirha symlink
+# Create ~/bin symlinks
 mkdir -p ~/bin
 ln -sf "$REPO_ROOT/scripts/jirha" ~/bin/jirha
+ln -sf "$REPO_ROOT/scripts/pantheon-cli" ~/bin/pantheon-cli
+
+# Install Playwright Firefox browser if needed
+if ! venv/bin/python -c "from playwright.sync_api import sync_playwright" 2>/dev/null; then
+  echo "Installing Playwright Firefox browser..."
+  venv/bin/playwright install firefox
+fi
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
   if [[ -f "$HOME/.bashrc" ]]; then
     echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"

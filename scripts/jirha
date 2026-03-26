@@ -327,9 +327,15 @@ def cmd_show(args):
 
     # Comments
     if f.comment and f.comment.comments:
-        print(f'\nComments ({len(f.comment.comments)}):')
-        for c in f.comment.comments[-3:]:
-            print(f'  {c.author.displayName}: {c.body[:200]}')
+        comments = f.comment.comments
+        if args.comments:
+            print(f'\nComments ({len(comments)}):')
+            for c in comments:
+                print(f'  {c.author.displayName}: {c.body[:500]}')
+        else:
+            print(f'\nComments ({len(comments)}):')
+            for c in comments[-3:]:
+                print(f'  {c.author.displayName}: {c.body[:200]}')
 
 
 def _resolve_sp(args, jira):
@@ -391,8 +397,13 @@ def _build_fields(args, jira):
     # Simple scalar fields
     simple = [
         ('summary', 'summary', lambda v: (v, f'Summary: {v}')),
+        ('issue_type', 'issuetype', lambda v: ({'name': v}, f'Type: {v}')),
         ('pr', CF_GIT_PR, lambda v: (v, f'PR: {v}')),
         ('priority', 'priority', lambda v: ({'name': v}, f'Priority: {v}')),
+        ('assignee', 'assignee', lambda v: ({'name': v}, f'Assignee: {v}')),
+        ('rn_status', CF_RN_STATUS, lambda v: (v, f'RN Status: {v}')),
+        ('rn_type', CF_RN_TYPE, lambda v: (v, f'RN Type: {v}')),
+        ('rn_text', CF_RN_TEXT, lambda v: (v, f'RN Text: {v}')),
     ]
     for attr, field_key, transform in simple:
         val = getattr(args, attr, None)
@@ -425,6 +436,16 @@ def _build_fields(args, jira):
             changes.append(f'Fix version: {args.fix_version}')
         else:
             print(f'{args.key} already has fix version {args.fix_version}')
+
+    # Affects version (append, not replace)
+    if getattr(args, 'affects_version', None):
+        existing = [{'name': v.name} for v in jira.issue(args.key, fields='versions').fields.versions]
+        if not any(v['name'] == args.affects_version for v in existing):
+            existing.append({'name': args.affects_version})
+            fields['versions'] = existing
+            changes.append(f'Affects version: {args.affects_version}')
+        else:
+            print(f'{args.key} already has affects version {args.affects_version}')
 
     # Component (append, not replace)
     if args.component:
@@ -968,6 +989,7 @@ def main():
 
     p = sub.add_parser('show', help='Show issue details')
     p.add_argument('key', help='Issue key')
+    p.add_argument('--comments', action='store_true', help='Show all comments (default: last 3)')
     p.set_defaults(func=cmd_show)
 
     p = sub.add_parser('jql', help='Run arbitrary JQL')
@@ -989,6 +1011,7 @@ def main():
     p = sub.add_parser('update', help='Update fields on an issue with comment')
     p.add_argument('key', help='Issue key')
     p.add_argument('--summary', '-s', help='New summary/title')
+    p.add_argument('--type', dest='issue_type', help='Issue type (e.g., Task, Bug, Story)')
     p.add_argument('--desc', help='Description text')
     p.add_argument('--desc-file', help='Read description from file')
     sp_help = ', '.join(str(s) for s in SP_VALUES)
@@ -997,15 +1020,20 @@ def main():
     p.add_argument('--priority', choices=['Blocker', 'Critical', 'Major', 'Normal', 'Minor'],
                    help='Priority')
     p.add_argument('--fix-version', help='Add fix version (e.g., 1.10.0)')
+    p.add_argument('--affects-version', help='Add affects version (e.g., 1.9.0)')
     p.add_argument('--component', help=f'Add component (e.g., {DEFAULT_COMPONENT})')
     p.add_argument('--team', help=f'Set team (e.g., "{DEFAULT_TEAM}")')
     p.add_argument('--add-label', help='Add a label')
     p.add_argument('--remove-label', help='Remove a label')
+    p.add_argument('--assignee', help='Set assignee (Jira username)')
     p.add_argument('--link-to', help='Link to another issue key')
     p.add_argument('--link-type', default='relates to',
                    help='Link type (default: "relates to")')
     p.add_argument('--sprint', nargs='?', const='', default=None,
                    help='Add to sprint (default: active sprint, or specify name)')
+    p.add_argument('--rn-status', help='Release note status')
+    p.add_argument('--rn-type', help='Release note type')
+    p.add_argument('--rn-text', help='Release note text')
     p.add_argument('--comment', '-c', help='Comment explaining the changes')
     p.add_argument('--comment-file', '-f', help='Read comment from file')
     p.set_defaults(func=cmd_update)

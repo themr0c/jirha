@@ -18,20 +18,11 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 
 For custom field IDs, JQL queries, description templates, SP heuristics, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md).
 
-## pantheon-cli
+## pantheon-cli (moved)
 
-CLI for Pantheon docs publishing operations. Auto-bootstraps into the workspace venv and loads `.env` for `JIRA_EMAIL`. Requires a valid Kerberos ticket (`kinit`) and VPN.
-
-| Command | Description |
-|---|---|
-| `pantheon-cli list --version 1.9` | List titles with job states, branches, content dirs |
-| `pantheon-cli update --version 1.9 --env preview --branch BRANCH [--directory DIR] [--enable] [--rebuild] [--exec]` | Update build config (dry-run by default) |
-| `pantheon-cli rebuild --version 1.9 --env preview [--enable] [--wait] [--exec]` | Trigger rebuilds |
-| `pantheon-cli publish --version 1.9 [--rebuild-first] [--wait] [--exec]` | Enable + rebuild stage builds |
-
-Common options: `--product` (default: `red_hat_developer_hub`), `--title FILTER` (repeatable substring), `--fresh` (clear session), `--email` (override).
-
-For Reef API details, auth flow, and gotchas, see [docs/pantheon-reference.md](../docs/pantheon-reference.md).
+pantheon-cli and visual-diff have moved to their own repository:
+**Repository:** https://github.com/themr0c/pantheon-cli
+**Setup:** Clone the repo, then run `bash scripts/setup.sh`
 
 ## After PR create/update
 

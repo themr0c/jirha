@@ -9,8 +9,7 @@
       "Skill(update-config)",
       "Skill(update-config:*)",
       "Bash(python3 -c \":*)",
-      "Bash(pip install:*)",
-      "Bash(scripts/import-jobs:*)"
+      "Bash(pip install:*)"
     ],
     "additionalDirectories": [
       "//.claude",

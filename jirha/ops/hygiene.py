@@ -39,9 +39,7 @@ def _print_hygiene_report(issue_gaps, team=False):
         if team:
             assignee_str = f" @{_assignee_name(issue)}"
         summary = issue.fields.summary
-        print(
-            f"{issue.key}{sp_str}{assignee_str} [{issue.fields.status}] [{priority}] — {summary}"
-        )
+        print(f"{issue.key}{sp_str}{assignee_str} [{issue.fields.status}] [{priority}] — {summary}")
         print(f"  {SERVER}/browse/{issue.key}")
         print(f"  Components: {components}")
         print(f"  Missing: {', '.join(missing)}")

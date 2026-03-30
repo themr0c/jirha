@@ -11,6 +11,9 @@ dependencies = ["jira>=3.5", "openpyxl>=3.1"]
 [project.scripts]
 jirha = "jirha.cli:main"
 
+[tool.setuptools.packages.find]
+include = ["jirha*"]
+
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
 

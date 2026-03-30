@@ -20,8 +20,6 @@ jirha <command>           # via ~/bin/jirha symlink (works from any directory)
 scripts/jirha <command>   # directly from repo root
 ```
 
-There are no tests or lint configuration in this repo.
-
 ## Architecture
 
 **Package structure** — `jirha/` Python package with a clean dependency chain:

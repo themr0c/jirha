@@ -3,6 +3,7 @@
 from datetime import date, timedelta
 
 from jirha.api import (
+    _REVIEW_SUMMARIES,
     _assignee_filter,
     _assignee_name,
     _issue_sp,
@@ -12,8 +13,6 @@ from jirha.api import (
     get_jira,
 )
 from jirha.config import CF_SPRINT, CF_STORY_POINTS, DEFAULT_COMPONENT, SWIMLANES
-
-_REVIEW_SUMMARIES = ("[DOC] Peer Review", "[DOC] Technical Review")
 
 
 def _assign_swimlanes(issues):

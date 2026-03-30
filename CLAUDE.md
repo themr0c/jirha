@@ -24,15 +24,20 @@ There are no tests or lint configuration in this repo.
 
 ## Architecture
 
-**Single-file CLI** — all logic lives in `scripts/jirha` (~1,100 lines of Python). No package structure.
+**Package structure** — `jirha/` Python package with a clean dependency chain:
 
-**Venv auto-bootstrap** — the script detects if it's running outside the repo venv and re-execs itself under `venv/bin/python`. This means no `source venv/bin/activate` is needed before running.
+- `config.py` — constants, field IDs, `.env` loading
+- `api.py` — Jira connection (`get_jira()`), PR metrics (`_pr_metrics()`), shared query helpers
+- `ops/issues.py` — list, show, create, update, transition, close_subtasks commands
+- `ops/sprint.py` — sprint_status, swimlane assignment, velocity/risk assessment
+- `ops/hygiene.py` — hygiene checks, SP reassessment
+- `cli.py` — argparse entry point (`jirha = jirha.cli:main`)
 
-**Environment loading** — reads `.env` from the repo root for `JIRA_EMAIL` and `JIRA_API_TOKEN`, using HTTP Basic auth against `https://redhat.atlassian.net`.
+**scripts/jirha** is a thin shim: bootstraps the repo venv, then delegates to `venv/bin/jirha`.
 
-**Post-PR hook** (`scripts/hooks/post-pr.sh`) — a Claude `PostToolUse` hook that fires after `gh pr create` or `gh pr edit` in the content repository. It extracts the Jira issue key from the current branch name (pattern: `RHIDP-XXXX`) and auto-runs `jirha update KEY --pr <URL> --sp auto`.
+**Slash commands** are in `.claude/commands/jirha-*.md` and invoke `jirha <subcommand> $ARGUMENTS`.
 
-**SP auto-assessment** (`--sp auto`) — fetches PR metadata via `gh pr view` and applies tier-based heuristics on `.adoc` line counts. Details in [docs/jira-reference.md](docs/jira-reference.md#sp-heuristics---check-sp).
+**Jira conventions skill** is at `skills/jira-workflow.md`.
 
 ## Key reference
 

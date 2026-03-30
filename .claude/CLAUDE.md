@@ -18,6 +18,12 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 
 For custom field IDs, JQL queries, description templates, SP heuristics, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md).
 
+## Slash commands
+
+Each `jirha` subcommand is also available as a slash command in Claude:
+`/jirha-list`, `/jirha-show KEY`, `/jirha-sprint-status`, `/jirha-hygiene`,
+`/jirha-update KEY ...`, `/jirha-transition KEY`, `/jirha-create PROJECT SUMMARY`
+
 ## pantheon-cli (moved)
 
 pantheon-cli and visual-diff have moved to their own repository:

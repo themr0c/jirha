@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jirha"
+version = "1.0.0"
+requires-python = ">=3.11"
+dependencies = ["jira>=3.5", "openpyxl>=3.1"]
+
+[project.scripts]
+jirha = "jirha.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit"]
+markers = ["integration: requires real Jira credentials (skipped by default)"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

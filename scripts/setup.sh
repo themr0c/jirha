@@ -5,9 +5,10 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
 # Create/update venv if needed
-if [[ ! -f venv/bin/activate ]] || [[ requirements.txt -nt venv/bin/activate ]]; then
+if [[ ! -f venv/bin/activate ]] || [[ requirements.txt -nt venv/bin/activate ]] || [[ pyproject.toml -nt venv/bin/activate ]]; then
   python3 -m venv venv
   venv/bin/pip install -q -r requirements.txt
+  venv/bin/pip install -q -e .
   touch venv/bin/activate
 fi
 

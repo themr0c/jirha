@@ -36,7 +36,8 @@ SWIMLANES = [
     ('Nice-to-have', lambda i: 'nice-to-have' in (i.fields.labels or [])),
     ('Critical', lambda i: str(i.fields.priority) == 'Critical'),
     ('Doc sprint (lower priority)', lambda i: str(i.fields.issuetype) != 'Sub-task'
-        and 'Review' not in i.fields.summary),
+        and 'Review' not in i.fields.summary
+        and bool(i.fields.labels or i.fields.components)),
     ('Reviews', lambda i: str(i.fields.issuetype) == 'Sub-task' and 'Review' in i.fields.summary),
     ('Other', lambda i: True),
 ]

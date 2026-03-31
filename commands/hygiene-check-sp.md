@@ -1,3 +1,7 @@
+---
+description: Reassess SP from linked PRs and apply chosen changes
+---
+
 Run this command and capture the output:
 
 ```bash

@@ -1,0 +1,14 @@
+{
+  "name": "jirha-local",
+  "description": "Local jirha plugin marketplace",
+  "owner": {
+    "name": "themr0c"
+  },
+  "plugins": [
+    {
+      "name": "jirha",
+      "description": "Jira workflow helper for RHDH documentation",
+      "source": "./"
+    }
+  ]
+}

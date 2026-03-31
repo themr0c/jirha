@@ -158,3 +158,57 @@ def _assess_pr_sp(pr_url):
 
     tier, reason = _pr_metrics(data.get("files", []), len(data.get("commits", [])))
     return _TIER_TO_SP[tier], reason, number
+
+
+def _pr_status(pr_url):
+    """Fetch PR status as a markdown link string. Returns formatted string or None."""
+    m = re.match(r"https://github\.com/([^/]+/[^/]+)/pull/(\d+)", pr_url)
+    if not m:
+        return None
+    repo, number = m.group(1), m.group(2)
+    try:
+        result = subprocess.run(
+            [
+                "gh",
+                "pr",
+                "view",
+                number,
+                "--repo",
+                repo,
+                "--json",
+                "state,reviewDecision,statusCheckRollup,url",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        data = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+
+    state = data.get("state", "UNKNOWN").lower()
+    review = data.get("reviewDecision", "")
+    checks = data.get("statusCheckRollup", [])
+    url = data.get("url", pr_url)
+
+    parts = [state]
+    review_map = {
+        "APPROVED": "approved",
+        "CHANGES_REQUESTED": "changes requested",
+        "REVIEW_REQUIRED": "review required",
+    }
+    if review in review_map:
+        parts.append(review_map[review])
+
+    if checks:
+        conclusions = [c.get("conclusion", "") for c in checks]
+        if all(c == "SUCCESS" for c in conclusions):
+            parts.append("CI pass")
+        elif any(c == "FAILURE" for c in conclusions):
+            parts.append("CI fail")
+        elif any(c == "" for c in conclusions):
+            parts.append("CI running")
+
+    return f"[PR: {', '.join(parts)}]({url})"

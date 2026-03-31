@@ -58,7 +58,7 @@ def _find_sp_mismatches(jira, scope, max_results):
     Returns (mismatches, confirmed, skipped).
     """
     sp_issues = jira.search_issues(
-        f'{scope} AND sprint in openSprints() AND "Story Points" is not EMPTY'
+        f"{scope} AND sprint in openSprints()"
         f"{REVIEW_FILTER}",
         maxResults=max_results,
         fields=f"summary,status,assignee,{CF_STORY_POINTS},{CF_GIT_PR}",
@@ -71,15 +71,16 @@ def _find_sp_mismatches(jira, scope, max_results):
             skipped += 1
             continue
         current_sp = int(_issue_sp(issue))
-        if current_sp not in SP_TIERS:
-            skipped += 1
-            continue
         result = _assess_pr_sp(pr_url)
         if not result:
             skipped += 1
             continue
         suggested_sp, reason, pr_number = result
-        if abs(SP_TIERS[current_sp] - SP_TIERS[suggested_sp]) >= 2:
+        is_mismatch = (
+            current_sp not in SP_TIERS
+            or abs(SP_TIERS[current_sp] - SP_TIERS[suggested_sp]) >= 2
+        )
+        if is_mismatch:
             mismatches.append(
                 {
                     "key": issue.key,

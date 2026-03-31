@@ -12,7 +12,7 @@ from jirha.api import (
     _warn_in_progress_no_sprint,
     get_jira,
 )
-from jirha.config import CF_SPRINT, CF_STORY_POINTS, DEFAULT_COMPONENT, SWIMLANES
+from jirha.config import CF_SPRINT, CF_STORY_POINTS, DEFAULT_COMPONENT, SERVER, SWIMLANES
 
 
 def _assign_swimlanes(issues):
@@ -97,14 +97,20 @@ def _historical_velocities(jira, board_id):
         return []
 
 
-def _format_issue_line(issue, team=False):
-    """Format a single issue as a markdown list item."""
+def _format_issue_line(issue, team=False, pr_status=None):
+    """Format a single issue as a markdown checkbox list item with Jira link."""
     sp = _issue_sp(issue)
     sp_str = f" {int(sp)}SP" if sp else ""
     labels = issue.fields.labels or []
     label_str = f" [{', '.join(labels)}]" if labels else ""
     assignee_str = f" @{_assignee_name(issue)}" if team else ""
-    return f"- {issue.key}{sp_str}{assignee_str}{label_str} — {issue.fields.summary}"
+    checkbox = "- [x]" if str(issue.fields.status) == "Closed" else "- [ ]"
+    key_link = f"[{issue.key}]({SERVER}/browse/{issue.key})"
+    pr_suffix = f" — {pr_status}" if pr_status else ""
+    return (
+        f"{checkbox} {key_link}{sp_str}{assignee_str}{label_str}"
+        f" — {issue.fields.summary}{pr_suffix}"
+    )
 
 
 def _print_swimlanes(swimlane_issues, team=False):

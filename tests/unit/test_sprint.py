@@ -146,3 +146,96 @@ class TestBlendedVelocity:
         hist = [("S1", 40, 10, 4.0), ("S2", 60, 10, 6.0)]
         result = _blended_velocity(hist, current_velocity=0.0, elapsed_days=1, total_days=10)
         assert result == pytest.approx(0.9 * 5.0 + 0.1 * 0.0)
+
+
+def _make_format_issue(key, status, sp=0, labels=None, summary="Test summary", assignee=None):
+    """Build a mock issue for _format_issue_line tests."""
+    issue = MagicMock()
+    issue.key = key
+    issue.fields.status = status
+    issue.fields.summary = summary
+    issue.fields.labels = labels or []
+    setattr(issue.fields, "customfield_10028", sp)  # CF_STORY_POINTS
+    if assignee:
+        issue.fields.assignee = MagicMock()
+        issue.fields.assignee.displayName = assignee
+    else:
+        issue.fields.assignee = None
+    return issue
+
+
+class TestFormatIssueLine:
+    def test_closed_issue_has_checked_checkbox(self):
+        issue = _make_format_issue("RHIDP-100", "Closed", sp=3)
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue)
+        assert line.startswith("- [x] ")
+
+    def test_open_issue_has_unchecked_checkbox(self):
+        issue = _make_format_issue("RHIDP-101", "In Progress", sp=5)
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue)
+        assert line.startswith("- [ ] ")
+
+    def test_issue_key_is_markdown_link(self):
+        issue = _make_format_issue("RHIDP-102", "New", sp=1)
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue)
+        assert "[RHIDP-102](https://redhat.atlassian.net/browse/RHIDP-102)" in line
+
+    def test_sp_and_labels_present(self):
+        issue = _make_format_issue("RHIDP-103", "Review", sp=8, labels=["must-have"])
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue)
+        assert " 8SP" in line
+        assert "[must-have]" in line
+
+    def test_pr_status_appended_when_provided(self):
+        issue = _make_format_issue("RHIDP-104", "In Progress", sp=3)
+        from jirha.ops.sprint import _format_issue_line
+
+        pr = "[PR: open, approved](https://github.com/org/repo/pull/42)"
+        line = _format_issue_line(issue, pr_status=pr)
+        assert line.endswith(f" — {pr}")
+
+    def test_no_pr_suffix_when_none(self):
+        issue = _make_format_issue("RHIDP-105", "In Progress", sp=3)
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue)
+        assert "PR:" not in line
+
+    def test_team_mode_shows_assignee(self):
+        issue = _make_format_issue("RHIDP-106", "New", sp=1, assignee="Jane Doe")
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue, team=True)
+        assert "@Jane Doe" in line
+
+    def test_full_format_open_with_pr(self):
+        issue = _make_format_issue(
+            "RHIDP-107", "In Progress", sp=8, labels=["must-have"], summary="Fix auth"
+        )
+        from jirha.ops.sprint import _format_issue_line
+
+        pr = "[PR: open, approved, CI pass](https://github.com/org/repo/pull/10)"
+        line = _format_issue_line(issue, pr_status=pr)
+        expected = (
+            "- [ ] [RHIDP-107](https://redhat.atlassian.net/browse/RHIDP-107)"
+            " 8SP [must-have] — Fix auth — [PR: open, approved, CI pass](https://github.com/org/repo/pull/10)"
+        )
+        assert line == expected
+
+    def test_full_format_closed(self):
+        issue = _make_format_issue("RHIDP-108", "Closed", sp=3, summary="Update docs")
+        from jirha.ops.sprint import _format_issue_line
+
+        line = _format_issue_line(issue)
+        expected = (
+            "- [x] [RHIDP-108](https://redhat.atlassian.net/browse/RHIDP-108) 3SP — Update docs"
+        )
+        assert line == expected

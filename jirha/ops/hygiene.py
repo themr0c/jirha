@@ -58,7 +58,7 @@ def _find_sp_mismatches(jira, scope, max_results):
     Returns (mismatches, confirmed, skipped).
     """
     sp_issues = jira.search_issues(
-        f"{scope} AND sprint in openSprints()"
+        f"{scope} AND sprint in openSprints() AND type not in (Epic, Feature)"
         f"{REVIEW_FILTER}",
         maxResults=max_results,
         fields=f"summary,status,assignee,{CF_STORY_POINTS},{CF_GIT_PR}",
@@ -70,14 +70,16 @@ def _find_sp_mismatches(jira, scope, max_results):
         if not pr_url:
             skipped += 1
             continue
-        current_sp = int(_issue_sp(issue))
+        raw_sp = getattr(issue.fields, CF_STORY_POINTS, None)
+        current_sp = int(raw_sp) if raw_sp is not None else None
         result = _assess_pr_sp(pr_url)
         if not result:
             skipped += 1
             continue
         suggested_sp, reason, pr_number = result
         is_mismatch = (
-            current_sp not in SP_TIERS
+            current_sp is None
+            or current_sp not in SP_TIERS
             or abs(SP_TIERS[current_sp] - SP_TIERS[suggested_sp]) >= 2
         )
         if is_mismatch:
@@ -131,8 +133,9 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
     print("### Mismatches found:\n")
     for i, m in enumerate(mismatches, 1):
         assignee_str = f" @{m['assignee']}" if team else ""
+        current_label = f"{m['current_sp']}SP" if m["current_sp"] is not None else "no SP"
         print(
-            f"{i}. {m['key']} {m['current_sp']}SP → suggested {m['suggested_sp']}SP{assignee_str}"
+            f"{i}. {m['key']} {current_label} → suggested {m['suggested_sp']}SP{assignee_str}"
         )
         print(f"   {m['reason']}")
         print(f"   {SERVER}/browse/{m['key']}")
@@ -162,8 +165,9 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
         new_sp = overrides.get(idx, m["suggested_sp"])
         comment = f"SP reassessed from PR #{m['pr_number']}: {m['reason']}"
         jira.issue(m["key"]).update(fields={CF_STORY_POINTS: float(new_sp)})
-        jira.add_comment(m["key"], f"Updated SP: {m['current_sp']} → {new_sp}\n\n{comment}")
-        print(f"  → {m['key']}: {m['current_sp']}SP → {new_sp}SP")
+        old_label = f"{m['current_sp']}" if m["current_sp"] is not None else "empty"
+        jira.add_comment(m["key"], f"Updated SP: {old_label} → {new_sp}\n\n{comment}")
+        print(f"  → {m['key']}: {old_label} → {new_sp}SP")
     print(f"\nApplied {len(apply_indices)} change(s).")
 
 

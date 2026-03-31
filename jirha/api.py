@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 
 from jirha.config import (
+    CF_GIT_PR,
     CF_SPRINT,
     CF_STORY_POINTS,
     EMAIL,
@@ -212,3 +213,18 @@ def _pr_status(pr_url):
             parts.append("CI running")
 
     return f"[PR: {', '.join(parts)}]({url})"
+
+
+def _fetch_pr_statuses(issues):
+    """Return dict of issue key -> formatted PR status string for non-closed issues."""
+    statuses = {}
+    for issue in issues:
+        if str(issue.fields.status) == "Closed":
+            continue
+        pr_url = getattr(issue.fields, CF_GIT_PR, None)
+        if not pr_url:
+            continue
+        status = _pr_status(pr_url)
+        if status:
+            statuses[issue.key] = status
+    return statuses

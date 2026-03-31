@@ -1,7 +1,8 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from jirha.api import _pr_status
+from jirha.api import _fetch_pr_statuses, _pr_status
+from jirha.config import CF_GIT_PR
 
 
 class TestPrStatus:
@@ -84,3 +85,53 @@ class TestPrStatus:
         mock_run.side_effect = sp.TimeoutExpired(cmd="gh", timeout=15)
         result = _pr_status("https://github.com/org/repo/pull/1")
         assert result is None
+
+
+def _make_issue(key, status, pr_url=None):
+    issue = MagicMock()
+    issue.key = key
+    issue.fields.status = status
+    setattr(issue.fields, CF_GIT_PR, pr_url)
+    return issue
+
+
+class TestFetchPrStatuses:
+    @patch("jirha.api._pr_status")
+    def test_skips_closed_issues(self, mock_pr):
+        closed = _make_issue("RHIDP-1", "Closed", "https://github.com/org/repo/pull/1")
+        result = _fetch_pr_statuses([closed])
+        mock_pr.assert_not_called()
+        assert result == {}
+
+    @patch("jirha.api._pr_status")
+    def test_skips_issues_without_pr(self, mock_pr):
+        issue = _make_issue("RHIDP-2", "In Progress", None)
+        result = _fetch_pr_statuses([issue])
+        mock_pr.assert_not_called()
+        assert result == {}
+
+    @patch("jirha.api._pr_status")
+    def test_fetches_for_open_issue_with_pr(self, mock_pr):
+        mock_pr.return_value = "[PR: open, approved](https://github.com/org/repo/pull/3)"
+        issue = _make_issue("RHIDP-3", "In Progress", "https://github.com/org/repo/pull/3")
+        result = _fetch_pr_statuses([issue])
+        assert result == {"RHIDP-3": "[PR: open, approved](https://github.com/org/repo/pull/3)"}
+
+    @patch("jirha.api._pr_status")
+    def test_mixed_issues(self, mock_pr):
+        mock_pr.return_value = "[PR: open](https://github.com/org/repo/pull/4)"
+        open_with_pr = _make_issue("RHIDP-4", "Review", "https://github.com/org/repo/pull/4")
+        open_no_pr = _make_issue("RHIDP-5", "In Progress", None)
+        closed_with_pr = _make_issue("RHIDP-6", "Closed", "https://github.com/org/repo/pull/6")
+        result = _fetch_pr_statuses([open_with_pr, open_no_pr, closed_with_pr])
+        assert "RHIDP-4" in result
+        assert "RHIDP-5" not in result
+        assert "RHIDP-6" not in result
+        mock_pr.assert_called_once()
+
+    @patch("jirha.api._pr_status")
+    def test_pr_status_returns_none(self, mock_pr):
+        mock_pr.return_value = None
+        issue = _make_issue("RHIDP-7", "In Progress", "https://github.com/org/repo/pull/7")
+        result = _fetch_pr_statuses([issue])
+        assert result == {}

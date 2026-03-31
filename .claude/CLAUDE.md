@@ -21,9 +21,9 @@ For custom field IDs, JQL queries, description templates, SP heuristics, and spr
 
 ## Slash commands
 
-Each `jirha` subcommand is also available as a slash command in Claude:
-`/jirha-list`, `/jirha-show KEY`, `/jirha-sprint-status`, `/jirha-short-sprint-status`, `/jirha-hygiene`,
-`/jirha-update KEY ...`, `/jirha-transition KEY`, `/jirha-create PROJECT SUMMARY`
+Each `jirha` subcommand is also available as a plugin slash command in Claude:
+`/jirha:list`, `/jirha:show KEY`, `/jirha:sprint-status`, `/jirha:short-sprint-status`, `/jirha:hygiene`,
+`/jirha:update KEY ...`, `/jirha:transition KEY`, `/jirha:create PROJECT SUMMARY`
 
 ## pantheon-cli (moved)
 

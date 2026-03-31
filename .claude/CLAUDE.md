@@ -11,6 +11,7 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha jql "QUERY" [--max N]` | Run arbitrary JQL |
 | `jirha hygiene [--max N] [--team] [--check-sp] [--dry-run]` | List issues with missing metadata; `--check-sp` reassesses SP from linked PRs |
 | `jirha sprint-status [--team]` | Sprint board by priority swimlanes |
+| `jirha short-sprint-status [--team]` | Sprint board showing only open issues |
 | `jirha update KEY [-s SUMMARY] [--desc TEXT] [--desc-file FILE] [--sp N\|auto] [--pr URL] [--priority P] [--component C] [--team T] [--add-label L] [--remove-label L] [--link-to KEY] [--link-type TYPE] [--sprint [NAME]] [-c "comment"] [-f FILE]` | Batch-update issue fields, link, or add to sprint |
 | `jirha transition KEY [STATUS]` | Transition issue, or list available transitions |
 | `jirha create PROJECT SUMMARY [--type TYPE] [--component NAME] [--priority NAME] [--parent KEY] [--desc TEXT] [-f FILE]` | Create a new issue (use `--parent` for sub-tasks) |
@@ -21,7 +22,7 @@ For custom field IDs, JQL queries, description templates, SP heuristics, and spr
 ## Slash commands
 
 Each `jirha` subcommand is also available as a slash command in Claude:
-`/jirha-list`, `/jirha-show KEY`, `/jirha-sprint-status`, `/jirha-hygiene`,
+`/jirha-list`, `/jirha-show KEY`, `/jirha-sprint-status`, `/jirha-short-sprint-status`, `/jirha-hygiene`,
 `/jirha-update KEY ...`, `/jirha-transition KEY`, `/jirha-create PROJECT SUMMARY`
 
 ## pantheon-cli (moved)

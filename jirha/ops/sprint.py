@@ -118,7 +118,7 @@ def _format_issue_line(issue, team=False, pr_status=None):
     return " | ".join(parts)
 
 
-def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None):
+def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None, open_only=False):
     """Print swimlane sections and return (total_by_status, sp_by_status) dicts."""
     if pr_statuses is None:
         pr_statuses = {}
@@ -139,12 +139,17 @@ def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None):
             by_status.setdefault(status, []).append(issue)
 
         for status in sorted(by_status.keys(), key=_status_sort_key):
+            count = len(by_status[status])
+            sp = sum(_issue_sp(i) for i in by_status[status])
+            total_by_status[status] = total_by_status.get(status, 0) + count
+            sp_by_status[status] = sp_by_status.get(status, 0) + sp
+            if open_only and status == "Closed":
+                print(f"### Closed | {count} issues | {int(sp)} SP\n")
+                continue
             print(f"### {status}")
             for issue in by_status[status]:
                 pr = pr_statuses.get(issue.key)
                 print(_format_issue_line(issue, team, pr_status=pr))
-                total_by_status[status] = total_by_status.get(status, 0) + 1
-                sp_by_status[status] = sp_by_status.get(status, 0) + _issue_sp(issue)
             print()
     return total_by_status, sp_by_status
 
@@ -214,7 +219,7 @@ def _print_risk_assessment(jira, sprint, closed_sp, remaining_sp, swimlane_issue
         cut_sp += sp
 
 
-def cmd_sprint_status(args):
+def _run_sprint_status(args, open_only=False):
     """Show sprint status grouped by priority swimlanes."""
     jira = get_jira()
     issues = jira.search_issues(
@@ -234,7 +239,9 @@ def cmd_sprint_status(args):
 
     swimlane_issues = _assign_swimlanes(issues)
     pr_statuses = _fetch_pr_statuses(issues)
-    total_by_status, sp_by_status = _print_swimlanes(swimlane_issues, args.team, pr_statuses)
+    total_by_status, sp_by_status = _print_swimlanes(
+        swimlane_issues, args.team, pr_statuses, open_only=open_only
+    )
 
     total_sp = sum(sp_by_status.values())
     closed_sp = sp_by_status.get("Closed", 0)
@@ -253,3 +260,13 @@ def cmd_sprint_status(args):
 
     _print_risk_assessment(jira, sprint, closed_sp, total_sp - closed_sp, swimlane_issues)
     _warn_in_progress_no_sprint(jira, args.team)
+
+
+def cmd_sprint_status(args):
+    """Show sprint status grouped by priority swimlanes."""
+    _run_sprint_status(args, open_only=False)
+
+
+def cmd_short_sprint_status(args):
+    """Show sprint status with only open issues."""
+    _run_sprint_status(args, open_only=True)

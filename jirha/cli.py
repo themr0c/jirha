@@ -12,7 +12,7 @@ from jirha.ops.issues import (
     cmd_transition,
     cmd_update,
 )
-from jirha.ops.sprint import cmd_sprint_status
+from jirha.ops.sprint import cmd_short_sprint_status, cmd_sprint_status
 
 
 def _cmd_jql(args):
@@ -54,6 +54,10 @@ def main():
     p = sub.add_parser("sprint-status", help="Sprint status by priority swimlanes")
     p.add_argument("--team", action="store_true", help="Report for entire RHDH Documentation team")
     p.set_defaults(func=cmd_sprint_status)
+
+    p = sub.add_parser("short-sprint-status", help="Sprint status showing only open issues")
+    p.add_argument("--team", action="store_true", help="Report for entire RHDH Documentation team")
+    p.set_defaults(func=cmd_short_sprint_status)
 
     p = sub.add_parser("update", help="Update fields on an issue with comment")
     p.add_argument("key", help="Issue key")

@@ -58,7 +58,7 @@ def _find_sp_mismatches(jira, scope, max_results):
     Returns (mismatches, confirmed, skipped).
     """
     sp_issues = jira.search_issues(
-        f'{scope} AND status not in (Closed, Resolved) AND "Story Points" is not EMPTY'
+        f'{scope} AND sprint in openSprints() AND "Story Points" is not EMPTY'
         f"{REVIEW_FILTER}",
         maxResults=max_results,
         fields=f"summary,status,assignee,{CF_STORY_POINTS},{CF_GIT_PR}",

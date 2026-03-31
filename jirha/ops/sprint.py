@@ -6,13 +6,14 @@ from jirha.api import (
     _REVIEW_SUMMARIES,
     _assignee_filter,
     _assignee_name,
+    _fetch_pr_statuses,
     _issue_sp,
     _parse_jira_date,
     _status_sort_key,
     _warn_in_progress_no_sprint,
     get_jira,
 )
-from jirha.config import CF_SPRINT, CF_STORY_POINTS, DEFAULT_COMPONENT, SERVER, SWIMLANES
+from jirha.config import CF_GIT_PR, CF_SPRINT, CF_STORY_POINTS, DEFAULT_COMPONENT, SERVER, SWIMLANES
 
 
 def _assign_swimlanes(issues):
@@ -113,8 +114,10 @@ def _format_issue_line(issue, team=False, pr_status=None):
     )
 
 
-def _print_swimlanes(swimlane_issues, team=False):
+def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None):
     """Print swimlane sections and return (total_by_status, sp_by_status) dicts."""
+    if pr_statuses is None:
+        pr_statuses = {}
     total_by_status = {}
     sp_by_status = {}
     for name, _ in SWIMLANES:
@@ -134,7 +137,8 @@ def _print_swimlanes(swimlane_issues, team=False):
         for status in sorted(by_status.keys(), key=_status_sort_key):
             print(f"### {status}")
             for issue in by_status[status]:
-                print(_format_issue_line(issue, team))
+                pr = pr_statuses.get(issue.key)
+                print(_format_issue_line(issue, team, pr_status=pr))
                 total_by_status[status] = total_by_status.get(status, 0) + 1
                 sp_by_status[status] = sp_by_status.get(status, 0) + _issue_sp(issue)
             print()
@@ -213,7 +217,7 @@ def cmd_sprint_status(args):
         f"{_assignee_filter(args.team)} AND sprint in openSprints() ORDER BY status ASC",
         maxResults=200,
         fields=f"summary,status,priority,labels,issuetype,components,assignee,"
-        f"{CF_STORY_POINTS},{CF_SPRINT}",
+        f"{CF_STORY_POINTS},{CF_SPRINT},{CF_GIT_PR}",
     )
 
     sprint = _get_active_sprint(jira)
@@ -225,7 +229,8 @@ def cmd_sprint_status(args):
         )
 
     swimlane_issues = _assign_swimlanes(issues)
-    total_by_status, sp_by_status = _print_swimlanes(swimlane_issues, args.team)
+    pr_statuses = _fetch_pr_statuses(issues)
+    total_by_status, sp_by_status = _print_swimlanes(swimlane_issues, args.team, pr_statuses)
 
     total_sp = sum(sp_by_status.values())
     closed_sp = sp_by_status.get("Closed", 0)

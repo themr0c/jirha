@@ -197,7 +197,7 @@ class TestFormatIssueLine:
         from jirha.ops.sprint import _format_issue_line
 
         line = _format_issue_line(issue)
-        assert " | Major | 8 SP | must-have | " in line
+        assert " | Major |  8 SP | must-have | " in line
 
     def test_pr_status_as_last_pipe_field(self):
         issue = _make_format_issue("RHIDP-104", "In Progress", sp=3)
@@ -231,7 +231,7 @@ class TestFormatIssueLine:
         pr = "PR: open, approved, CI pass — https://github.com/org/repo/pull/10"
         line = _format_issue_line(issue, pr_status=pr)
         expected = (
-            f"- [ ] {S}/browse/RHIDP-107 | Major | 8 SP | must-have | Fix auth | {pr}"
+            f"- [ ] {S}/browse/RHIDP-107 | Major |  8 SP | must-have | Fix auth | {pr}"
         )
         assert line == expected
 
@@ -240,5 +240,5 @@ class TestFormatIssueLine:
         from jirha.ops.sprint import _format_issue_line
 
         line = _format_issue_line(issue)
-        expected = f"- [x] {S}/browse/RHIDP-108 | Major | 3 SP |  | Update docs"
+        expected = f"- [x] {S}/browse/RHIDP-108 | Major |  3 SP |  | Update docs"
         assert line == expected

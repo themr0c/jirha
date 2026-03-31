@@ -105,7 +105,8 @@ def _format_issue_line(issue, team=False, pr_status=None):
     labels = issue.fields.labels or []
     label_str = f" [{', '.join(labels)}]" if labels else ""
     assignee_str = f" @{_assignee_name(issue)}" if team else ""
-    line = f"- {issue.key}{sp_str}{assignee_str}{label_str} — {issue.fields.summary}"
+    checkbox = "[x]" if str(issue.fields.status) == "Closed" else "[ ]"
+    line = f"- {checkbox} {issue.key}{sp_str}{assignee_str}{label_str} — {issue.fields.summary}"
     line += f"\n  {SERVER}/browse/{issue.key}"
     if pr_status:
         line += f"\n  {pr_status}"

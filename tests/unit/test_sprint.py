@@ -165,12 +165,19 @@ def _make_format_issue(key, status, sp=0, labels=None, summary="Test summary", a
 
 
 class TestFormatIssueLine:
-    def test_issue_key_on_first_line(self):
+    def test_closed_issue_has_checked_checkbox(self):
         issue = _make_format_issue("RHIDP-100", "Closed", sp=3)
         from jirha.ops.sprint import _format_issue_line
 
         lines = _format_issue_line(issue).split("\n")
-        assert lines[0].startswith("- RHIDP-100 3SP")
+        assert lines[0].startswith("- [x] RHIDP-100")
+
+    def test_open_issue_has_unchecked_checkbox(self):
+        issue = _make_format_issue("RHIDP-100b", "In Progress", sp=3)
+        from jirha.ops.sprint import _format_issue_line
+
+        lines = _format_issue_line(issue).split("\n")
+        assert lines[0].startswith("- [ ] RHIDP-100b")
 
     def test_jira_url_on_second_line(self):
         issue = _make_format_issue("RHIDP-101", "In Progress", sp=5)
@@ -219,7 +226,7 @@ class TestFormatIssueLine:
 
         pr = "PR: open, approved, CI pass — https://github.com/org/repo/pull/10"
         lines = _format_issue_line(issue, pr_status=pr).split("\n")
-        assert lines[0] == "- RHIDP-107 8SP [must-have] — Fix auth"
+        assert lines[0] == "- [ ] RHIDP-107 8SP [must-have] — Fix auth"
         assert lines[1] == "  https://redhat.atlassian.net/browse/RHIDP-107"
         assert lines[2] == f"  {pr}"
 
@@ -228,5 +235,5 @@ class TestFormatIssueLine:
         from jirha.ops.sprint import _format_issue_line
 
         lines = _format_issue_line(issue).split("\n")
-        assert lines[0] == "- RHIDP-108 3SP — Update docs"
+        assert lines[0] == "- [x] RHIDP-108 3SP — Update docs"
         assert lines[1] == "  https://redhat.atlassian.net/browse/RHIDP-108"

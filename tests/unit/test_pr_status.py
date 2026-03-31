@@ -23,7 +23,7 @@ class TestPrStatus:
             }
         )
         result = _pr_status("https://github.com/org/repo/pull/42")
-        assert result == "[PR: open, approved, CI pass](https://github.com/org/repo/pull/42)"
+        assert result == "PR: open, approved, CI pass — https://github.com/org/repo/pull/42"
 
     @patch("jirha.api.subprocess.run")
     def test_open_changes_requested_ci_fail(self, mock_run):
@@ -37,7 +37,7 @@ class TestPrStatus:
         )
         result = _pr_status("https://github.com/org/repo/pull/10")
         assert (
-            result == "[PR: open, changes requested, CI fail](https://github.com/org/repo/pull/10)"
+            result == "PR: open, changes requested, CI fail — https://github.com/org/repo/pull/10"
         )
 
     @patch("jirha.api.subprocess.run")
@@ -51,7 +51,7 @@ class TestPrStatus:
             }
         )
         result = _pr_status("https://github.com/org/repo/pull/5")
-        assert result == "[PR: merged](https://github.com/org/repo/pull/5)"
+        assert result == "PR: merged — https://github.com/org/repo/pull/5"
 
     @patch("jirha.api.subprocess.run")
     def test_ci_running(self, mock_run):
@@ -65,7 +65,7 @@ class TestPrStatus:
         )
         result = _pr_status("https://github.com/org/repo/pull/7")
         assert (
-            result == "[PR: open, review required, CI running](https://github.com/org/repo/pull/7)"
+            result == "PR: open, review required, CI running — https://github.com/org/repo/pull/7"
         )
 
     @patch("jirha.api.subprocess.run")
@@ -112,14 +112,14 @@ class TestFetchPrStatuses:
 
     @patch("jirha.api._pr_status")
     def test_fetches_for_open_issue_with_pr(self, mock_pr):
-        mock_pr.return_value = "[PR: open, approved](https://github.com/org/repo/pull/3)"
+        mock_pr.return_value = "PR: open, approved — https://github.com/org/repo/pull/3"
         issue = _make_issue("RHIDP-3", "In Progress", "https://github.com/org/repo/pull/3")
         result = _fetch_pr_statuses([issue])
-        assert result == {"RHIDP-3": "[PR: open, approved](https://github.com/org/repo/pull/3)"}
+        assert result == {"RHIDP-3": "PR: open, approved — https://github.com/org/repo/pull/3"}
 
     @patch("jirha.api._pr_status")
     def test_mixed_issues(self, mock_pr):
-        mock_pr.return_value = "[PR: open](https://github.com/org/repo/pull/4)"
+        mock_pr.return_value = "PR: open — https://github.com/org/repo/pull/4"
         open_with_pr = _make_issue("RHIDP-4", "Review", "https://github.com/org/repo/pull/4")
         open_no_pr = _make_issue("RHIDP-5", "In Progress", None)
         closed_with_pr = _make_issue("RHIDP-6", "Closed", "https://github.com/org/repo/pull/6")

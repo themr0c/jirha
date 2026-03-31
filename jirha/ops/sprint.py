@@ -99,19 +99,17 @@ def _historical_velocities(jira, board_id):
 
 
 def _format_issue_line(issue, team=False, pr_status=None):
-    """Format a single issue as a markdown checkbox list item with Jira link."""
+    """Format a single issue as a list item with Jira link and optional PR status."""
     sp = _issue_sp(issue)
     sp_str = f" {int(sp)}SP" if sp else ""
     labels = issue.fields.labels or []
     label_str = f" [{', '.join(labels)}]" if labels else ""
     assignee_str = f" @{_assignee_name(issue)}" if team else ""
-    checkbox = "- [x]" if str(issue.fields.status) == "Closed" else "- [ ]"
-    key_link = f"[{issue.key}]({SERVER}/browse/{issue.key})"
-    pr_suffix = f" — {pr_status}" if pr_status else ""
-    return (
-        f"{checkbox} {key_link}{sp_str}{assignee_str}{label_str}"
-        f" — {issue.fields.summary}{pr_suffix}"
-    )
+    line = f"- {issue.key}{sp_str}{assignee_str}{label_str} — {issue.fields.summary}"
+    line += f"\n  {SERVER}/browse/{issue.key}"
+    if pr_status:
+        line += f"\n  {pr_status}"
+    return line
 
 
 def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None):

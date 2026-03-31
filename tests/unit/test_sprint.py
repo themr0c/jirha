@@ -165,26 +165,19 @@ def _make_format_issue(key, status, sp=0, labels=None, summary="Test summary", a
 
 
 class TestFormatIssueLine:
-    def test_closed_issue_has_checked_checkbox(self):
+    def test_issue_key_on_first_line(self):
         issue = _make_format_issue("RHIDP-100", "Closed", sp=3)
         from jirha.ops.sprint import _format_issue_line
 
-        line = _format_issue_line(issue)
-        assert line.startswith("- [x] ")
+        lines = _format_issue_line(issue).split("\n")
+        assert lines[0].startswith("- RHIDP-100 3SP")
 
-    def test_open_issue_has_unchecked_checkbox(self):
+    def test_jira_url_on_second_line(self):
         issue = _make_format_issue("RHIDP-101", "In Progress", sp=5)
         from jirha.ops.sprint import _format_issue_line
 
-        line = _format_issue_line(issue)
-        assert line.startswith("- [ ] ")
-
-    def test_issue_key_is_markdown_link(self):
-        issue = _make_format_issue("RHIDP-102", "New", sp=1)
-        from jirha.ops.sprint import _format_issue_line
-
-        line = _format_issue_line(issue)
-        assert "[RHIDP-102](https://redhat.atlassian.net/browse/RHIDP-102)" in line
+        lines = _format_issue_line(issue).split("\n")
+        assert lines[1].strip() == "https://redhat.atlassian.net/browse/RHIDP-101"
 
     def test_sp_and_labels_present(self):
         issue = _make_format_issue("RHIDP-103", "Review", sp=8, labels=["must-have"])
@@ -194,20 +187,22 @@ class TestFormatIssueLine:
         assert " 8SP" in line
         assert "[must-have]" in line
 
-    def test_pr_status_appended_when_provided(self):
+    def test_pr_status_on_third_line(self):
         issue = _make_format_issue("RHIDP-104", "In Progress", sp=3)
         from jirha.ops.sprint import _format_issue_line
 
-        pr = "[PR: open, approved](https://github.com/org/repo/pull/42)"
-        line = _format_issue_line(issue, pr_status=pr)
-        assert line.endswith(f" — {pr}")
+        pr = "PR: open, approved — https://github.com/org/repo/pull/42"
+        lines = _format_issue_line(issue, pr_status=pr).split("\n")
+        assert len(lines) == 3
+        assert lines[2].strip() == pr
 
-    def test_no_pr_suffix_when_none(self):
+    def test_no_pr_line_when_none(self):
         issue = _make_format_issue("RHIDP-105", "In Progress", sp=3)
         from jirha.ops.sprint import _format_issue_line
 
-        line = _format_issue_line(issue)
-        assert "PR:" not in line
+        lines = _format_issue_line(issue).split("\n")
+        assert len(lines) == 2
+        assert "PR:" not in _format_issue_line(issue)
 
     def test_team_mode_shows_assignee(self):
         issue = _make_format_issue("RHIDP-106", "New", sp=1, assignee="Jane Doe")
@@ -222,20 +217,16 @@ class TestFormatIssueLine:
         )
         from jirha.ops.sprint import _format_issue_line
 
-        pr = "[PR: open, approved, CI pass](https://github.com/org/repo/pull/10)"
-        line = _format_issue_line(issue, pr_status=pr)
-        expected = (
-            "- [ ] [RHIDP-107](https://redhat.atlassian.net/browse/RHIDP-107)"
-            " 8SP [must-have] — Fix auth — [PR: open, approved, CI pass](https://github.com/org/repo/pull/10)"
-        )
-        assert line == expected
+        pr = "PR: open, approved, CI pass — https://github.com/org/repo/pull/10"
+        lines = _format_issue_line(issue, pr_status=pr).split("\n")
+        assert lines[0] == "- RHIDP-107 8SP [must-have] — Fix auth"
+        assert lines[1] == "  https://redhat.atlassian.net/browse/RHIDP-107"
+        assert lines[2] == f"  {pr}"
 
     def test_full_format_closed(self):
         issue = _make_format_issue("RHIDP-108", "Closed", sp=3, summary="Update docs")
         from jirha.ops.sprint import _format_issue_line
 
-        line = _format_issue_line(issue)
-        expected = (
-            "- [x] [RHIDP-108](https://redhat.atlassian.net/browse/RHIDP-108) 3SP — Update docs"
-        )
-        assert line == expected
+        lines = _format_issue_line(issue).split("\n")
+        assert lines[0] == "- RHIDP-108 3SP — Update docs"
+        assert lines[1] == "  https://redhat.atlassian.net/browse/RHIDP-108"

@@ -212,7 +212,7 @@ def _pr_status(pr_url):
         elif any(c == "" for c in conclusions):
             parts.append("CI running")
 
-    return f"[PR: {', '.join(parts)}]({url})"
+    return f"PR: {', '.join(parts)} — {url}"
 
 
 def _fetch_pr_statuses(issues):

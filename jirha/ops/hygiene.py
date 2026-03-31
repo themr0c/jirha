@@ -192,6 +192,11 @@ def cmd_hygiene(args):
             f"{fields_base},issuetype",
         ),
         ("description", f"{base} AND description is EMPTY", fields_base),
+        (
+            "SP should be empty",
+            f'{base} AND type in (Epic, Feature) AND "Story Points" is not EMPTY',
+            fields_base,
+        ),
     ]
 
     issue_gaps = {}

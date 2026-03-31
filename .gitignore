@@ -10,3 +10,5 @@ __pycache__/
 *.pyc
 data/
 .claude/settings.local.json
+.remember/
+*.egg-info/

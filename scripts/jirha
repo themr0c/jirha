@@ -8,7 +8,8 @@ from pathlib import Path
 _repo_root = Path(__file__).resolve().parent.parent
 _venv_python = _repo_root / 'venv' / 'bin' / 'python'
 
-if _venv_python.is_file() and Path(sys.executable).resolve() != _venv_python.resolve():
+_venv_dir = _repo_root / 'venv'
+if _venv_python.is_file() and Path(sys.prefix).resolve() != _venv_dir.resolve():
     # Re-exec under venv Python, running the installed jirha entry point
     _venv_jirha = _venv_python.parent / 'jirha'
     os.execv(str(_venv_python), [str(_venv_python), str(_venv_jirha)] + sys.argv[1:])

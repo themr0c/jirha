@@ -106,6 +106,7 @@ def main():
     p.add_argument("--parent", help="Parent issue key (for sub-tasks)")
     p.add_argument("--desc", help="Description text")
     p.add_argument("--file", "-f", help="Read description from file")
+    p.add_argument("--affects-version", help="Affects version (e.g., 1.10.0)")
     p.set_defaults(func=cmd_create)
 
     p = sub.add_parser("close-subtasks", help="Close open subtasks of closed parents")

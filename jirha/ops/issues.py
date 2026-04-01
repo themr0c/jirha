@@ -410,6 +410,8 @@ def cmd_create(args):
             fields["description"] = f.read()
     elif args.desc:
         fields["description"] = args.desc
+    if args.affects_version:
+        fields["versions"] = [{"name": args.affects_version}]
 
     issue = jira.create_issue(fields=fields)
     print(f"Created {issue.key}: {args.summary}")

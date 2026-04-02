@@ -22,6 +22,8 @@ from jirha.config import (
 SP_TIERS = dict(zip(SP_VALUES, range(len(SP_VALUES))))
 _TIER_TO_SP = dict(enumerate(SP_VALUES))
 _ADOC_TIER_THRESHOLDS = [(30, 0), (150, 1), (400, 2), (800, 3)]
+# Floor for non-adoc-heavy PRs (tooling, scripts, config)
+_TOTAL_TIER_THRESHOLDS = [(500, 0), (2000, 1), (5000, 2), (15000, 3)]
 _IMAGE_EXTS = (".png", ".svg", ".jpg", ".gif")
 
 _REVIEW_SUMMARIES = ("[DOC] Peer Review", "[DOC] Technical Review")
@@ -90,8 +92,7 @@ def _warn_in_progress_no_sprint(jira, team=False):
             tag = f"STALE (last: {closed[-1].name}, {len(closed)} prev sprints)"
         else:
             tag = "BACKLOG (no sprint)"
-        print(f"- {issue.key}{sp_str}{assignee_str} [{tag}] — {issue.fields.summary}")
-        print(f"  {SERVER}/browse/{issue.key}")
+        print(f"- {SERVER}/browse/{issue.key}{sp_str}{assignee_str} [{tag}] — {issue.fields.summary}")
 
 
 def _pr_metrics(files, commits):
@@ -121,9 +122,19 @@ def _pr_metrics(files, commits):
             tier = t
             break
 
+    # Floor from total lines (catches tooling/script-heavy PRs)
+    total_lines = adds + dels
+    total_tier = 4
+    for threshold, t in _TOTAL_TIER_THRESHOLDS:
+        if total_lines < threshold:
+            total_tier = t
+            break
+    tier = max(tier, total_tier)
+
     if sum([new_adoc >= 1, assemblies >= 2, images >= 3, commits >= 6]) >= 2:
         tier = min(tier + 1, 4)
-    if is_mechanical:
+    # Mechanical discount only when adoc is the dominant change
+    if is_mechanical and adoc_lines > total_lines * 0.5:
         tier = max(tier - 1, 0)
 
     return tier, ", ".join(parts)
@@ -159,6 +170,76 @@ def _assess_pr_sp(pr_url):
 
     tier, reason = _pr_metrics(data.get("files", []), len(data.get("commits", [])))
     return _TIER_TO_SP[tier], reason, number
+
+
+def _parse_pr_url(pr_url):
+    """Parse a GitHub PR URL into (repo, number) or None."""
+    m = re.match(r"https://github\.com/([^/]+/[^/]+)/pull/(\d+)", pr_url)
+    return (m.group(1), m.group(2)) if m else None
+
+
+def _pr_body(pr_url):
+    """Fetch PR body/description text. Returns string or None."""
+    parsed = _parse_pr_url(pr_url)
+    if not parsed:
+        return None
+    repo, number = parsed
+    try:
+        result = subprocess.run(
+            ["gh", "pr", "view", number, "--repo", repo, "--json", "body,title"],
+            capture_output=True, text=True, timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        data = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+    return data.get("body") or None
+
+
+def _pr_details(pr_url):
+    """Fetch PR details: state, title, baseRefName, url. Returns dict or None."""
+    parsed = _parse_pr_url(pr_url)
+    if not parsed:
+        return None
+    repo, number = parsed
+    try:
+        result = subprocess.run(
+            [
+                "gh", "pr", "view", number, "--repo", repo,
+                "--json", "state,title,baseRefName,url,mergedAt",
+            ],
+            capture_output=True, text=True, timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        data = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+    data["repo"] = repo
+    data["number"] = number
+    return data
+
+
+def _find_cherry_picks(repo, pr_number):
+    """Find cherry-pick PRs for a given PR number. Returns list of dicts."""
+    try:
+        result = subprocess.run(
+            [
+                "gh", "pr", "list", "--repo", repo, "--state", "all",
+                "--search", f"cherry-pick {pr_number}",
+                "--json", "number,title,url,state,baseRefName",
+                "--limit", "10",
+            ],
+            capture_output=True, text=True, timeout=15,
+        )
+        if result.returncode != 0:
+            return []
+        prs = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return []
+    # Filter out the original PR itself
+    return [p for p in prs if str(p.get("number")) != str(pr_number)]
 
 
 def _pr_status(pr_url):
@@ -213,6 +294,62 @@ def _pr_status(pr_url):
             parts.append("CI running")
 
     return f"PR: {', '.join(parts)} — {url}"
+
+
+def _extract_jira_keys(text):
+    """Extract Jira issue keys (e.g., RHIDP-1234) from text."""
+    if not text:
+        return set()
+    return set(re.findall(r"[A-Z][A-Z0-9]+-\d+", text))
+
+
+def _fetch_user_prs(start_date, end_date=None):
+    """Fetch PRs authored by current user, updated since start_date.
+
+    Returns list of dicts with: number, title, url, state, baseRefName, headRefName, body.
+    """
+    query = f"updated:>={start_date.isoformat()}"
+    if end_date:
+        query = f"updated:{start_date.isoformat()}..{end_date.isoformat()}"
+    try:
+        result = subprocess.run(
+            [
+                "gh", "search", "prs",
+                "--author=@me",
+                "--limit=100",
+                f"--updated={query.split('updated:')[1]}",
+                "--json", "number,title,url,state,repository",
+            ],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode != 0:
+            return []
+        prs = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return []
+
+    # Fetch details (branch names, body) for each PR
+    detailed = []
+    for pr in prs:
+        repo_name = pr.get("repository", {}).get("nameWithOwner", "")
+        if not repo_name:
+            continue
+        try:
+            detail_result = subprocess.run(
+                [
+                    "gh", "pr", "view", str(pr["number"]),
+                    "--repo", repo_name,
+                    "--json", "number,title,url,state,baseRefName,headRefName,body",
+                ],
+                capture_output=True, text=True, timeout=15,
+            )
+            if detail_result.returncode == 0:
+                data = json.loads(detail_result.stdout)
+                data["repo"] = repo_name
+                detailed.append(data)
+        except (subprocess.TimeoutExpired, json.JSONDecodeError):
+            continue
+    return detailed
 
 
 def _fetch_pr_statuses(issues):

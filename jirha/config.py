@@ -18,7 +18,7 @@ TEAM_RHDH_DOCS_ID = "ec74d716-af36-4b3c-950f-f79213d08f71-3319"
 # Jira conventions
 DEFAULT_COMPONENT = "Documentation"
 DEFAULT_TEAM = "RHDH Documentation"
-SP_VALUES = (1, 3, 5, 8, 13)
+SP_VALUES = (0, 1, 3, 5, 8, 13)
 
 # Status display ordering
 STATUS_ORDER = {"New": 0, "In Progress": 1, "Review": 2, "Closed": 3}

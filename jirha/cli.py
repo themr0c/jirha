@@ -44,11 +44,10 @@ def main():
     p.add_argument("--max", type=int, default=50)
     p.set_defaults(func=_cmd_jql)
 
-    p = sub.add_parser("hygiene", help="List issues with missing metadata")
+    p = sub.add_parser("hygiene", help="Full sprint hygiene audit")
     p.add_argument("--max", type=int, default=50)
     p.add_argument("--team", action="store_true", help="Report for entire RHDH Documentation team")
-    p.add_argument("--check-sp", action="store_true", help="Reassess SP from linked PRs")
-    p.add_argument("--dry-run", action="store_true", help="Show SP mismatches without prompting")
+    p.add_argument("--dry-run", action="store_true", help="Report only, no interactive prompts")
     p.set_defaults(func=cmd_hygiene)
 
     p = sub.add_parser("sprint-status", help="Sprint status by priority swimlanes")

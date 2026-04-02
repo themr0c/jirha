@@ -91,3 +91,51 @@ def test_images_counted():
     tier, reason = _pr_metrics(files, commits=1)
     assert tier == 2
     assert "3 images" in reason
+
+
+def test_total_lines_floor_tooling_pr():
+    """Non-adoc-heavy PR (scripts/tooling) gets tier from total lines."""
+    files = [
+        _adoc("docs/file.adoc", 2, 2),  # 4 adoc lines
+        {"path": "scripts/tool.js", "additions": 2000, "deletions": 1000},
+    ]
+    # adoc tier = 0 (4 lines), total = 3004 lines → total tier 2 (5SP)
+    tier, reason = _pr_metrics(files, commits=1)
+    assert tier == 2
+
+
+def test_total_lines_floor_large_tooling_pr():
+    """Large tooling PR gets high tier from total lines."""
+    files = [
+        _adoc("docs/f1.adoc", 1, 1),
+        _adoc("docs/f2.adoc", 1, 1),
+        _adoc("docs/f3.adoc", 1, 1),
+        _adoc("docs/f4.adoc", 1, 1),
+        {"path": "build/index.js", "additions": 4915, "deletions": 7351},
+    ]
+    # adoc tier = 0, total = 12274 → total tier 3 (8SP)
+    # mechanical flag fires (4 adoc files, all ≤4 lines) but adoc < 50% of total
+    tier, reason = _pr_metrics(files, commits=1)
+    assert tier == 3  # 8SP — matches RHIDP-12950 scenario
+
+
+def test_mechanical_only_when_adoc_dominant():
+    """Mechanical discount doesn't apply when adoc is a small fraction."""
+    files = [
+        _adoc(f"docs/file{i}.adoc", 2, 2) for i in range(10)
+    ] + [
+        {"path": "scripts/big.py", "additions": 200, "deletions": 0},
+    ]
+    # 10 adoc files × 4 lines = 40 adoc lines (tier 1)
+    # total = 240, adoc = 40 → adoc is 17% of total → no mechanical discount
+    tier, reason = _pr_metrics(files, commits=1)
+    assert tier == 1  # no discount applied
+    assert "mechanical" in reason  # still labeled, just not discounted
+
+
+def test_total_lines_floor_does_not_lower_adoc_tier():
+    """Total-lines floor never lowers the adoc-based tier."""
+    files = [_adoc("docs/file.adoc", 500, 0)]  # 500 adoc lines → tier 3
+    # total = 500 → total tier 0; max(3, 0) = 3
+    tier, reason = _pr_metrics(files, commits=1)
+    assert tier == 3

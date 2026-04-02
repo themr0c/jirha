@@ -1,3 +1,4 @@
+from jirha.api import _extract_jira_keys
 from jirha.ops.hygiene import _parse_sp_choice
 
 
@@ -48,3 +49,26 @@ def test_parse_out_of_range_ignored():
     apply, overrides = _parse_sp_choice("99", mismatches)
     assert apply == set()
     assert overrides == {}
+
+
+# --- _extract_jira_keys tests ---
+
+
+def test_extract_keys_from_title():
+    assert _extract_jira_keys("RHIDP-1234: fix docs") == {"RHIDP-1234"}
+
+
+def test_extract_multiple_keys():
+    assert _extract_jira_keys("RHIDP-1 and RHDHBUG-99") == {"RHIDP-1", "RHDHBUG-99"}
+
+
+def test_extract_keys_from_branch():
+    assert _extract_jira_keys("feature/RHIDP-5678-add-auth") == {"RHIDP-5678"}
+
+
+def test_extract_keys_none():
+    assert _extract_jira_keys(None) == set()
+
+
+def test_extract_keys_no_match():
+    assert _extract_jira_keys("no jira key here") == set()

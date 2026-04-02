@@ -1,10 +1,197 @@
 # Jira Reference
 
+## Commands
+
+### list
+
+List issues assigned to the current user.
+
+```
+jirha list [--open] [--jql "..."] [--max N]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--open` | false | Only open issues (excludes Closed) |
+| `--jql` | — | Custom JQL query (overrides default) |
+| `--max` | 50 | Maximum results |
+
+### show
+
+Show full details for a single issue: status, priority, components, SP, PR, links, release notes, description, and recent comments.
+
+```
+jirha show KEY [--comments]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--comments` | false | Show all comments (default: last 3, truncated to 200 chars) |
+
+### jql
+
+Run an arbitrary JQL query and print matching issues.
+
+```
+jirha jql "QUERY" [--max N]
+```
+
+### update
+
+Batch-update fields on a single issue.
+
+```
+jirha update KEY [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `-s`, `--summary` | — | New summary/title |
+| `--type` | — | Issue type (Task, Bug, Story, ...) |
+| `--desc` | — | Description text |
+| `--desc-file` | — | Read description from file |
+| `--sp` | — | Story points (0, 1, 3, 5, 8, 13, or `auto`) |
+| `--pr` | — | Git PR URL (appends to existing) |
+| `--priority` | — | Blocker, Critical, Major, Normal, Minor |
+| `--fix-version` | — | Add fix version |
+| `--affects-version` | — | Add affects version |
+| `--component` | — | Add component |
+| `--team` | — | Set team (e.g., "RHDH Documentation") |
+| `--add-label` | — | Add a label |
+| `--remove-label` | — | Remove a label |
+| `--assignee` | — | Set assignee (Jira username) |
+| `--link-to` | — | Link to another issue key |
+| `--link-type` | "relates to" | Link type |
+| `--sprint` | — | Add to sprint (no value = active sprint, or specify name) |
+| `--rn-status` | — | Release note status |
+| `--rn-type` | — | Release note type |
+| `--rn-text` | — | Release note text |
+| `-c`, `--comment` | — | Comment text |
+| `-f`, `--comment-file` | — | Read comment from file |
+
+`--sp auto` assesses SP from the linked PR using the heuristics below.
+
+### transition
+
+Transition an issue to a new status, or list available transitions.
+
+```
+jirha transition KEY [STATUS]
+```
+
+Without `STATUS`, lists available transitions. With `STATUS`, performs case-insensitive match and transitions.
+
+### create
+
+Create a new issue.
+
+```
+jirha create PROJECT SUMMARY [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--type` | Task | Issue type |
+| `--component` | — | Component name |
+| `--priority` | — | Priority name |
+| `--parent` | — | Parent issue key (for sub-tasks) |
+| `--desc` | — | Description text |
+| `-f`, `--file` | — | Read description from file |
+| `--affects-version` | — | Affects version |
+
+### hygiene
+
+Full sprint hygiene audit. Scans all issues (open and closed) in the current sprint.
+
+```
+jirha hygiene [--max N] [--team] [--dry-run]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--max` | 50 | Maximum results per query |
+| `--team` | false | Audit entire RHDH Documentation team |
+| `--dry-run` | false | Report only, no interactive prompts |
+
+**Steps:**
+
+1. **Sprint detection** — prints sprint name and date range.
+
+2. **Metadata checks** — flags issues missing: component, team, priority, SP, description. Also flags Epics/Features that have SP set (should be empty). Warns about In Progress issues not in the current sprint.
+
+3. **Missing descriptions** — for issues with empty descriptions that have a linked PR, fetches the PR body and proposes it as the description. Interactive: `[a]ll / [n]one / [1,2,...]`.
+
+4. **Auto-link PRs** — fetches all PRs authored by the user and modified during the sprint (via `gh search prs`). Matches PRs to Jiras by key in PR title, branch name, or body. Auto-updates the Jira PR field without confirmation.
+
+5. **SP reassessment** — compares current SP against PR-based assessment. Flags mismatches of 2+ tiers. Interactive: `[a]ll / [n]one / [1,2,...] / [1=5] override`.
+
+6. **PR/Jira status cross-check:**
+   - Open PR on Closed Jira → proposes reopen (transition to In Progress).
+   - All PRs merged/closed on Open Jira → proposes close. Also closes open review subtasks.
+   - Open review subtasks on Closed Jiras → proposes close.
+   - Each group prompts: `[a]ll / [n]one / [1,2,...]`.
+
+**Modes:**
+- **Terminal** (`jirha hygiene`): interactive — prompts for decisions, applies accepted changes.
+- **Dry-run** (`jirha hygiene --dry-run`): report only — prints findings with `To update: jirha update KEY ...` hints. Used by the Claude slash command.
+
+### sprint-status
+
+Sprint board grouped by priority swimlanes.
+
+```
+jirha sprint-status [--team]
+```
+
+Shows all issues (open and closed) in the current sprint, grouped by swimlane then by status.
+
+**Swimlane order:** Blocker, AEM migration, Test-day, Customer, Must-have, Nice-to-have, Critical, Doc sprint (lower priority), Reviews, Other.
+
+**Output format:**
+
+```
+# <Sprint Name>
+**Dates:** YYYY-MM-DD → YYYY-MM-DD  **Working days:** N remaining / M total
+
+## <Swimlane> — X/Y SP (Z%)
+### <Status>
+- [x] https://redhat.atlassian.net/browse/KEY | Priority | SP | labels | summary
+```
+
+Each issue line is pipe-separated: checkbox, Jira URL, priority, SP, labels, summary. `[x]` for Closed, `[ ]` otherwise. PR status appended when available.
+
+**Risk assessment** (when sprint is active with remaining work):
+- Current velocity: closed SP / elapsed business days.
+- Historical velocity: average of last 3 closed Documentation sprints.
+- Blended velocity: weighted by sprint progress (early = 90% historical, late = 60% current).
+- **ON TRACK** if projected SP ≥ remaining SP.
+- **AT RISK** if shortfall — lists candidate issues to drop, lowest priority first.
+
+**Totals:** issue count by status, SP by status, progress percentage.
+
+### short-sprint-status
+
+Same as `sprint-status` but collapses Closed issues to a single summary line per swimlane:
+
+```
+### Closed | N issues | X SP
+```
+
+### close-subtasks
+
+Close open subtasks of closed parent issues.
+
+```
+jirha close-subtasks [--dry-run]
+```
+
+Finds all user's closed parent issues and closes any open subtasks.
+
 ## Conventions
 
 - Component: Documentation (unless otherwise specified).
 - Team: RHDH Documentation.
-- Story points: 1, 3, 5, 8, 13.
+- Story points: 0, 1, 3, 5, 8, 13.
 - Keep PR URL field populated.
 
 ## Custom Field IDs
@@ -105,25 +292,9 @@ h2. Acceptance Criteria
 (?) DOC - Downstream documentation merged: <link to meaningful PR>
 ```
 
-## Sprint Status Format
+## SP Heuristics
 
-Present sprint status as a list grouped by priority swimlanes, then by status:
-```
-# <Sprint Name>
-**Dates:** YYYY-MM-DD → YYYY-MM-DD  **Working days:** N remaining / M total
-## <Priority> — X/Y SP (Z%)
-### <Status>
-- [KEY](https://redhat.atlassian.net/browse/KEY) <SP>SP <labels> — <summary>
-## Risk Assessment
-**Velocity / Projected / Status (ON TRACK or AT RISK)**
-```
-- Swimlane order: Blocker, AEM migration, Test-day, Customer, Must-have, Nice-to-have, Critical, Doc sprint lower, Reviews, Other
-- Risk assessment uses blended velocity (historical avg from last 3 closed sprints + current sprint, weighted by elapsed time). If projected SP < remaining SP → AT RISK with suggested issues to drop.
-- End with totals per status and SP progress (closed/total SP, percentage)
-
-## SP Heuristics (`--check-sp`)
-
-`jirha hygiene --check-sp` reassesses story points by analyzing the linked GitHub PR. It only flags mismatches of 2+ tiers (e.g. 1 SP vs 5 SP) to avoid noise.
+`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing the linked GitHub PR. Hygiene only flags mismatches of 2+ tiers.
 
 **Base tier** — determined by .adoc line volume (additions + deletions):
 
@@ -141,7 +312,17 @@ Present sprint status as a list grouped by priority swimlanes, then by status:
 - 3+ images added/changed
 - 6+ commits
 
-**Mechanical discount** (tier -1): if >80% of .adoc files have ≤4 lines changed and there are 4+ .adoc files, the change is likely mechanical (bulk rename, xref update).
+**Total-lines floor** (for tooling/script PRs): when non-.adoc changes dominate, total lines across all files set a minimum tier:
+
+| Total lines | Floor tier | SP |
+|---|---|---|
+| < 500 | — | — |
+| 500–1999 | 0 | 1 |
+| 2000–4999 | 1 | 3 |
+| 5000–14999 | 2 | 5 |
+| 15000+ | 3 | 8 |
+
+**Mechanical discount** (tier -1): if >80% of .adoc files have ≤4 lines changed, there are 4+ .adoc files, and .adoc accounts for >50% of total lines changed.
 
 ## Inline python-jira
 

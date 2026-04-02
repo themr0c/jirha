@@ -9,7 +9,7 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha list [--open] [--jql "..."] [--max N]` | List my issues |
 | `jirha show KEY` | Show issue details (desc, comments, SP, PR, RN) |
 | `jirha jql "QUERY" [--max N]` | Run arbitrary JQL |
-| `jirha hygiene [--max N] [--team] [--check-sp] [--dry-run]` | List issues with missing metadata; `--check-sp` reassesses SP from linked PRs |
+| `jirha hygiene [--max N] [--team] [--dry-run]` | Full sprint hygiene audit; interactive when run from terminal, `--dry-run` for report only |
 | `jirha sprint-status [--team]` | Sprint board by priority swimlanes |
 | `jirha short-sprint-status [--team]` | Sprint board showing only open issues |
 | `jirha update KEY [-s SUMMARY] [--desc TEXT] [--desc-file FILE] [--sp N\|auto] [--pr URL] [--priority P] [--component C] [--team T] [--add-label L] [--remove-label L] [--link-to KEY] [--link-type TYPE] [--sprint [NAME]] [-c "comment"] [-f FILE]` | Batch-update issue fields, link, or add to sprint |

@@ -87,6 +87,7 @@ def main():
     p.add_argument("--rn-status", help="Release note status")
     p.add_argument("--rn-type", help="Release note type")
     p.add_argument("--rn-text", help="Release note text")
+    p.add_argument("--attach", help="Attach a file to the issue")
     p.add_argument("--comment", "-c", help="Comment explaining the changes")
     p.add_argument("--comment-file", "-f", help="Read comment from file")
     p.set_defaults(func=cmd_update)

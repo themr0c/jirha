@@ -346,13 +346,18 @@ def cmd_update(args):
 
     comment = _build_comment(args, changes)
 
-    if not fields and not comment and sprint_name is None and not args.link_to:
+    if not fields and not comment and sprint_name is None and not args.link_to and not args.attach:
         sys.exit("Error: nothing to update.")
 
     if fields:
         jira.issue(args.key).update(fields=fields)
         for c in changes:
             print(f"  {c}")
+
+    # Attachment
+    if args.attach:
+        jira.add_attachment(issue=args.key, attachment=args.attach)
+        changes.append(f"Attached: {args.attach}")
 
     if comment:
         jira.add_comment(args.key, comment)

@@ -63,6 +63,7 @@ jirha update KEY [options]
 | `--link-to` | — | Link to another issue key |
 | `--link-type` | "relates to" | Link type |
 | `--sprint` | — | Add to sprint (no value = active sprint, or specify name) |
+| `--attach` | — | Attach a file to the issue |
 | `--rn-status` | — | Release note status |
 | `--rn-type` | — | Release note type |
 | `--rn-text` | — | Release note text |

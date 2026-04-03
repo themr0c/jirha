@@ -18,7 +18,7 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha meta PROJECT [--type TYPE]` | Show valid issue types and fields for a project |
 | `jirha close-subtasks [--dry-run]` | Close open subtasks of closed parents |
 
-For custom field IDs, JQL queries, description templates, SP heuristics, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md).
+For custom field IDs, JQL queries, description templates, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md). For SP reference and auto-suggest heuristics, see [docs/sp-heuristics.md](../docs/sp-heuristics.md).
 
 ## Slash commands
 

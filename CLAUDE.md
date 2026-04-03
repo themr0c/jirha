@@ -41,7 +41,8 @@ scripts/jirha <command>   # directly from repo root
 ## Key reference
 
 - **Command reference**: `.claude/CLAUDE.md`
-- **Custom field IDs, JQL templates, SP heuristics, description templates, sprint status format**: `docs/jira-reference.md`
+- **Custom field IDs, JQL templates, description templates, sprint status format**: `docs/jira-reference.md`
+- **SP reference, auto-suggest heuristics, threshold methodology**: `docs/sp-heuristics.md`
 
 ## Inline python-jira (for queries jirha doesn't cover)
 

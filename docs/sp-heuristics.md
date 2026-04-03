@@ -161,17 +161,25 @@ Verdict: useful contextual signal for the LLM estimation skill (especially doc-o
 
 ### Context assembler
 
-Instead of predicting SP, the Jira-only path assembles hierarchy context for human estimation:
+Instead of predicting SP, the Jira-only path assembles hierarchy context for human or LLM estimation:
 
 1. Walks task → epic → feature hierarchy
-2. Fetches sibling epics and their child tasks under the same feature
-3. Collects engineering PR metrics from non-doc-repo siblings
-4. Suggests an SP range based on the median of engineering PR assessments (when ≥2 data points)
+2. Uses Team field (`customfield_10001`) to classify tasks as engineering vs documentation
+3. Fetches sibling epics and their child tasks under the same feature
+4. Follows issue links at all levels (task, epic, feature) — walks the full tree from each linked issue
+5. Fetches PR description bodies for scope signals
+6. Includes feature T-shirt size when available
+7. Collects engineering PR metrics from non-doc-team siblings
+8. Suggests an SP range based on the median of engineering PR assessments (when ≥2 data points)
+9. Caches results to disk (`.jirha-cache/`) — no TTL, use `--refresh` to force re-fetch
 
 **Usage:**
 
-- `jirha context KEY` — standalone command, prints full hierarchy context
-- `jirha update KEY --sp auto` — when no PR is linked, falls back to context assembler output with a suggested range (if available), then prompts for manual `--sp <value>`
+- `jirha context KEY` — standalone command, prints human-readable hierarchy context
+- `jirha context KEY --json` — outputs full JSON context (for LLM consumption)
+- `jirha context KEY --json --refresh` — force re-fetch, ignoring disk cache
+- `/jirha:estimate KEY` — Claude skill that fetches JSON context, reasons across 4 SP dimensions (complexity, risk, uncertainty, effort), suggests SP, and confirms before writing
+- `jirha update KEY --sp auto` — when no PR is linked, outputs JSON context and prompts for manual `--sp <value>`
 - `jirha hygiene` — reports context suggestions for tasks missing SP with no linked PR
 
 **Data quality tiers:**

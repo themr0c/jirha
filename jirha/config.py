@@ -15,6 +15,9 @@ CF_TEAM = "customfield_10001"
 CF_SPRINT = "customfield_10020"
 TEAM_RHDH_DOCS_ID = "ec74d716-af36-4b3c-950f-f79213d08f71-3319"
 
+# Feature T-shirt size (Jira custom field)
+CF_SIZE = "customfield_10795"
+
 # Jira conventions
 DEFAULT_COMPONENT = "Documentation"
 DEFAULT_TEAM = "RHDH Documentation"
@@ -68,6 +71,9 @@ def _load_env_file(path: Path) -> dict:
 _repo_root = Path(__file__).resolve().parent.parent
 for _k, _v in _load_env_file(_repo_root / ".env").items():
     os.environ.setdefault(_k, _v)
+
+# Disk cache for hierarchy context (permanent, no TTL)
+CACHE_DIR = _repo_root / ".jirha-cache"
 
 EMAIL = os.environ.get("JIRA_EMAIL")
 # Note: EMAIL may be None if JIRA_EMAIL is unset; get_jira() will exit with an error.

@@ -18,3 +18,13 @@ def test_load_env_file_skips_comments_and_blanks(tmp_path):
     env.write_text("# comment\n\nKEY=value\nANOTHER=val=with=equals\n")
     result = _load_env_file(env)
     assert result == {"KEY": "value", "ANOTHER": "val=with=equals"}
+
+
+def test_cache_dir_constant():
+    from jirha.config import CACHE_DIR
+    assert CACHE_DIR.name == ".jirha-cache"
+
+
+def test_cf_size_constant():
+    from jirha.config import CF_SIZE
+    assert CF_SIZE.startswith("customfield_")

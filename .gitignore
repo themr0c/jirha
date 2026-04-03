@@ -14,3 +14,4 @@ data/
 .envrc
 .direnv/
 *.egg-info/
+.jirha-cache/

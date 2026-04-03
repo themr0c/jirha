@@ -230,9 +230,7 @@ class TestFormatIssueLine:
 
         pr = "PR: open, approved, CI pass — https://github.com/org/repo/pull/10"
         line = _format_issue_line(issue, pr_status=pr)
-        expected = (
-            f"- [ ] {S}/browse/RHIDP-107 | Major |  8 SP | must-have | Fix auth | {pr}"
-        )
+        expected = f"- [ ] {S}/browse/RHIDP-107 | Major |  8 SP | must-have | Fix auth | {pr}"
         assert line == expected
 
     def test_full_format_closed(self):

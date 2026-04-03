@@ -316,26 +316,26 @@ Story points are a relative measure of effort, complexity, risk, and uncertainty
 
 ## SP Heuristics
 
-`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing the linked GitHub PR. Hygiene only flags mismatches of 2+ tiers. Thresholds are derived from 137 Jira issues with SP merged in 2026 (see `docs/superpowers/pr_sp_data.csv`).
+`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing the linked GitHub PR. Hygiene only flags mismatches of 2+ tiers. Thresholds are derived from 380 Jira issues with SP across 1088 merged PRs in 2025–2026 (see `docs/superpowers/pr_sp_data*.csv`).
 
 **Base tier** — determined by .adoc line volume (additions + deletions):
 
 | Lines changed | Tier | SP |
 |---|---|---|
 | < 5 | 0 | 0 |
-| 5–19 | 1 | 1 |
-| 20–39 | 2 | 2 |
-| 40–79 | 3 | 3 |
-| 80–179 | 4 | 5 |
-| 180–499 | 5 | 8 |
-| 500–1199 | 6 | 13 |
+| 5–29 | 1 | 1 |
+| 30–59 | 2 | 2 |
+| 60–119 | 3 | 3 |
+| 120–299 | 4 | 5 |
+| 300–549 | 5 | 8 |
+| 550–1199 | 6 | 13 |
 | 1200+ | 6 | 13 |
 
 Auto-suggest caps at 13 SP. 21 SP is accepted as valid but never auto-suggested (the team guide says 21 SP should be split).
 
 **Complexity bumps** (tier +1, capped at tier 5 = 8 SP, if 2+ signals present):
 - 2+ new .adoc files (no deletions, >5 lines added)
-- 6+ total .adoc files touched
+- 10+ total .adoc files touched
 - 12+ commits
 
 **Total-lines floor** (for tooling/script PRs): when non-.adoc changes dominate, total lines across all files set a minimum tier:
@@ -344,9 +344,9 @@ Auto-suggest caps at 13 SP. 21 SP is accepted as valid but never auto-suggested 
 |---|---|---|
 | < 20 | 0 | 0 |
 | 20–99 | 1 | 1 |
-| 100–199 | 2 | 2 |
-| 200–499 | 3 | 3 |
-| 500–1499 | 4 | 5 |
+| 100–249 | 2 | 2 |
+| 250–599 | 3 | 3 |
+| 600–1499 | 4 | 5 |
 | 1500–4999 | 5 | 8 |
 | 5000–14999 | 6 | 13 |
 | 15000+ | 6 | 13 |

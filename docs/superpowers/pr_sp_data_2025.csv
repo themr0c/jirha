@@ -1,0 +1,753 @@
+pr,jira_key,sp,title,merged_at,days_open,comments,adoc_files,adoc_added,adoc_deleted,adoc_total,other_files,other_added,other_deleted,other_total,total_lines,new_adoc_files,assembly_files,image_files,commits
+1645,RHDHBUGS-2419,1,[release-1.8] RHDHBUGS-2419: Changing note to mention workaround in this version,2025-12-12,0.0,2,2,4,7,11,0,0,0,0,11,0,0,0,2
+1644,RHIDP-8377,13,RHIDP:8377: Getting Started for Developers,2025-12-17,5.0,2,30,266,275,541,0,0,0,0,541,7,0,0,3
+1643,RHIDP-9238,5,[release-1.8] RHIDP-9238: Troubleshooting Guide,2025-12-12,0.8,2,6,350,0,350,0,0,0,0,350,5,0,0,14
+1642,RHIDP-9238,5,[release-1.7] RHIDP-9238: Troubleshooting Guide,2025-12-12,0.8,2,6,350,0,350,0,0,0,0,350,5,0,0,14
+1641,,,[release-1.8] [RHDHBUGS#2427] improve clarity of adoption insights upgrade requirements,2025-12-11,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1640,,,[RHDHBUGS#2427] improve clarity of adoption insights upgrade requirements,2025-12-11,0.0,4,1,2,2,4,0,0,0,0,4,0,0,0,1
+1639,RHDHBUGS-2423,2,[main] RHDHBUGS-2423 - Fix missing Quickstart RBAC configuration content,2025-12-10,0.0,2,3,6,4,10,0,0,0,0,10,0,0,0,1
+1638,RHDHBUGS-2423,2,RHDHBUGS-2423 - Fix missing Quickstart RBAC configuration content,2025-12-10,0.0,5,3,6,4,10,0,0,0,0,10,0,0,0,1
+1637,RHDHBUGS-2419,1,RHDHBUGS-2419: Changing note to mention workaround in this version,2025-12-12,2.3,4,2,4,7,11,0,0,0,0,11,0,0,0,2
+1635,RHDHBUGS-2402,1,[release-1.8] RHDHBUGS-2402: Fixed yaml indentation error,2025-12-09,0.0,1,1,18,18,36,0,0,0,0,36,0,0,0,1
+1634,RHDHBUGS-2402,1,RHDHBUGS-2402: Fixed yaml indentation error,2025-12-09,0.1,4,1,18,18,36,0,0,0,0,36,0,0,0,1
+1632,RHDHBUGS-2302,2,[release-1.8] RHDHBUGS-2302 - Add Explanation of npx @red-hat-developer-hub/cli package export Command,2025-12-08,0.0,1,1,12,0,12,0,0,0,0,12,1,0,0,7
+1631,RHIDP-9751,5,[release-1.8] RHIDP-9751 - fix link,2025-12-08,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1630,RHIDP-9751,5,RHIDP-9751 - fix link,2025-12-08,0.0,4,1,1,1,2,0,0,0,0,2,0,0,0,1
+1629,RHDHBUGS-2300,5,Manual cherry-pick-RHDHBUGS-2300,2025-12-08,0.0,1,5,138,0,138,0,0,0,0,138,5,0,0,1
+1628,RHIDP-9238,5,RHIDP-9238: Troubleshooting Guide,2025-12-11,3.2,13,6,350,0,350,0,0,0,0,350,5,0,0,14
+1627,RHIDP-9793,3,[release-1.8] RHIDP-9793 Pass htmltest in CI,2025-12-08,0.0,1,0,0,0,0,1,6,0,6,6,0,0,0,1
+1626,RHDHBUGS-2300,5,[release-1.8] RHDHBUGS-2300: Improve Documentation on When and Why Frontend Plugin Wiring Is Required,2025-12-08,0.1,1,5,138,0,138,0,0,0,0,138,5,0,0,11
+1625,RHIDP-8066,8,RHIDP-8066: time syntax,2025-12-19,14.3,3,6,83,23,106,0,0,0,0,106,1,0,0,7
+1624,RHDHBUGS-2316,1,[release-1.8] RHDHBUGS-2316: fixed broken link,2025-12-08,3.5,1,1,1,1,2,0,0,0,0,2,0,0,0,4
+1623,RHDHBUGS-2302,2,RHDHBUGS-2302 - Add Explanation of npx @red-hat-developer-hub/cli package export Command,2025-12-08,4.3,7,1,12,0,12,0,0,0,0,12,1,0,0,10
+1622,RHDHBUGS-2300,5,RHDHBUGS-2300: Improve Documentation on When and Why Frontend Plugin Wiring Is Required,2025-12-08,4.4,7,5,138,0,138,0,0,0,0,138,5,0,0,11
+1621,,,[release-1.8] Minor fix,2025-12-02,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,2
+1620,,,[release-1.7] Minor fix,2025-12-02,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,2
+1619,,,Minor fix,2025-12-02,0.0,7,1,2,2,4,0,0,0,0,4,0,0,0,2
+1618,RHDHBUGS-2274,2,[release-1.8] RHDHBUGS-2274: Changes to the RHOAI docs,2025-12-02,0.0,1,4,40,36,76,0,0,0,0,76,0,0,0,8
+1617,,,Manual cherry-pick: Restructure Orchestrator documentation,2025-12-02,0.1,1,29,161,128,289,0,0,0,0,289,4,0,0,2
+1616,RHIDP-9237,5,[release-1.8] RHIDP-9237: Restructuring the existing Orchestrator Documentation,2025-12-02,0.0,1,30,165,145,310,0,0,0,0,310,5,0,0,14
+1614,RHDHBUGS-2280,2,[release-1.8] RHDHBUGS-2280 - Remove Operator Flavors title,2025-12-01,0.1,1,1,0,8,8,5,0,16,16,24,0,0,0,1
+1613,RHIDP-9646,2,[release-1.8] RHIDP-9646: Minor changes,2025-11-28,0.0,1,2,2,2,4,0,0,0,0,4,0,0,0,1
+1612,RHIDP-9646,2,RHIDP-9646: Minor changes,2025-11-28,0.0,4,2,2,2,4,0,0,0,0,4,0,0,0,1
+1611,RHIDP-9646,2,[release-1.8] RHIDP-9646: Modularization for the new content,2025-11-28,0.0,1,6,30,31,61,0,0,0,0,61,0,0,0,1
+1610,RHDHBUGS-2316,1,RHDHBUGS-2316: fixed broken link,2025-12-04,6.9,7,1,1,1,2,0,0,0,0,2,0,0,0,4
+1609,,,Update the orchestrator plugin version,2025-11-27,0.0,1,1,1,0,1,0,0,0,0,1,0,0,0,1
+1608,,,Update the orchestrator plugin version,2025-11-27,0.1,1,1,1,0,1,0,0,0,0,1,0,0,0,1
+1607,RHIDP-9936,,RHIDP-9936: Release notes for Red Hat Developer Hub 1.7.3,2025-12-01,4.5,3,1,2,0,2,0,0,0,0,2,0,0,0,2
+1606,,,Bump to 1.7.3 in release 1.7,2025-11-27,0.4,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1605,,,Bump to 1.8.2 in release-1.8 branch,2025-11-27,0.7,1,1,2,2,4,0,0,0,0,4,0,0,0,2
+1604,RHIDP-9237,5,RHIDP-9237: Restructuring the existing Orchestrator Documentation,2025-12-02,6.7,15,31,166,145,311,0,0,0,0,311,5,0,0,14
+1602,RHDHBUGS-2062,3,[release-1.8] RHDHBUGS-2062: Update RHDH Air-gapped Installation for oc-mirror v2 as oc-mirror v1 is deprecated since OC,2025-11-25,0.0,1,2,19,38,57,0,0,0,0,57,0,0,0,4
+1601,RHDHBUGS-2062,3,[release-1.7] RHDHBUGS-2062: Update RHDH Air-gapped Installation for oc-mirror v2 as oc-mirror v1 is deprecated since OC,2025-11-25,0.0,1,2,19,38,57,0,0,0,0,57,0,0,0,4
+1600,RHDHBUGS-2192,2,RHDHBUGS-2192: Add note in the upgrade instructions-Manual cherry-pick,2025-11-25,0.0,1,1,6,0,6,0,0,0,0,6,1,0,0,1
+1599,RHDHBUGS-2192,2,[release-1.8] RHDHBUGS-2192: Add note in the upgrade instructions highlighting limitation when upgrading CLI-deployed He,2025-11-25,0.0,1,1,6,0,6,0,0,0,0,6,1,0,0,3
+1598,RHIDP-3219,3,[release-1.7] RHIDP-3219: Improve docs for installing on EKS with Helm,2025-11-25,0.0,1,3,6,0,6,0,0,0,0,6,0,0,0,8
+1597,RHIDP-3219,3,[release-1.8] RHIDP-3219: Improve docs for installing on EKS with Helm,2025-11-25,0.0,1,3,6,0,6,0,0,0,0,6,0,0,0,8
+1596,RHIDP-9646,2,RHIDP-9646: Modularization for the new content,2025-11-28,3.1,6,6,30,31,61,0,0,0,0,61,0,0,0,1
+1595,RHDHBUGS-2192,2,RHDHBUGS-2192: Add note in the upgrade instructions highlighting limitation when upgrading CLI-deployed Helm releases,2025-11-25,4.7,6,1,6,0,6,0,0,0,0,6,1,0,0,3
+1594,RHIDP-3219,3,RHIDP-3219: Improve docs for installing on EKS with Helm,2025-11-25,4.9,6,3,6,0,6,0,0,0,0,6,0,0,0,8
+1593,RHIDP-7912,5,cherry-pick: RHIDP-7912: omitIdentityTokenOwnershipClaim flag (#1487),2025-12-08,18.0,1,3,31,0,31,0,0,0,0,31,2,0,0,1
+1592,RHDHBUGS-2062,3,RHDHBUGS-2062: Update RHDH Air-gapped Installation for oc-mirror v2 as oc-mirror v1 is deprecated since OCP 4.18,2025-11-25,5.9,8,2,19,38,57,0,0,0,0,57,0,0,0,4
+1591,RHDHBUGS-2257,2,[release-1.8] RHDHBUGS-2257: Added GitHub token option,2025-11-19,0.0,1,1,56,27,83,0,0,0,0,83,0,0,0,8
+1590,RHDHBUGS-2281,1,[release-1.8] RHDHBUGS-2281: Added link to MUI icons,2025-11-19,0.0,1,1,40,6,46,0,0,0,0,46,0,0,0,4
+1589,,,[release-1.8] RHIDP:9680: Added missing content for LS and image updates,2025-11-19,0.0,1,5,99,90,189,1,0,0,0,189,0,0,1,9
+1588,RHDHBUGS-2274,2,RHDHBUGS-2274: Changes to the RHOAI docs,2025-12-02,13.3,9,4,40,36,76,0,0,0,0,76,0,0,0,8
+1587,RHIDP-9793,3,RHIDP-9793 Pass htmltest in CI,2025-11-18,0.0,4,0,0,0,0,1,6,0,6,6,0,0,0,1
+1586,RHIDP-9833,3,RHIDP-9833 Updated release notes script config and removed stale content.,2025-11-18,0.0,0,6,0,296,296,1,25,25,50,346,0,0,0,2
+1585,,,Add Creative Commons license URL to ignore list,2025-11-18,0.0,1,0,0,0,0,1,1,0,1,1,0,0,0,1
+1584,RHIDP-9751,5,RHIDP-9751 - fixed broken links - backport #1570 to release-1.8,2025-11-18,0.0,0,19,60,69,129,3,16,5,21,150,0,0,0,2
+1583,RHDHBUGS-2257,2,RHDHBUGS-2257: Added GitHub token option,2025-11-19,2.2,6,1,56,27,83,0,0,0,0,83,0,0,0,8
+1581,RHDHBUGS-2281,1,RHDHBUGS-2281: Added link to MUI icons,2025-11-19,2.2,5,1,40,6,46,0,0,0,0,46,0,0,0,4
+1580,RHIDP-3395,1,[release-1.7] RHIDP-3395: app-config.yaml vs. app-config-rhdh.yaml,2025-11-17,0.0,1,4,6,6,12,0,0,0,0,12,0,0,0,1
+1579,RHIDP-3395,1,[release-1.8] RHIDP-3395: app-config.yaml vs. app-config-rhdh.yaml,2025-11-17,0.0,1,4,6,6,12,0,0,0,0,12,0,0,0,1
+1578,RHDHBUGS-2280,2,RHDHBUGS-2280 - Remove Operator Flavors title,2025-12-01,16.9,9,1,0,8,8,5,0,16,16,24,0,0,0,1
+1577,,,[release-1.8] Update link in the Upgrade,2025-11-14,0.0,1,2,2,2,4,0,0,0,0,4,0,0,0,1
+1576,RHDHBUGS-2039,1,[release-1.8] RHDHBUGS-2039: Incorrect GitHub Org Plugin Package Name-1.8,2025-11-14,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1575,RHDHBUGS-2039,1,RHDHBUGS-2039: Incorrect GitHub Org Plugin Package Name-1.8,2025-11-14,0.1,5,1,1,1,2,0,0,0,0,2,0,0,0,1
+1574,RHIDP-3395,1,RHIDP-3395: app-config.yaml vs. app-config-rhdh.yaml,2025-11-17,3.3,5,4,6,6,12,0,0,0,0,12,0,0,0,1
+1573,RHDHBUGS-2039,1,RHDHBUGS-2039: Incorrect GitHub Org Plugin Package Name,2025-11-14,0.5,3,1,2,2,4,0,0,0,0,4,0,0,0,1
+1572,,,Update link in the Upgrade,2025-11-14,0.8,4,2,2,2,4,0,0,0,0,4,0,0,0,1
+1571,RHDHBUGS-2254,3,[release-1.8] RHDHBUGS-2254: New documentation Article to document upgrade Orchestrator ,2025-11-13,0.0,1,3,64,0,64,0,0,0,0,64,1,0,0,4
+1570,RHIDP-9751,5,RHIDP-9751 - fixed broken links,2025-11-17,4.0,5,19,66,71,137,3,15,5,20,157,0,0,0,13
+1569,RHIDP-9680,1,RHIDP:9680: Added missing content for LS and image updates,2025-11-19,6.1,11,5,99,90,189,1,0,0,0,189,0,0,1,8
+1568,RHDHBUGS-2254,3,RHDHBUGS-2254: New documentation Article to document upgrade Orchestrator ,2025-11-13,0.3,4,3,64,0,64,0,0,0,0,64,1,0,0,4
+1567,RHDHBUGS-2269,2,RHDHBUGS-2269: Added links to the Release Notes New Features for RHDH 1.8,2025-11-13,0.3,1,3,44,34,78,0,0,0,0,78,0,0,0,2
+1566,RHDHBUGS-2255,1,[release-1.7] RHDHBUGS-2255: Remove keyclock as a requirement,2025-11-12,0.0,1,1,0,2,2,0,0,0,0,2,0,0,0,1
+1565,RHDHBUGS-2255,1,[release-1.8] RHDHBUGS-2255: Remove keyclock as a requirement,2025-11-12,0.0,1,1,0,2,2,0,0,0,0,2,0,0,0,1
+1564,RHDHBUGS-2255,1,RHDHBUGS-2255: Remove keyclock as a requirement,2025-11-12,0.1,8,1,0,2,2,0,0,0,0,2,0,0,0,1
+1563,RHIDP-8196,,RHIDP-8196: added events module to RN,2025-11-12,0.4,1,1,7,0,7,0,0,0,0,7,1,0,0,2
+1562,,,added additional resources,2025-11-12,0.7,3,1,8,0,8,0,0,0,0,8,1,0,0,3
+1561,,,Fix Fixed Issues,2025-11-11,0.0,1,1,4,4,8,0,0,0,0,8,0,0,0,2
+1560,,,release-notes-extra-script-1 - Extra release notes updates,2025-11-11,0.0,1,1,78,83,161,0,0,0,0,161,0,0,0,1
+1559,,,Update fixed issues for 1.8,2025-11-11,0.0,1,1,18,1,19,0,0,0,0,19,0,0,0,1
+1558,,,Minor fix,2025-11-11,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1557,,,release-notes-extra-script - Extra release notes updates,2025-11-11,0.0,1,1,13,0,13,0,0,0,0,13,1,0,0,2
+1556,,,Update fixed issues and known issues,2025-11-11,0.0,1,2,115,72,187,0,0,0,0,187,0,0,0,1
+1555,,,release-notes-extra-1 - Extra release notes updates,2025-11-10,0.0,1,1,54,0,54,0,0,0,0,54,1,0,0,1
+1554,RHIDP-8634,8,[release-1.8] RHIDP-8634-3 - [feedback] Improve the documentation to help developers convert plugins to dynamic plugins,2025-11-10,0.0,1,2,5,3,8,0,0,0,0,8,0,0,0,5
+1553,,,[main] chore(release notes): fix the single-source-release-notes.py and readme to explain how to export a token before r,2025-11-10,0.0,1,1,9,1,10,1,13,1,14,24,0,0,0,1
+1552,,,chore(release notes): regenerate missing content from JIRA,2025-11-10,0.0,1,3,42,18,60,0,0,0,0,60,1,0,0,2
+1551,,,chore(release notes): fix the single-source-release-notes.py and readme to explain how to export a token before running ,2025-11-10,0.0,4,1,9,1,10,1,13,1,14,24,0,0,0,1
+1550,,,Release notes extra: Late changes to Release Notes,2025-11-10,0.1,2,2,9,3,12,0,0,0,0,12,1,0,0,4
+1549,RHIDP-8635,8,RHIDP-8635-3 - Comprehensive documentation for developers on adding localization support to custom plugins,2025-11-10,0.0,1,17,817,1,818,1,0,0,0,818,13,0,1,1
+1548,,,chore(release): link to RHSA for 1.8.0,2025-11-10,0.0,1,1,2,0,2,0,0,0,0,2,0,0,0,1
+1546,,,Release notes update for release-1.8,2025-11-10,0.0,1,3,66,21,87,1,7,7,14,101,2,0,0,2
+1545,,,[release-1.8] RHDHPAI-1091: Lightspeed Core Developer Lightspeed,2025-11-10,0.0,1,18,404,545,949,3,0,0,0,949,2,0,3,26
+1544,RHIDP-8629,2,[release-1.8] RHIDP-8629: sizing requirements for external PostgreSQL deployment with RHDH,2025-11-10,0.0,1,3,55,1,56,0,0,0,0,56,0,0,0,10
+1543,RHDHBUGS-2009,3,[release-1.8] RHDHBUGS-2009: Orchestrator docs update,2025-11-10,0.0,1,4,22,12,34,0,0,0,0,34,1,0,0,4
+1542,RHDHBUGS-2221,1,[release-1.7] RHDHBUGS-2221:Remove janus-idp references,2025-11-10,0.0,1,3,4,6,10,0,0,0,0,10,0,0,0,1
+1541,RHDHBUGS-2221,1,[release-1.8] RHDHBUGS-2221:Remove janus-idp references,2025-11-10,0.0,0,3,4,6,10,0,0,0,0,10,0,0,0,1
+1540,RHDHBUGS-2134,1,[release-1.8] RHDHBUGS-2134: updated attribute,2025-11-10,0.0,1,3,4,4,8,0,0,0,0,8,0,0,0,2
+1539,RHDHBUGS-2134,1,[release-1.7] RHDHBUGS-2134: updated attribute,2025-11-10,0.0,1,3,4,4,8,0,0,0,0,8,0,0,0,2
+1538,,,[release-1.8] RHDHPAI-1087: Few changes to MCP client configuration,2025-11-10,0.0,1,3,9,76,85,0,0,0,0,85,0,0,0,2
+1537,RHIDP-8055,1,RHIDP-8055-1 - Dynamic Plugins - Update table of dynamic plugins for RHDH 1.8,2025-11-10,0.0,1,2,205,205,410,2,6,6,12,422,0,0,0,1
+1536,RHIDP-8636,13,RHIDP-8636 - Release notes for 1.8,2025-11-10,0.2,2,6,357,222,579,1,19,19,38,617,0,0,0,11
+1535,,,chore: fix sorting and regen supported plugin tables,2025-11-07,0.1,4,2,205,205,410,2,5,5,10,420,0,0,0,1
+1534,RHIDP-8634,8,RHIDP-8634-3 - [feedback] Improve the documentation to help developers convert plugins to dynamic plugins,2025-11-10,3.1,3,2,5,3,8,0,0,0,0,8,0,0,0,7
+1532,,,RHDHPAI-1087: Few changes to MCP client configuration,2025-11-10,2.7,6,3,9,76,85,0,0,0,0,85,0,0,0,2
+1531,RHIDP-7564,8,[release-1.8] RHIDP-7564-1 - Support Pre-Configured RHDH Deployments in Operator,2025-11-07,0.0,1,3,80,0,80,0,0,0,0,80,1,0,0,9
+1530,RHIDP-8631,5,[release-1.8] RHIDP-8631: bulk import with gitlab,2025-11-07,0.0,1,5,68,20,88,0,0,0,0,88,1,0,0,5
+1529,RHIDP-8196,,[release-1.8] RHIDP-8196: Events Module configuration for GitHub,2025-11-07,0.0,1,3,108,0,108,0,0,0,0,108,2,0,0,31
+1527,,,[release-1.8] RHDHPAI-1087: Updating title for OpenShift AI Connector for RHDH,2025-11-07,0.0,1,2,2,3,5,0,0,0,0,5,0,0,0,1
+1526,,,RHDHPAI-1087: Updating title for OpenShift AI Connector for RHDH,2025-11-07,0.0,4,2,2,3,5,0,0,0,0,5,0,0,0,1
+1525,,,[release-1.8] RHDHPAI-1089: RHOAI Model catalog bridge,2025-11-07,0.0,1,11,564,0,564,5,15,0,15,579,11,0,0,11
+1524,RHIDP-7564,8,RHIDP-7564-1 - Support Pre-Configured RHDH Deployments in Operator,2025-11-07,0.6,4,3,80,0,80,0,0,0,0,80,1,0,0,10
+1523,RHDHBUGS-2009,3,RHDHBUGS-2009: Orchestrator docs update,2025-11-10,3.5,4,4,22,12,34,0,0,0,0,34,1,0,0,5
+1522,,,[release-1.8] Minor Fix-Customizable Table,2025-11-06,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1521,,,Minor Fix-Customizable Table,2025-11-06,0.0,4,1,1,1,2,0,0,0,0,2,0,0,0,1
+1520,RHIDP-9035,1,[release-1.8] RHIDP-9035: Update the QuickAccess card icons on the Homepage,2025-11-06,0.0,1,2,105,1,106,0,0,0,0,106,1,0,0,5
+1519,RHIDP-8622,5,"[release-1.8] RHIDP-8622: Removing ""Verified"" And Improving Transparency In The Extensions Catalog",2025-11-06,0.0,1,3,51,0,51,0,0,0,0,51,2,0,0,4
+1517,RHIDP-2135,2,[release-1.8] RHIDP-2135: README update,2025-11-06,0.0,1,1,129,8,137,0,0,0,0,137,0,0,0,13
+1516,RHIDP-7912,5,[release-1.8] RHIDP-7912: omitIdentityTokenOwnershipClaim flag,2025-11-06,0.0,1,3,31,0,31,0,0,0,0,31,2,0,0,15
+1515,RHIDP-8118,2,[release-1.8] RHIDP-8118: update variables in authentication docs,2025-11-06,0.0,1,5,32,26,58,0,0,0,0,58,0,0,0,2
+1514,RHIDP-8634,8,RHIDP-8634-2-1-8 - Improve the documentation to help developers convert plugins to dynamic plugins CP,2025-11-06,0.1,2,17,276,28,304,5,0,0,0,304,4,0,5,3
+1513,RHIDP-9035,1,RHIDP-9035: Update the QuickAccess card icons on the Homepage,2025-11-06,0.3,6,2,105,1,106,0,0,0,0,106,1,0,0,5
+1512,,,Update the attribute,2025-11-06,0.2,1,1,1,0,1,0,0,0,0,1,0,0,0,1
+1511,,,[release-1.8] Fix a typo on the Orchestrator,2025-11-06,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1510,,,[release-1.8] Minor Fixes and suggestions,2025-11-06,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1509,,,[release-1.7] Fix a typo on the Orchestrator,2025-11-06,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1508,,,Minor Fixes and suggestions,2025-11-06,0.0,3,1,2,2,4,0,0,0,0,4,0,0,0,1
+1507,,,Fix a typo on the Orchestrator,2025-11-06,0.0,11,1,1,1,2,0,0,0,0,2,0,0,0,1
+1506,,,[release-1.8] Update the customization section,2025-11-06,0.0,1,3,26,31,57,0,0,0,0,57,1,0,0,5
+1505,,,add-missing-attributes - Update attributes in release-1.8,2025-11-05,0.0,1,1,2,0,2,0,0,0,0,2,0,0,0,1
+1504,RHIDP-8711,,RHIDP-8711: Orchestrator flavors airgap support- Manual cherry pick,2025-11-06,0.3,1,9,550,0,550,0,0,0,0,550,7,0,0,1
+1503,RHIDP-8711,,RHIDP-8711: Orchestrator flavors airgap support-Manual cherry pick.,2025-11-06,0.3,1,9,550,0,550,0,0,0,0,550,7,0,0,1
+1502,,,Update the customization section,2025-11-06,0.4,3,3,26,31,57,0,0,0,0,57,1,0,0,5
+1501,RHDHBUGS-2221,1,RHDHBUGS-2221:Remove janus-idp references,2025-11-10,4.7,5,3,4,6,10,0,0,0,0,10,0,0,0,3
+1500,,,[release-1.8] RHDHPAI-1087: MCP plugin doc - dev preview,2025-11-05,0.0,1,22,657,1,658,5,15,0,15,673,21,0,0,20
+1499,RHIDP-9105,5,RHIDP-9105: Best practices when creating a workflow (#1424),2025-11-05,0.0,2,2,87,1,88,0,0,0,0,88,1,0,0,1
+1498,RHIDP-9105,5,RHIDP-9105: Best practices when creating a workflow (#1424),2025-11-05,0.0,2,2,87,1,88,0,0,0,0,88,1,0,0,1
+1497,RHIDP-8623,3,[release-1.8] RHIDP-8623 - [Doc] Create a quickstart for the developer persona,2025-11-05,0.0,1,3,54,0,54,0,0,0,0,54,1,0,0,7
+1496,,,"[release-1.7] RHDHSUPP-292: Bad repository linked in ""TechDocs Pipelines with GitHub Actions""",2025-11-05,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1495,,,"[release-1.8] RHDHSUPP-292: Bad repository linked in ""TechDocs Pipelines with GitHub Actions""",2025-11-05,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1494,,,"RHDHSUPP-292: Bad repository linked in ""TechDocs Pipelines with GitHub Actions""",2025-11-05,0.0,7,1,1,1,2,0,0,0,0,2,0,0,0,1
+1493,,,[release-1.8] Fixing title issues,2025-11-05,0.0,1,2,3,3,6,0,0,0,0,6,0,0,0,2
+1492,,,Fixing title issues,2025-11-05,0.0,3,2,3,3,6,0,0,0,0,6,0,0,0,2
+1491,RHIDP-8622,5,"RHIDP-8622: Removing ""Verified"" And Improving Transparency In The Extensions Catalog",2025-11-06,1.2,5,3,51,0,51,0,0,0,0,51,2,0,0,4
+1490,RHIDP-8709,,[release-1.8] RHIDP-8709: Scorecard plugin,2025-11-05,0.0,1,22,700,1,701,7,15,0,15,716,19,0,2,18
+1489,,,[release-1.8] Include dynamicArtifact:redhat packages in dynamic plugins tables,2025-11-05,0.9,1,2,21,5,26,2,37,26,63,89,0,0,0,1
+1488,RHIDP-8118,2,RHIDP-8118: update variables in authentication docs,2025-11-06,1.8,7,5,32,26,58,0,0,0,0,58,0,0,0,2
+1487,RHIDP-7912,5,RHIDP-7912: omitIdentityTokenOwnershipClaim flag,2025-11-06,1.8,6,3,31,0,31,0,0,0,0,31,2,0,0,16
+1486,RHIDP-8911,2,[release-1.8] RHIDP-8911 - Add upstream docs link and Note for Dynamic Plugin Factory in RHDH Docs 1.8,2025-11-04,0.0,1,2,21,0,21,0,0,0,0,21,1,0,0,7
+1485,RHIDP-8956,,[release-1.8] RHIDP-8956: Created titles for the new Developer category,2025-11-04,0.0,1,35,206,86,292,10,10,0,10,302,6,0,0,14
+1484,RHIDP-9486,2,RHIDP-9486: Release notes for Red Hat Developer Hub 1.7.2,2025-11-05,0.8,4,2,14,0,14,0,0,0,0,14,1,0,0,5
+1483,RHIDP-8819,5,[release-1.8] RHIDP-8819: Phase 1 of Enhanced Homepage Customization for RHDH,2025-11-04,0.0,1,2,177,0,177,0,0,0,0,177,1,0,0,6
+1482,RHIDP-8828,5,[release-1.8] RHIDP-8828: Injecting resources for backstage containers,2025-11-04,0.0,1,3,143,82,225,0,0,0,0,225,1,0,0,19
+1481,RHIDP-8634,8,RHIDP-8634-2 - Improve the documentation to help developers convert plugins to dynamic plugins,2025-11-05,1.4,6,19,302,28,330,5,0,0,0,330,5,0,5,28
+1480,,,chore: tagRelease.sh: bump to 1.7.2 in release-1.7 branch [skip-build],2025-11-04,0.4,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1479,RHIDP-8627,5,[release-1.8] RHIDP-8627: Templates lifecycle management,2025-11-03,0.0,1,5,101,0,101,0,0,0,0,101,3,0,0,9
+1478,,,RHDHPAI-1089: RHOAI Model catalog bridge,2025-11-07,3.5,4,11,564,0,564,5,15,0,15,579,11,0,0,11
+1477,RHDHBUGS-2190,1,RHDHBUGS-2190: Fixing authorization step in Lightspeed,2025-11-03,0.1,1,1,34,5,39,0,0,0,0,39,0,0,0,6
+1476,RHIDP-8956,,RHIDP-8956: Created titles for the new Developer category,2025-11-04,1.4,4,35,206,86,292,10,10,0,10,302,6,0,0,14
+1474,RHIDP-8631,5,RHIDP-8631: bulk import with gitlab,2025-11-07,4.7,6,5,68,20,88,0,0,0,0,88,1,0,0,5
+1473,RHIDP-8623,3,RHIDP-8623 - [Doc] Create a quickstart for the developer persona,2025-11-05,3.0,4,3,54,0,54,0,0,0,0,54,1,0,0,11
+1472,RHIDP-8911,2,RHIDP-8911 - Add upstream docs link and Note for Dynamic Plugin Factory in RHDH Docs 1.8,2025-11-04,4.0,4,2,21,0,21,0,0,0,0,21,1,0,0,10
+1471,RHDHBUGS-2173,2,[release-1.8] RHDHBUGS-2173 - Incorrect file path for Keycloak backend plugin,2025-10-31,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1470,RHIDP-8627,5,RHIDP-8627: Templates lifecycle management,2025-11-03,3.4,5,5,101,0,101,0,0,0,0,101,3,0,0,9
+1469,RHIDP-8818,1,[release-1.8] RHIDP-8818: updated yaml file,2025-10-30,0.0,1,2,35,23,58,0,0,0,0,58,0,0,0,7
+1468,RHIDP-8637,3,[release-1.8] RHIDP-8637: OpenTelemetry Service Monitor,2025-10-30,0.0,1,2,20,42,62,0,0,0,0,62,0,0,0,6
+1467,,,RHDHPAI-1091: Lightspeed Core Developer Lightspeed,2025-11-10,11.0,6,18,404,545,949,3,0,0,0,949,2,0,3,26
+1466,RHIDP-8818,1,RHIDP-8818: updated yaml file,2025-10-30,1.0,4,2,35,23,58,0,0,0,0,58,0,0,0,7
+1465,RHIDP-8709,,RHIDP-8709: Scorecard plugin,2025-11-05,7.0,5,22,700,1,701,7,15,0,15,716,19,0,2,18
+1464,RHIDP-8828,5,RHIDP-8828: Injecting resources for backstage containers,2025-11-04,6.3,3,3,143,82,225,0,0,0,0,225,1,0,0,19
+1463,RHIDP-8637,3,RHIDP-8637: OpenTelemetry Service Monitor,2025-10-30,1.9,6,2,20,42,62,0,0,0,0,62,0,0,0,6
+1462,,,RHDHPAI-1087: MCP plugin doc - dev preview,2025-11-05,8.2,4,22,657,1,658,5,15,0,15,673,21,0,0,20
+1461,RHIDP-8196,,RHIDP-8196: Events Module configuration for GitHub,2025-11-07,10.5,5,3,108,0,108,0,0,0,0,108,2,0,0,35
+1460,,,Include dynamicArtifact:redhat packages in dynamic plugins tables ,2025-11-04,10.7,5,2,21,5,26,2,36,25,61,87,0,0,0,3
+1459,RHDHBUGS-2173,2,RHDHBUGS-2173-1-7 - Incorrect file path for Keycloak backend plugin (1.7),2025-10-31,6.8,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1458,RHDHBUGS-2173,2,RHDHBUGS-2173 - Incorrect file path for Keycloak backend plugin,2025-10-31,6.8,4,1,1,1,2,0,0,0,0,2,0,0,0,2
+1457,RHIDP-8632,5,[release-1.8] RHIDP-8632: Update the Bulk Import Plugin to Integrate with Existing Backstage Templates and Orchestrator ,2025-10-28,4.1,1,4,133,0,133,0,0,0,0,133,3,0,0,19
+1456,RHDHBUGS-2134,1,RHDHBUGS-2134: updated attribute,2025-11-10,17.5,10,3,4,4,8,0,0,0,0,8,0,0,0,2
+1455,,,[release-1.8] chore: clarify backstage version support,2025-10-22,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,2
+1454,,,chore: clarify backstage version support,2025-10-22,0.1,4,1,1,1,2,0,0,0,0,2,0,0,0,2
+1453,,,Manual cherry-pick: Update preinstalled plugins list (#1451),2025-10-22,0.0,1,1,1,0,1,0,0,0,0,1,0,0,0,3
+1452,RHDHBUGS-2156,1,[release-1.8] RHDHBUGS-2156: Add @backstage/events-backend plugin to the list of pre-installed RHDH plugins,2025-10-22,0.0,1,1,1,0,1,0,0,0,0,1,0,0,0,1
+1451,RHDHBUGS-2156,1,RHDHBUGS-2156: Add @backstage/events-backend plugin to the list of pre-installed RHDH plugins,2025-10-22,0.0,5,1,1,0,1,0,0,0,0,1,0,0,0,1
+1450,RHIDP-8819,5,RHIDP-8819: Phase 1 of Enhanced Homepage Customization for RHDH,2025-11-04,13.1,5,2,177,0,177,0,0,0,0,177,1,0,0,6
+1449,RHIDP-8629,2,RHIDP-8629: sizing requirements for external PostgreSQL deployment with RHDH,2025-11-10,20.6,8,3,55,1,56,0,0,0,0,56,0,0,0,14
+1448,,,cherry-pick GH#1268,2025-10-20,0.0,1,2,396,0,396,0,0,0,0,396,1,0,0,1
+1447,,,cherry-pick GH#1442,2025-10-20,3.0,1,31,989,1100,2089,0,0,0,0,2089,20,0,0,1
+1446,,,chore: regen plugins for release-1.8 and...,2025-10-16,0.0,1,3,74,74,148,2,107,96,203,351,0,0,0,1
+1445,,,chore: regen plugins for main and update the...,2025-10-16,0.0,1,3,75,75,150,2,108,97,205,355,0,0,0,1
+1444,RHIDP-8632,5,RHIDP-8632: Update the Bulk Import Plugin to Integrate with Existing Backstage Templates and Orchestrator Workflows,2025-10-24,9.0,5,4,133,0,133,0,0,0,0,133,3,0,0,20
+1443,RHIDP-8635,8,RHIDP-8635-1 - Comprehensive documentation for developers on adding localization support to custom plugins,2025-11-10,27.1,4,17,817,1,818,1,0,0,0,818,13,0,1,64
+1442,RHDHBUGS-2067,5,RHDHBUGS-2067 - Grouped optional configurations in one example file,2025-10-17,2.9,5,31,989,1100,2089,0,0,0,0,2089,20,0,0,8
+1441,RHIDP-9010,5,Added some content missing from the manual cherrypick,2025-10-13,0.0,1,1,6,7,13,0,0,0,0,13,0,0,0,1
+1440,,,Manual cherry pick 1422,2025-10-10,0.0,1,5,129,36,165,0,0,0,0,165,2,0,0,1
+1439,RHIDP-9188,2,chore(deprecation): move OCM into its own deprecated file (RHIDP-9188),2025-10-10,0.2,1,6,146,97,243,2,32,13,45,288,2,0,0,2
+1438,,,Manual cherry-pick for 1416,2025-10-09,0.1,2,13,462,2,464,0,0,0,0,464,11,0,0,1
+1437,,,Manual cherrypick for PR-1426,2025-10-09,0.0,1,26,234,197,431,0,0,0,0,431,2,0,0,3
+1436,RHDHBUGS-2070,3,[release-1.7] RHDHBUGS-2070 - Added oc-mirror prerequisite,2025-10-09,0.0,1,5,82,73,155,0,0,0,0,155,0,0,0,8
+1435,RHIDP-8711,,RHIDP-8711: Orchestrator flavors airgap support (Helm and Operator),2025-11-05,27.9,7,9,550,0,550,0,0,0,0,550,7,0,0,29
+1434,,,[release-1.7] chore: update min/max OCP versions supported (4.16-4.19),2025-10-08,0.0,0,1,3,3,6,0,0,0,0,6,0,0,0,2
+1433,,,chore: version bump for 1.8 in main branch,2025-10-08,0.2,1,1,5,5,10,0,0,0,0,10,0,0,0,1
+1432,,,chore: update min/max OCP versions supported (4.16-4.19),2025-10-08,0.3,4,1,3,3,6,0,0,0,0,6,0,0,0,2
+1431,RHIDP-8630,5,RHIDP-8630: Added notification during software template version update,2025-10-09,1.8,1,2,74,0,74,0,0,0,0,74,1,0,0,3
+1430,RHDHBUGS-2070,3,RHDHBUGS-2070 - Added oc-mirror prerequisite,2025-10-09,1.9,8,5,82,73,155,0,0,0,0,155,0,0,0,10
+1429,RHIDP-9017,5,RHIDP-9017 Updated authenticating with GitHub,2025-10-10,2.8,1,6,126,63,189,0,0,0,0,189,3,0,0,11
+1428,RHIDP-9106,2,[release-1.7] RHIDP-9106: Compatibility matrix,2025-10-07,0.0,1,2,22,0,22,0,0,0,0,22,1,0,0,7
+1427,,,RHDHBUGS-Fixed Issues and Feature Enhancements-1.7.1,2025-10-08,1.4,2,3,210,174,384,0,0,0,0,384,0,0,0,6
+1426,RHIDP-9010,5,RHIDP-9010: AEM-related changes,2025-10-09,3.3,4,25,239,217,456,0,0,0,0,456,2,0,0,5
+1424,RHIDP-9105,5,RHIDP-9105: Best practices when creating a workflow,2025-11-05,35.1,11,2,87,1,88,0,0,0,0,88,1,0,0,10
+1423,RHIDP-9106,2,RHIDP-9106: Compatibility matrix,2025-10-07,5.8,7,2,22,0,22,0,0,0,0,22,1,0,0,7
+1422,RHIDP-9107,5,RHIDP-9107: Orchestrator architecture,2025-10-10,9.6,3,5,129,38,167,0,0,0,0,167,2,0,0,17
+1421,,,Manual cherry-pick:Topology modularization,2025-10-01,0.8,1,3,12,5,17,0,0,0,0,17,0,0,0,1
+1420,,,Manual cherry-pick:Topology modularization,2025-10-01,0.8,1,2,2,2,4,0,0,0,0,4,0,0,0,3
+1419,,,Manual cherrypick,2025-09-30,0.1,1,2,24,9,33,0,0,0,0,33,0,0,0,1
+1418,RHIDP-7649,8,RHIDP-7649: Incorrectly structured content related to the Topology plugin,2025-09-30,0.7,5,3,12,5,17,0,0,0,0,17,0,0,0,5
+1417,RHDHBUGS-2051,3,RHDHBUGS-2051: Adding further changes,2025-09-29,0.3,5,2,6,1,7,0,0,0,0,7,0,0,0,6
+1416,RHIDP-8641,8,RHIDP-8641: Building and Deploying Serverless Workflows,2025-10-09,12.9,4,13,462,1,463,0,0,0,0,463,11,0,0,5
+1415,,,chore: tagRelease.sh: bump to 1.6.5 in release-1.6 branch [skip-build],2025-09-25,0.1,2,2,5,3,8,0,0,0,0,8,0,0,0,2
+1412,RHDHBUGS-261,5,[release-1.7] RHDHBUGS-261: Minor fixes,2025-09-24,0.0,1,4,5,5,10,0,0,0,0,10,0,0,0,1
+1411,RHDHBUGS-261,5,[release-1.6] RHDHBUGS-261: Minor fixes,2025-09-24,0.0,1,4,5,5,10,0,0,0,0,10,0,0,0,1
+1410,RHDHBUGS-261,5,RHDHBUGS-261: Minor fixes,2025-09-24,0.0,5,4,5,5,10,0,0,0,0,10,0,0,0,1
+1409,RHDHBUGS-1204,,[release-1.7] RHDHBUGS-1204: Fixing a minor issue,2025-09-24,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1408,RHDHBUGS-1204,,RHDHBUGS-1204: Fixing a minor issue,2025-09-24,0.0,4,1,1,1,2,0,0,0,0,2,0,0,0,1
+1407,,,Manual cherrypick for PR-1403,2025-09-24,0.1,1,4,64,1,65,0,0,0,0,65,2,0,0,3
+1406,RHIDP-8198,5,RHDIP-8198: removed obsolete doc files,2025-09-24,1.2,4,11,0,314,314,0,0,0,0,314,0,0,0,3
+1405,,,Manual cherrpick for PR-1396,2025-09-22,0.0,1,1,24,2,26,0,0,0,0,26,0,0,0,1
+1404,RHIDP-7802,3,[release-1.7] RHIDP-7802: Adding short description to Home cards,2025-09-22,0.0,1,1,28,2,30,0,0,0,0,30,0,0,0,5
+1403,RHDHBUGS-2051,3,RHDHBUGS-2051: Adding a new topic on adding a new llm provider,2025-09-24,2.0,5,4,73,0,73,0,0,0,0,73,2,0,0,5
+1402,RHDHBUGS-2055,1,[release-1.7] RHDHBUGS-2055-Minor fix,2025-09-19,0.0,1,1,13,0,13,0,0,0,0,13,1,0,0,1
+1401,RHDHBUGS-2055,1,RHDHBUGS-2055-Minor fix,2025-09-19,0.1,3,1,13,0,13,0,0,0,0,13,1,0,0,1
+1400,RHDHBUGS-2055,1,[release-1.7] RHDHBUGS-2055: Incorrect configuration for orchestrator plugins in operator upstream and downstream docs,2025-09-19,0.0,1,1,39,14,53,0,0,0,0,53,0,0,0,1
+1399,,,Manual cherry-pick-#1384,2025-09-19,0.1,1,10,212,25,237,0,0,0,0,237,7,0,0,1
+1398,,,Default configuration,2025-09-19,0.1,1,10,212,25,237,0,0,0,0,237,7,0,0,1
+1397,RHDHBUGS-2056,2,[release-1.7] RHDHBUGS-2056 Missing steps in the orchestrator installment downstream docs,2025-09-19,0.0,1,1,56,1,57,0,0,0,0,57,0,0,0,3
+1396,RHIDP-7802,3,RHIDP-7802: Adding short description to Home cards,2025-09-22,3.2,8,1,28,2,30,0,0,0,0,30,0,0,0,5
+1395,RHDHBUGS-2056,2,RHDHBUGS-2056 Missing steps in the orchestrator installment downstream docs,2025-09-19,0.6,4,1,56,1,57,0,0,0,0,57,0,0,0,3
+1394,RHDHBUGS-2055,1,RHDHBUGS-2055: Incorrect configuration for orchestrator plugins in operator upstream and downstream docs,2025-09-19,0.7,3,1,39,14,53,0,0,0,0,53,0,0,0,1
+1393,RHIDP-7848,3,RHIDP-7848 - Renamed the title,2025-09-18,0.0,1,2,10,10,20,5,0,0,0,20,1,0,0,1
+1392,RHDHBUGS-1109,5,[release-1.7] RHDHBUGS-1109 Fixed URL changes in production,2025-09-17,0.0,1,1,3,3,6,0,0,0,0,6,0,0,0,1
+1391,RHDHBUGS-1109,5,RHDHBUGS-1109 Fixed URL changes in production,2025-09-17,0.0,3,1,3,3,6,0,0,0,0,6,0,0,0,1
+1390,RHDHBUGS-1109,5,RHDHBUGS-1109 - Added OLM framework prerequisites for AKS and reused common content  for release 1.7,2025-09-17,0.0,1,24,524,916,1440,0,0,0,0,1440,12,0,0,1
+1389,RHDHBUGS-2052,1,[release-1.7] RHDHBUGS-2052: Fixed issues in the Dev Lightspeed docs,2025-09-17,0.0,1,2,23,16,39,0,0,0,0,39,0,0,0,4
+1388,RHIDP-8604,,RHIDP-8604: Release notes for Red Hat Developer Hub 1.7.1,2025-09-17,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1387,RHDHBUGS-2052,1,RHDHBUGS-2052: Fixed issues in the Dev Lightspeed docs,2025-09-17,0.2,4,2,23,16,39,0,0,0,0,39,0,0,0,4
+1386,RHIDP-7572,5,[release-1.7] RHIDP-7572 - RBAC: Ability to add plugin(s) with permissions to the plugins configuration for the rbac-bac,2025-09-16,0.0,1,2,86,2,88,0,0,0,0,88,1,0,0,2
+1385,RHDHBUGS-1999,1,[release-1.7] RHDHBUGS-1999: fixed macros,2025-09-16,0.1,1,1,2,0,2,0,0,0,0,2,0,0,0,1
+1384,RHDHBUGS-261,5,RHDHBUGS-261: Operator: Add documentation for default config,2025-09-19,3.4,5,10,211,25,236,0,0,0,0,236,7,0,0,7
+1383,RHIDP-8896,2,RHIDP-8896  - RHDH 1.7.1 - Update versions and support status in table of plugins,2025-09-16,1.1,1,2,31,31,62,1,14,14,28,90,0,0,0,3
+1382,RHDHBUGS-1109,5,RHDHBUGS-1109 - Added OLM framework prerequisites for AKS and reused common content,2025-09-17,2.3,7,24,501,902,1403,0,0,0,0,1403,12,0,0,6
+1381,RHIDP-8588,3,RHIDP-8588 - Added 1.7.1 release notes items,2025-09-15,0.0,1,4,32,12,44,1,3,3,6,50,1,0,0,2
+1380,,,[release-1.7] Orchestrator minor fixes,2025-09-11,0.0,1,2,2,2,4,0,0,0,0,4,0,0,0,1
+1379,,,Orchestrator minor fixes,2025-09-11,0.0,5,2,2,2,4,0,0,0,0,4,0,0,0,1
+1378,RHIDP-7572,5,RHIDP-7572 - RBAC: Ability to add plugin(s) with permissions to the plugins configuration for the rbac-backend via the U,2025-09-16,5.1,3,2,86,2,88,0,0,0,0,88,1,0,0,2
+1377,RHIDP-8566,3,RHIDP-8566 fixed Vale alert AsciiDocDITA.LinkAttribute,2025-09-11,0.0,1,6,9,6,15,0,0,0,0,15,0,0,0,4
+1376,RHDHBUGS-2008,1,[release-1.6] RHDHBUGS-2008: Removed anthropomorphism and extra heading title,2025-09-11,0.0,1,1,32,41,73,0,0,0,0,73,0,0,0,1
+1375,RHDHBUGS-2008,1,[release-1.7] RHDHBUGS-2008: Removed anthropomorphism and extra heading title,2025-09-11,0.0,1,1,32,41,73,0,0,0,0,73,0,0,0,1
+1374,RHIDP-8202,1,RHIDP-8202 DITA compatible links in concept and references modules,2025-09-15,3.9,2,20,86,65,151,0,0,0,0,151,0,0,0,5
+1373,RHIDP-8827,2,RHIDP-8827: Added supported HA platform,2025-09-22,11.1,1,1,1,0,1,0,0,0,0,1,0,0,0,1
+1372,RHDHBUGS-2008,1,RHDHBUGS-2008: Removed anthropomorphism and extra heading title,2025-09-11,0.2,7,1,32,41,73,0,0,0,0,73,0,0,0,1
+1371,RHIDP-8563,8, RHIDP-8563 Fixed the Vale error AsciiDocDITA.ContentType,2025-09-11,0.8,2,100,189,54,243,0,0,0,0,243,0,0,0,7
+1370,RHIDP-8571,3,RHIDP-8571 Fixed AsciiDocDITA.TaskSection warnings,2025-09-10,0.0,1,13,19,19,38,0,0,0,0,38,0,0,0,1
+1369,RHIDP-8567,3,RHIDP-8567 fixed AsciiDocDITA.TaskDuplicate warnings,2025-09-10,0.1,1,5,30,38,68,0,0,0,0,68,2,0,0,2
+1368,RHIDP-8565,5,RHIDP-8565 fixed the Vale alert: AsciiDocDITA.RelatedLinks,2025-09-10,0.1,1,7,46,43,89,0,0,0,0,89,0,0,0,2
+1367,RHIDP-8550,1,RHIDP-8550 fixed the Vale alert: AsciiDocDITA.AdmonitionTitle,2025-09-10,0.2,1,2,2,4,6,0,0,0,0,6,0,0,0,4
+1366,RHIDP-8551,3,RHIDP-8551 fixed the Vale alert: AsciiDocDITA.AuthorLine,2025-09-10,0.2,1,14,96,49,145,0,0,0,0,145,0,0,0,10
+1365,RHIDP-2628,2,RHIDP-2628:Update installation prerequisite,2025-10-07,27.0,1,11,11,11,22,0,0,0,0,22,0,0,0,3
+1364,,,Manual cherry-pick-1.6-Add Sizing requirements as a prereq for RHDH installation,2025-09-10,0.7,1,13,21,9,30,0,0,0,0,30,0,0,0,2
+1363,RHIDP-7472,8,[release-1.7] RHIDP-7472-1 - Modularize plugins content in artifacts/rhdh-plugins-reference,2025-09-09,0.0,1,21,915,26,941,0,0,0,0,941,18,0,0,26
+1362,RHIDP-2628,2,Manual cherry-pick: RHIDP-2628: Add Sizing requirements as a prerequisites for RHDH insta…,2025-09-10,0.7,1,13,14,2,16,0,0,0,0,16,0,0,0,2
+1361,RHDHBUGS-2005,13,RHDHBUGS-2005 Fixed broken links addendum (#1359),2025-09-09,0.0,1,36,83,82,165,0,0,0,0,165,0,0,0,1
+1360,RHIDP-8815,3,[release-1.7] RHIDP-8815-Minor Update,2025-09-09,0.0,1,1,4,2,6,0,0,0,0,6,0,0,0,1
+1359,RHDHBUGS-2005,13,RHDHBUGS-2005 Fixed broken links addendum,2025-09-09,0.1,4,36,85,86,171,0,0,0,0,171,0,0,0,11
+1358,RHIDP-7472,8,RHIDP-7472-1 - Modularize plugins content in artifacts/rhdh-plugins-reference,2025-09-09,0.6,3,21,915,26,941,0,0,0,0,941,18,0,0,27
+1357,RHDHBUGS-2005,13,RHDHBUGS-2005 - Fixed broken links #1348 backport to 1.7,2025-09-09,0.7,1,94,420,416,836,6,25,0,25,861,0,0,0,2
+1356,RHIDP-8815,3,RHIDP-8815-Minor Update,2025-09-09,1.1,3,1,4,2,6,0,0,0,0,6,0,0,0,1
+1355,RHIDP-4065,1,[release-1.6] RHIDP-4065: Added note for bug,2025-09-08,0.0,1,1,7,2,9,0,0,0,0,9,0,0,0,1
+1354,RHIDP-4065,1,[release-1.7] RHIDP-4065: Added note for bug,2025-09-08,0.0,1,1,7,2,9,0,0,0,0,9,0,0,0,1
+1353,RHIDP-8815,3,[release-1.7] RHIDP-8815: Updates on the Orchestrator documentation into RHDH,2025-09-05,0.0,1,5,10,10,20,0,0,0,0,20,0,0,0,2
+1352,RHIDP-8815,3,RHIDP-8815: Updates on the Orchestrator documentation into RHDH,2025-09-05,0.1,3,5,10,10,20,0,0,0,0,20,0,0,0,2
+1351,RHIDP-4065,1,RHIDP-4065: Added note for bug,2025-09-08,2.9,5,1,7,2,9,0,0,0,0,9,0,0,0,1
+1349,RHDHBUGS-422,2,RHDHBUGS-422: fixed duplicate titles in tables,2025-11-10,67.0,9,1,1,0,1,0,0,0,0,1,0,0,0,3
+1348,RHDHBUGS-2005,13,RHDHBUGS-2005 - Fixed broken links,2025-09-08,4.3,7,94,420,416,836,6,25,0,25,861,0,0,0,95
+1347,RHIDP-7556,,[release-1.7] RHIDP-7556: Update-Orchestrator-documentation-1.7,2025-09-03,0.0,1,7,87,79,166,0,0,0,0,166,4,0,0,9
+1346,RHDHBUGS-2000,1,RHDHBUGS-2000: Update the breaking change,2025-09-03,0.2,1,1,57,1,58,0,0,0,0,58,0,0,0,4
+1345,RHIDP-2628,2,RHIDP-2628: Add Sizing requirements as a prerequisites for RHDH installation,2025-09-09,6.8,6,13,14,2,16,0,0,0,0,16,0,0,0,7
+1344,RHIDP-8548,5,RHIDP-8548 Fix the 14 AsciiDocDITA.ExampleBlock errors,2025-09-04,1.9,1,5,59,70,129,0,0,0,0,129,0,0,0,7
+1343,RHIDP-8569,3,RHIDP-8569 Fix the 3 AsciiDocDITA.TaskTitle warnings,2025-09-04,2.0,1,3,8,8,16,0,0,0,0,16,0,0,0,3
+1342,RHIDP-8564,1,RHIDP-8564 Fixed the 1 AsciiDocDITA.DiscreteHeading warning,2025-09-04,2.1,1,1,0,5,5,0,0,0,0,5,0,0,0,1
+1341,RHIDP-8785,3,RHIDP-8785 - Enabled AsciiDocDITA Vale rules,2025-09-04,2.1,1,0,0,0,0,2,8,2,10,10,0,0,0,2
+1339,RHDHBUGS-1999,1,RHDHBUGS-1999: fixed macros,2025-09-16,14.9,3,1,2,0,2,0,0,0,0,2,0,0,0,1
+1338,RHIDP-7556,,RHIDP-7556: Update-Orchestrator-documentation-1.7,2025-09-03,5.0,4,7,87,79,166,0,0,0,0,166,4,0,0,9
+1337,RHDHBUGS-1955,1,[release-1.6] RHDHBUGS-1955: removed additional resources,2025-08-29,0.0,1,1,0,3,3,0,0,0,0,3,0,0,0,1
+1336,RHDHBUGS-1955,1,[release-1.7] RHDHBUGS-1955: removed additional resources,2025-08-29,0.0,1,1,0,3,3,0,0,0,0,3,0,0,0,1
+1335,RHIDP-2135,2,RHIDP-2135: README update,2025-10-15,47.7,7,1,129,8,137,0,0,0,0,137,0,0,0,14
+1334,,,chore: tagRelease.sh: bump to 1.6.4 in release-1.6 branch [skip-build],2025-08-27,0.1,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1333,RHIDP-8558,,RHIDP-8558: Release notes for Red Hat Developer Hub 1.6.4,2025-08-27,0.0,2,1,2,0,2,0,0,0,0,2,0,0,0,1
+1332,,,[release-1.7] RHDHPAI-1075: Post GA changes,2025-08-26,0.0,1,3,13,7,20,0,0,0,0,20,0,0,0,2
+1331,,,Manual cherrypick for PR-1324,2025-08-26,0.0,1,4,71,72,143,0,0,0,0,143,0,0,0,1
+1329,,,RHDHPAI-1075: Post GA changes,2025-08-26,0.2,5,3,13,7,20,0,0,0,0,20,0,0,0,2
+1328,,,RHDHPAI-770-1 - Added RHDHPAI-770 feature to the new features,2025-08-21,0.0,1,2,12,0,12,0,0,0,0,12,1,0,0,1
+1327,,,POST-GA-Quickstart-update - POST-GA Quickstart update,2025-08-21,0.1,4,2,16,16,32,1,0,0,0,32,1,0,1,2
+1326,,,[release-1.7] Orchestrator in RHDH Updates,2025-08-21,0.0,1,8,32,61,93,0,0,0,0,93,0,0,0,13
+1325,RHIDP-6477,1,RHIDP-6477-RN-JANUS-IDP-CLI - POST-GA docs release tasks for RHDH 1.7.0 release,2025-08-21,0.2,1,3,6,6,12,0,0,0,0,12,0,0,0,4
+1324,RHIDP-8688,2,RHIDP-8688: Minor changes,2025-08-26,5.1,4,4,19,20,39,0,0,0,0,39,0,0,0,3
+1323,RHIDP-7723,1,[release-1.6] RHIDP-7723: Removing readonlyrootfilesystem,2025-08-21,0.0,1,4,0,56,56,0,0,0,0,56,0,0,0,1
+1322,RHIDP-7723,1,[release-1.7] RHIDP-7723: Removing readonlyrootfilesystem,2025-08-21,0.0,1,4,0,56,56,0,0,0,0,56,0,0,0,1
+1321,RHIDP-7723,1,RHIDP-7723: Readonlyrootfilesystem release notes update,2025-08-28,6.9,1,1,54,50,104,0,0,0,0,104,0,0,0,3
+1318,RHDH-7556,,Orchestrator in RHDH Updates,2025-08-21,0.7,3,8,32,61,93,0,0,0,0,93,0,0,0,13
+1317,RHIDP-7556,,[release-1.7] RHIDP-7556: Orchestrator flavor in RHDH Operator,2025-08-20,0.0,2,11,465,0,465,5,15,0,15,480,10,0,0,25
+1316,RHIDP-7723,1,RHIDP-7723: Removing readonlyrootfilesystem,2025-08-21,0.7,5,4,0,56,56,0,0,0,0,56,0,0,0,1
+1315,,,chore(release-notes): add link to RHSA for 1.7.0 and placeholder for 1.7.1; update link to query only for RHDH 1.7,2025-08-20,0.0,1,1,5,1,6,0,0,0,0,6,0,0,0,1
+1314,RHIDP-6478,,RHIDP-6478-1 - Release notes for Red Hat Developer Hub 1.7.0,2025-08-20,0.0,1,6,303,5,308,1,22,22,44,352,1,0,0,1
+1313,,,[release-1.7] RHDHPAI-808: Developer Lightspeed content RHDH,2025-08-19,0.0,1,30,934,2,936,6,15,0,15,951,24,0,1,11
+1312,RHIDP-7614,5,Manual Cherry-Pick-RHIDP-7614: Displaying the preferred username and Company Logo (#1254),2025-08-19,0.0,1,4,209,1,210,0,0,0,0,210,3,0,0,1
+1311,RHIDP-7560,8,RHIDP-7560-1 - Install and configure plugins from Extensions page (next phase),2025-08-19,0.0,1,9,390,14,404,6,0,0,0,404,7,0,6,4
+1310,RHIDP-8240,5,[release-1.7] RHIDP-8240 - Create a Quickstart guide to support first-time onboarding for administrators,2025-08-19,0.2,1,5,107,0,107,1,0,0,0,107,4,0,1,14
+1309,RHIDP-5152,8,[release-1.6] RHIDP-5152: Add Frontend Plugn Wiring Section,2025-08-18,0.0,1,18,816,0,816,0,0,0,0,816,16,0,0,6
+1308,RHIDP-5152,8,[release-1.7] RHIDP-5152: Add Frontend Plugn Wiring Section,2025-08-18,0.0,1,18,816,0,816,0,0,0,0,816,16,0,0,6
+1307,RHDHBUGS-1955,1,RHDHBUGS-1955: removed additional resources,2025-08-29,11.1,9,1,0,3,3,0,0,0,0,3,0,0,0,1
+1306,RHIDP-6905,,[release-1.7] RHIDP-6905: Versioning of software templates,2025-08-18,0.0,1,2,45,0,45,0,0,0,0,45,1,0,0,4
+1305,RHIDP-7556,,RHIDP-7556: Orchestrator flavor in RHDH Operator,2025-08-20,2.3,3,11,465,0,465,5,15,0,15,480,10,0,0,25
+1304,,,Manual cp,2025-08-18,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1303,RHIDP-6478,,RHIDP-6478 - Release notes for Red Hat Developer Hub 1.7.0,2025-08-20,2.9,3,6,294,17,311,1,22,22,44,355,0,0,0,23
+1300,,,RHDHPAI-808: Developer Lightspeed content RHDH,2025-08-19,6.0,5,30,934,2,936,6,15,0,15,951,24,0,1,11
+1299,RHIDP-6966,,[release-1.7] RHIDP-6966: use @red-hat-developer-hub/cli instead of @janus-idp/cli,2025-08-12,0.7,1,6,14,14,28,0,0,0,0,28,0,0,0,1
+1298,RHIDP-6905,,RHIDP-6905: Versioning of software templates,2025-08-18,6.8,4,2,45,0,45,0,0,0,0,45,1,0,0,4
+1297,RHIDP-7526,3,feat: migrate lifecycle/support metadata to overlay repo for all supported plugins in downstream-plugins file RHIDP-7526,2025-09-09,33.0,5,3,222,232,454,2,266,195,461,915,0,0,0,30
+1296,RHIDP-5733,3,RHIDP-5733: Info about custom config in the Installation guides-manual-cherry-pick,2025-08-07,0.6,1,6,202,11,213,0,0,0,0,213,2,0,0,1
+1295,RHIDP-5733,3,[release-1.6] RHIDP-5733: Info about custom config in the Installation guides,2025-08-07,0.6,1,6,171,12,183,0,0,0,0,183,1,0,0,8
+1294,RHIDP-5733,3,[release-1.7] RHIDP-5733: Info about custom config in the Installation guides,2025-08-07,0.6,1,6,171,12,183,0,0,0,0,183,1,0,0,8
+1293,RHIDP-8313,5,[release-1.7] RHIDP-8313: Global Header - Enable Quicklinks and Starred Items by default,2025-08-06,0.3,1,3,143,1,144,1,2,1,3,147,2,0,0,3
+1292,,,Minor change in adoption insights,2025-08-14,9.2,3,1,1,1,2,0,0,0,0,2,0,0,0,1
+1291,,,[release-1.5] chore: add note about correctly sequencing of versions to allow > and < queries to work when generating Re,2025-08-28,23.2,3,1,5,2,7,0,0,0,0,7,0,0,0,2
+1290,,,[release-1.6] chore: add note about correctly sequencing of versions to allow > and < queries to work when generating Re,2025-08-28,23.2,2,1,5,2,7,0,0,0,0,7,0,0,0,2
+1289,,,[release-1.7] RHDHPAI-804: Multi-analytics provider (Adoption Insights plugin),2025-08-05,0.1,1,13,204,254,458,0,0,0,0,458,7,0,0,14
+1288,RHIDP-7202,5,[release-1.7] RHIDP-7202: Doc procs for generating TechDocs pipeline with GitHub Actions and embedding videos,2025-08-04,0.0,1,11,243,12,255,0,0,0,0,255,4,0,0,8
+1287,RHIDP-8240,5,RHIDP-8240 - Create a Quickstart guide to support first-time onboarding for administrators,2025-08-19,18.7,7,5,107,0,107,1,0,0,0,107,4,0,1,17
+1286,RHDHBUGS-1883,2,[release-1.6] RHDHBUGS-1883: Added log level details,2025-07-31,0.0,1,3,21,3,24,0,0,0,0,24,1,0,0,5
+1285,RHDHBUGS-1883,2,[release-1.7] RHDHBUGS-1883: Added log level details,2025-07-31,0.0,1,3,21,3,24,0,0,0,0,24,1,0,0,5
+1284,RHIDP-8313,5,RHIDP-8313: Global Header - Enable Quicklinks and Starred Items by default,2025-08-06,8.9,4,3,143,1,144,1,2,1,3,147,2,0,0,3
+1281,RHIDP-7560,8,RHIDP-7560 - Install and configure plugins from Extensions page ,2025-08-19,26.8,9,19,586,99,685,11,16,0,16,701,14,0,6,71
+1280,,,chore: tagRelease.sh: bump to 1.6.3 in release-1.6 branch [skip-build],2025-07-22,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1279,,,chore: update RN for 1.6.3 advisory...,2025-07-22,0.6,2,1,2,0,2,0,0,0,0,2,0,0,0,1
+1278,RHDHBUGS-1883,2,RHDHBUGS-1883: Added log level details,2025-07-31,13.2,7,3,21,3,24,0,0,0,0,24,1,0,0,5
+1277,RHIDP-4196,1,chore: optionally provide more details about which plugins are missing from the .csv (RHIDP-4196),2025-07-18,0.7,2,0,0,0,0,1,29,11,40,40,0,0,0,1
+1276,RHIDP-8117,5,[release-1.7] chore(plugins): update dynamic plugins tables and .csv file with latest plugin wrapper versions (RHIDP-811,2025-07-17,0.0,1,4,120,101,221,2,163,138,301,522,0,0,0,4
+1275,,,Manual cherrypick for PR-1232,2025-07-17,0.4,1,23,35,35,70,1,2,2,4,74,0,0,0,1
+1274,RHIDP-7789,3,[release-1.6] RHIDP-7789: Some docs refer to old CRD versions or deprecated CRD fields,2025-07-16,0.0,1,3,11,11,22,0,0,0,0,22,0,0,0,5
+1273,RHIDP-7789,3,[release-1.7] RHIDP-7789: Some docs refer to old CRD versions or deprecated CRD fields,2025-07-16,0.0,1,3,11,11,22,0,0,0,0,22,0,0,0,5
+1272,,,chore: tagRelease.sh: bump to 1.5.3 in release-1.5 branch [skip-build],2025-07-17,1.5,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1271,,,chore(rn): Security update for 1.5.3,2025-07-15,0.7,1,1,1,0,1,0,0,0,0,1,0,0,0,1
+1270,RHIDP-8117,5,chore(plugins): update dynamic plugins tables and .csv file with latest plugin wrapper versions (RHIDP-8117),2025-07-17,5.5,3,4,120,101,221,2,163,138,301,522,0,0,0,4
+1269,,,fix typo,2025-07-09,0.0,1,1,0,1,1,0,0,0,0,1,0,0,0,1
+1268,RHIDP-7612,5,RHIDP-7612 Added _Enablig user provisioning with LDAP_,2025-10-20,103.8,3,2,396,0,396,0,0,0,0,396,1,0,0,12
+1267,RHIDP-7849,8,RHIDP-7849 Added existing modules to _Setting up and configuring your first instance_,2025-10-07,91.0,2,24,501,50,551,0,0,0,0,551,9,0,0,20
+1266,RHIDP-7975,8,RHIDP-7975 Enabling authentication procedures with mandatory steps only,2025-09-30,83.9,3,11,183,170,353,2,6,0,6,359,1,0,0,14
+1265,RHIDP-7847,3,RHIDP-7847 Getting started on OCP for the platform engineer,2025-07-08,0.0,1,2,13,0,13,5,5,0,5,18,1,0,0,3
+1263,RHIDP-2862,3,[release-1.5] RHIDP-2862: Add air-gapped use case to TechDocs plugin doc,2025-07-07,0.0,1,1,6,1,7,0,0,0,0,7,0,0,0,2
+1262,RHIDP-2862,3,[release-1.6] RHIDP-2862: Add air-gapped use case to TechDocs plugin doc,2025-07-07,0.0,1,1,6,1,7,0,0,0,0,7,0,0,0,3
+1261,RHIDP-5612,3,[release-1.6] RHIDP-5612 - Fix platform related documentation for Operator,2025-07-07,0.0,1,3,4,141,145,0,0,0,0,145,0,0,0,1
+1260,RHIDP-5612,3,[main] RHIDP-5612 - Fix platform related documentation for Operator,2025-07-07,0.0,1,3,4,141,145,0,0,0,0,145,0,0,0,2
+1259,RHIDP-5152,8,RHIDP-5152: Add Frontend Plugn Wiring Section,2025-08-18,42.7,7,18,816,0,816,0,0,0,0,816,16,0,0,6
+1258,RHIDP-6966,,RHIDP-6966: use @red-hat-developer-hub/cli instead of @janus-idp/cli,2025-08-11,38.1,4,6,14,14,28,0,0,0,0,28,0,0,0,1
+1257,,,Fix links to Integrating Red Hat Developer Hub with GitHub,2025-07-08,3.8,2,6,13,4,17,0,0,0,0,17,0,0,0,5
+1256,RHIDP-7562,2,RHIDP:7562: Support High Availability on EKS,2025-07-07,4.1,1,1,7,1,8,0,0,0,0,8,0,0,0,2
+1254,RHIDP-7614,5,RHIDP-7614: Displaying the preferred username and Company Logo,2025-08-18,47.1,9,4,209,1,210,0,0,0,0,210,3,0,0,9
+1250,RHIDP-7789,3,RHIDP-7789: Some docs refer to old CRD versions or deprecated CRD fields,2025-07-16,14.3,6,3,11,11,22,0,0,0,0,22,0,0,0,5
+1249,RHIDP-2862,3,RHIDP-2862: Add air-gapped use case to TechDocs plugin doc,2025-07-07,5.3,7,1,6,1,7,0,0,0,0,7,0,0,0,2
+1246,,,chore: add note about correctly sequencing of versions to allow > and < queries to work when generating Release Notes co,2025-08-05,34.7,8,1,5,2,7,0,0,0,0,7,0,0,0,1
+1245,,,[release-1.6] Minor change,2025-07-01,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1244,,,chore: regen release notes for 1.6.2,2025-07-01,0.0,1,1,17,4,21,0,0,0,0,21,0,0,0,1
+1243,,,Minor change,2025-07-01,0.0,4,1,1,1,2,0,0,0,0,2,0,0,0,1
+1241,RHIDP-7933,2,[release-1.6] RHIDP-7933: Fixed bug issues in the Software Template and Software Catalog docs,2025-07-01,0.0,1,2,2,2,4,1,0,0,0,4,0,0,1,2
+1240,,,chore: tagRelease.sh: bump to 1.6.2 in release-1.6 branch [skip-build],2025-06-30,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1239,,,chore: update RN for 1.6.2 advisory...,2025-06-30,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1237,RHIDP-5612,3,RHIDP-5612 - Fix platform related documentation for Operator,2025-07-07,10.2,8,3,4,141,145,0,0,0,0,145,0,0,0,1
+1236,RHIDP-7933,2,RHIDP-7933: Fixed bug issues in the Software Template and Software Catalog docs,2025-07-01,6.3,4,2,2,2,4,1,0,0,0,4,0,0,1,2
+1235,RHIDP-7599,5,[release-1.6] RHIDP-7599: Update Template editor,2025-06-23,0.0,1,1,8,5,13,0,0,0,0,13,0,0,0,3
+1234,,,Cherry-pick: Renamed RHTAP to RHADS,2025-06-19,0.0,1,2,7,8,15,0,0,0,0,15,0,0,0,1
+1233,,,Renamed RHTAP to RHADS,2025-06-18,0.2,4,2,7,7,14,0,0,0,0,14,0,0,0,1
+1232,RHIDP-7812,2,RHIDP-7812: Updated abbrev. and added missing periods,2025-07-01,13.2,4,24,34,34,68,1,1,1,2,70,0,0,0,4
+1231,RHIDP-7834,8,RHIDP-7834-RHIDP-7634-RHIDP-598 Refactor authenticating with RHBK,2025-07-08,20.8,2,5,188,201,389,0,0,0,0,389,0,0,0,18
+1230,RHIDP-7803,2,RHIDP-7803: Updated the structure,2025-06-23,7.1,3,1,18,18,36,0,0,0,0,36,0,0,0,1
+1229,,,RHDHPAI-804: Multi-analytics provider (Adoption Insights plugin),2025-08-05,49.9,6,13,204,254,458,0,0,0,0,458,7,0,0,14
+1228,RHIDP-7202,5,RHIDP-7202: Doc procs for generating TechDocs pipeline with GitHub Actions and embedding videos,2025-08-04,51.6,6,11,243,12,255,0,0,0,0,255,4,0,0,10
+1227,RHIDP-7833,8,RHIDP-7833 Follow more logical user flow for authenticating with Azure,2025-07-07,24.0,4,6,494,455,949,0,0,0,0,949,1,0,0,30
+1226,RHIDP-6735,8,[release-1.6] RHIDP-6735 - Added high-level overview of auth and user provisioning,2025-06-12,0.0,1,2,38,44,82,0,0,0,0,82,1,0,0,18
+1225,,,chore(rn): fix link to RHSA for 1.5.2;...,2025-06-11,0.1,1,1,4,1,5,0,0,0,0,5,0,0,0,2
+1224,RHIDP-7794,8,RHIDP-7794 Clarify authenticating and integrating with GitHub,2025-06-16,5.7,1,12,388,328,716,5,15,0,15,731,4,0,0,46
+1223,RHIDP-7750,1,chore: remove attribute for the RHTAP 1.3 version (which is not used in the docs),2025-06-17,6.8,2,1,1,2,3,0,0,0,0,3,0,0,0,2
+1222,,,RHDHPAI-810: New home cards,2025-06-16,5.9,6,1,72,1,73,0,0,0,0,73,0,0,0,2
+1221,RHIDP-7748,,RHIDP-7748 - Update release version for 1.5.2,2025-06-05,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1220,,,Bump version of RHDH to 1.7 in main; bump to BS 1.39.1 as that's the version we will be based on shortly; remove RHTAP v,2025-06-12,6.7,1,1,4,5,9,0,0,0,0,9,0,0,0,1
+1219,RHIDP-6792,,RHIDP-6792 - Move Dynamic Plugin Auth provider to Tech Preview Section,2025-06-05,0.0,2,2,59,59,118,0,0,0,0,118,1,0,0,2
+1218,RHIDP-7599,5,RHIDP-7599: Update Template editor,2025-06-23,20.0,6,1,8,5,13,0,0,0,0,13,0,0,0,3
+1217,,,Manual cherrypicking for PR-1198,2025-06-03,0.0,1,1,7,2,9,0,0,0,0,9,0,0,0,1
+1216,,,[release-1.5] RHDHPAI-808: Minor change in adoption insights,2025-06-03,0.0,1,1,7,2,9,0,0,0,0,9,0,0,0,2
+1215,RHIDP-6138,3,RHIDP-6138 policy effect,2025-06-11,7.8,4,2,8,0,8,0,0,0,0,8,0,0,0,3
+1214,RHIDP-6749,,RHIDP-6749: RNs for 1.5.2,2025-06-04,1.1,5,1,18,0,18,0,0,0,0,18,1,0,0,3
+1213,RHIDP-7661,2,RHIDP-7661: Correct Fixed Issues Placement in 1.6.1 Release Notes,2025-06-02,0.2,4,3,59,66,125,0,0,0,0,125,0,0,0,4
+1212,RHIDP-7542,3,RHIDP-7542: Template editor updates,2025-06-04,2.2,4,1,11,7,18,0,0,0,0,18,0,0,0,4
+1209,RHIDP-7542,3,[release-1.6] RHIDP-7542: Template editor updates,2025-06-02,0.0,1,1,8,6,14,0,0,0,0,14,0,0,0,4
+1208,RHIDP-7649,8,RHIDP-7649: Update link to Bulk importing GitHub repositories ,2025-05-30,0.0,1,2,2,2,4,0,0,0,0,4,0,0,0,1
+1207,RHIDP-7649,8,RHIDP-7649: Update link to Bulk importing GitHub repositories,2025-05-30,0.0,1,2,21,1,22,0,0,0,0,22,1,0,0,1
+1206,RHIDP-7649,8,RHIDP-7649: Update link to Bulk importing GitHub repositories,2025-05-30,0.2,8,2,2,2,4,0,0,0,0,4,0,0,0,2
+1203,RHIDP-7649,8,[release-1.5] RHIDP-7649: Incorrectly structured content related to the Topology plugin,2025-05-29,0.0,1,2,10,7,17,0,0,0,0,17,1,0,0,1
+1202,RHIDP-7649,8,RHIDP-7649: Incorrectly structured content related to the Topology plugin,2025-05-29,0.4,7,2,10,7,17,0,0,0,0,17,1,0,0,1
+1200,,,chore(release): update attributes.adoc for release of 1.6.1,2025-06-04,8.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1199,RHIDP-7542,3,RHIDP-7542: Template editor updates,2025-06-02,6.0,9,1,8,6,14,0,0,0,0,14,0,0,0,4
+1198,,,RHDHPAI-808: Minor change in adoption insights,2025-06-03,7.9,6,1,7,2,9,0,0,0,0,9,0,0,0,2
+1197,RHIDP-7175,3,[release-1.5] RHIDP-7175: OCI Image content update,2025-05-26,0.0,1,1,25,6,31,0,0,0,0,31,0,0,0,5
+1196,RHIDP-7175,3,[release-1.6] RHIDP-7175: OCI Image content update,2025-05-26,0.0,1,1,25,6,31,0,0,0,0,31,0,0,0,5
+1195,,,Manual Cherrypick for PR-1191,2025-05-26,0.0,1,1,39,30,69,0,0,0,0,69,0,0,0,1
+1194,,,[release-1.5] RHDHPAI-813: Updated the adoption insights image,2025-05-26,0.0,1,1,30,28,58,0,0,0,0,58,0,0,0,1
+1193,RHIDP-6410,8,[release-1.5] RHIDP-6410 - added steps  to Azure authentication procedures,2025-05-26,0.0,1,4,51,50,101,0,0,0,0,101,0,0,0,15
+1192,RHIDP-7175,3,RHIDP-7175: OCI Image content update,2025-05-26,0.4,9,1,25,6,31,0,0,0,0,31,0,0,0,5
+1191,,,RHDHPAI-813: Updated the adoption insights image,2025-05-26,3.9,5,1,30,28,58,0,0,0,0,58,0,0,0,1
+1190,RHDHBUGS-241,1,RHDHBUGS-241: Update RHSA links for Fixed Security Issues for 1.5,2025-05-22,0.2,3,1,1,1,2,0,0,0,0,2,0,0,0,2
+1189,RHIDP-7461,3,[release-1.6] RHIDP-7461: List the steps for role-based access in UI,2025-05-22,0.0,1,4,60,19,79,0,0,0,0,79,2,0,0,2
+1188,RHIDP-5999,,RHIDP-5999: Fixed Issues in RN,2025-05-22,0.3,3,2,12,11,23,0,0,0,0,23,1,0,0,2
+1187,RHIDP-5608,2,RHIDP-5608: Update content for Template Editor,2025-05-26,4.3,3,3,45,48,93,1,0,0,0,93,0,0,1,3
+1186,RHIDP-6735,8,RHIDP-6735 - Added high-level overview of auth and user provisioning,2025-06-12,21.5,13,2,38,44,82,0,0,0,0,82,1,0,0,22
+1185,RHIDP-5999,,RHIDP-5999: POST-GA docs release tasks for RHDH release,2025-05-21,0.0,6,2,23,0,23,0,0,0,0,23,2,0,0,3
+1184,RHIDP-7542,3,[release-1.6] RHIDP-7542: Template Editor section update,2025-05-21,0.0,1,1,28,31,59,0,0,0,0,59,0,0,0,4
+1183,RHIDP-6501,3,[main] RHIDP-6501 - Modularize modules/dynamic-plugins/con-dynamic-plugins-cache.adoc,2025-05-20,0.0,1,6,166,152,318,0,0,0,0,318,4,0,0,6
+1182,RHIDP-6498,3,[release-1.5] RHIDP-6498: Modularize modules/configuring-a-floating-action-button/proc-configuring-floating-action-butto,2025-05-20,0.0,1,3,94,90,184,0,0,0,0,184,1,0,0,1
+1181,RHIDP-6498,3,[release-1.6] RHIDP-6498: Modularize modules/configuring-a-floating-action-button/proc-configuring-floating-action-butto,2025-05-20,0.0,1,3,94,90,184,0,0,0,0,184,1,0,0,1
+1180,RHIDP-6498,3,RHIDP-6498: Modularize modules/configuring-a-floating-action-button/proc-configuring-floating-action-button-as-a-dynamic,2025-05-20,0.1,5,3,94,90,184,0,0,0,0,184,1,0,0,1
+1179,RHIDP-6501,3,RHIDP-6501 - Modularize modules/dynamic-plugins/con-dynamic-plugins-cache.adoc,2025-05-20,0.1,7,6,166,152,318,0,0,0,0,318,4,0,0,7
+1178,RHIDP-7542,3,RHIDP-7542: Template Editor section update,2025-05-21,0.9,10,1,28,31,59,0,0,0,0,59,0,0,0,4
+1177,RHIDP-5184,8,RHIDP-5184 - added steps to _Configuring Redis cache_ (#1169),2025-05-21,0.9,0,3,38,20,58,0,0,0,0,58,1,0,0,1
+1176,RHIDP-7461,3,RHIDP-7461: List the steps for role-based access in UI,2025-05-22,2.0,6,4,60,19,79,0,0,0,0,79,2,0,0,2
+1173,RHIDP-5184,8,[release-1.6] RHIDP-5184 - added steps to _Configuring Redis cache_,2025-05-19,0.0,1,3,38,18,56,0,0,0,0,56,1,0,0,16
+1172,RHIDP-7455,5,[release-1.6] RHIDP-7455: Adding ArgoCD and Quay permissions,2025-05-19,0.0,1,1,35,1,36,0,0,0,0,36,0,0,0,3
+1171,RHIDP-7455,5,RHIDP-7455: Adding ArgoCD and Quay permissions,2025-05-19,0.7,4,1,35,1,36,0,0,0,0,36,0,0,0,3
+1170,,,chore: add static link to the 1.6.0...,2025-05-19,2.8,1,1,5,1,6,0,0,0,0,6,0,0,0,1
+1169,RHIDP-5184,8,RHIDP-5184 - added steps to _Configuring Redis cache_,2025-05-19,3.0,6,3,38,18,56,0,0,0,0,56,1,0,0,16
+1168,RHIDP-6410,8,RHIDP-6410 - added steps  to Azure authentication procedures,2025-05-26,9.9,15,4,51,50,101,0,0,0,0,101,0,0,0,18
+1167,RHIDP-7038,,[release-1.6] RHIDP-7038: Doc air-gapped installation on K8s platforms with Helm,2025-05-16,0.0,2,4,475,3,478,0,0,0,0,478,3,0,0,3
+1166,RHIDP-6152,3,[release-1.6] RHIDP-6152: Update Install Operator doc to reflect UI changes,2025-05-16,0.0,1,2,48,21,69,0,0,0,0,69,0,0,0,4
+1165,,,[release-1.6] Updated about RHDH,2025-05-14,0.0,1,2,80,3,83,1,5,1,6,89,1,0,0,1
+1164,RHIDP-6145,8,[release-1.6] RHIDP-6145: Added developer-focused content for software templates,2025-05-14,0.0,1,6,83,24,107,3,0,0,0,107,2,0,3,11
+1163,RHIDP-6144,13,[release-1.6] RHIDP-6144: Developer-focused content for software catalogs,2025-05-14,0.0,1,9,231,0,231,0,0,0,0,231,8,0,0,10
+1162,,,chore: fix list of enabled-by-default plugins in 1.5 (missing GA global-floating-action-button and 3 TP marketplace plug,2025-05-15,1.7,2,1,5,1,6,0,0,0,0,6,0,0,0,1
+1161,RHIDP-6584,8,[main] RHIDP-6584 - Document how users can install and configure plugins from Marketplace in RHDH,2025-05-13,0.0,2,2,61,2,63,4,0,0,0,63,1,0,4,12
+1160,RHIDP-5421,5,[release-1.6] RHIDP-5421 - Document which plugins in RHDH have metrics,2025-05-13,0.0,1,1,58,0,58,0,0,0,0,58,1,0,0,7
+1159,RHIDP-6147,8,[release-1.6] RHIDP-6147: Developer-focused content for Learning Paths,2025-05-13,0.0,1,4,30,1,31,0,0,0,0,31,2,0,0,3
+1158,RHIDP-6152,3,RHIDP-6152: Update Install Operator doc to reflect UI changes,2025-05-16,3.5,5,2,48,21,69,0,0,0,0,69,0,0,0,4
+1157,RHIDP-6143,13,Updated about RHDH,2025-05-14,1.7,6,2,80,3,83,1,5,1,6,89,1,0,0,2
+1156,,,"chore: update plugins list for 1.7/main, including new enabled-by-default tech preview plugins",2025-05-16,3.6,2,4,80,80,160,1,60,61,121,281,0,0,0,2
+1155,RHIDP-6575,3,RHIDP-6575:Minor-Fixes-RHIDP-6000-Release-notes-for-Red-Hat-Developer-Hub-1.6.0,2025-05-12,0.0,1,1,14,1,15,0,0,0,0,15,0,0,0,1
+1154,RHIDP-6148,5,[release-1.6] RHIDP-6148: Removed TP snippet from kubernetes custom actions,2025-05-14,1.8,1,1,0,2,2,0,0,0,0,2,0,0,0,2
+1153,RHIDP-6569,3,[release-1.6] RHIDP-6569-1 - Document the configurable features of navigation (sidebar) in RHDH,2025-05-12,0.0,1,3,13,1,14,0,0,0,0,14,1,0,0,4
+1152,RHIDP-6148,5,RHIDP-6148: Removed TP snippet from kubernetes custom actions,2025-05-12,0.0,3,1,0,2,2,0,0,0,0,2,0,0,0,1
+1151,RHIDP-6568,5,[release-1.6] RHIDP-6568: Create RHDH Metadata card customization content,2025-05-12,0.0,0,2,37,0,37,0,0,0,0,37,1,0,0,4
+1150,RHIDP-6569,3,RHIDP-6569-1 - Document the configurable features of navigation (sidebar) in RHDH,2025-05-12,1.1,4,3,13,1,14,0,0,0,0,14,1,0,0,4
+1149,RHIDP-7116,1,RHIDP-7116: Remove dangerouslyAllowSignInWithoutUserInCatalog in RHBK auth section,2025-05-08,0.0,1,1,0,26,26,0,0,0,0,26,0,0,0,1
+1148,RHIDP-7116,1,[release-1.6] RHIDP-7116: Remove dangerouslyAllowSignInWithoutUserInCatalog in RHBK auth section,2025-05-08,0.0,1,1,0,26,26,0,0,0,0,26,0,0,0,1
+1147,RHIDP-7116,1,[release-1.5] RHIDP-7116: Remove dangerouslyAllowSignInWithoutUserInCatalog in RHBK auth section,2025-05-08,0.2,1,1,0,26,26,0,0,0,0,26,0,0,0,1
+1146,RHIDP-6000,,chore: add developer-preview.adoc as a separate query and template than ref-release-notes-technology-preview.adoc (RHIDP,2025-05-12,4.7,2,0,0,0,0,1,23,2,25,25,0,0,0,1
+1145,RHIDP-6000,,chore: add developer-preview.adoc as a separate query and template than ref-release-notes-technology-preview.adoc (RHIDP,2025-05-12,4.7,2,0,0,0,0,1,23,2,25,25,0,0,0,1
+1143,RHIDP-6000,,chore: add developer-preview.adoc as a separate query and template than ref-release-notes-technology-preview.adoc (RHIDP,2025-05-12,4.7,1,0,0,0,0,1,23,2,25,25,0,0,0,1
+1142,RHIDP-4676,,chore: move RHIDP-4676 from TP to new features list (RHIDP-6148) [release-1.5],2025-05-12,4.9,3,2,10,13,23,0,0,0,0,23,0,0,0,1
+1141,RHIDP-6575,3,RHIDP-6575-1 - Promote RHDH-local to Dev preview status in RHDH Docs,2025-05-07,0.0,1,2,23,0,23,0,0,0,0,23,1,0,0,2
+1140,RHIDP-6575,3,RHIDP-6575 - Add RHDH Local attributes,2025-05-06,0.0,1,1,2,0,2,0,0,0,0,2,0,0,0,1
+1139,RHIDP-7116,1,RHIDP-7116: Remove dangerouslyAllowSignInWithoutUserInCatalog in RHBK auth section,2025-05-08,1.8,7,1,0,26,26,0,0,0,0,26,0,0,0,1
+1138,RHIDP-5653,5,RHIDP-5653: Reorganize Segment/Telemetry instructions into its own ca…,2025-05-07,1.8,1,14,79,69,148,0,0,0,0,148,3,0,0,1
+1137,RHIDP-5653,5,RHIDP-5653: Reorganize Segment/Telemetry instructions into its own ca…,2025-05-07,1.8,1,14,79,69,148,0,0,0,0,148,3,0,0,1
+1136,RHIDP-5653,5,[release-1.6] RHIDP-5653: Reorganize Segment/Telemetry instructions into its own category,2025-05-05,0.0,1,14,79,69,148,0,0,0,0,148,3,0,0,7
+1135,RHIDP-5653,5,[release-1.5] RHIDP-5653: Reorganize Segment/Telemetry instructions into its own category,2025-05-05,0.0,1,14,79,69,148,0,0,0,0,148,3,0,0,7
+1134,RHIDP-6503,3,[release-1.6] RHIDP-6503 - Modularize: Installing and configuring the Redis cache,2025-05-02,0.0,1,1,1,3,4,0,0,0,0,4,0,0,0,1
+1133,RHIDP-6000,,RHIDP-6000: Release notes for Red Hat Developer Hub 1.6.0,2025-05-12,11.2,9,8,342,31,373,0,0,0,0,373,0,0,0,3
+1132,RHIDP-5483,1,[release-1.4] RHIDP-5483: Update Authorization Preface,2025-05-01,0.0,1,3,8,18,26,0,0,0,0,26,0,0,0,3
+1131,RHIDP-5483,1,[release-1.5] RHIDP-5483: Update Authorization Preface,2025-05-05,4.0,3,3,8,18,26,0,0,0,0,26,0,0,0,3
+1130,RHIDP-5483,1,[release-1.6] RHIDP-5483: Update Authorization Preface,2025-05-01,0.0,1,3,8,18,26,0,0,0,0,26,0,0,0,4
+1129,RHIDP-6850,,[release-1.5] RHIDP-6850: Add TechDocs subtitle,2025-05-05,4.0,3,1,3,3,6,1,2,3,5,11,0,0,0,1
+1128,RHIDP-6850,,[release-1.6] RHIDP-6850: Add TechDocs subtitle,2025-05-01,0.0,1,1,3,3,6,1,2,3,5,11,0,0,0,1
+1127,RHIDP-6146,13,[release-1.6] RHIDP-6146: Create developer-focused TechDocs content,2025-05-05,4.0,3,7,141,0,141,0,0,0,0,141,6,0,0,3
+1126,RHIDP-6506,3,[release-1.6] RHIDP-6506: Modularize proc-rhdh-deploy-eks-operator.adoc,2025-05-01,0.0,1,3,12,8,20,0,0,0,0,20,1,0,0,1
+1125,,,Updated versions for 1.6,2025-04-30,0.0,1,1,4,4,8,0,0,0,0,8,0,0,0,1
+1124,RHIDP-5515,3,[release-1.5] RHIDP-5515: Document default PVC and Secret configuration update,2025-04-30,0.0,1,4,95,0,95,0,0,0,0,95,3,0,0,4
+1123,RHIDP-5515,3,[release-1.6] RHIDP-5515: Document default PVC and Secret configuration update,2025-04-30,0.0,1,4,95,0,95,0,0,0,0,95,3,0,0,4
+1122,RHIDP-6504,8,[release-1.5] RHIDP-6504: Modularize modules/dynamic-plugins/proc-topology-configure,2025-04-30,0.0,1,17,401,342,743,0,0,0,0,743,15,0,0,3
+1121,RHIDP-6504,8,[release-1.6] RHIDP-6504: Modularize modules/dynamic-plugins/proc-topology-configure,2025-04-30,0.0,1,17,401,342,743,0,0,0,0,743,15,0,0,3
+1120,RHIDP-6571,5,[release-1.6] RHIDP-6571 - remove configuring the base URL for Operator-based,2025-04-30,0.0,1,1,14,8,22,0,0,0,0,22,0,0,0,14
+1119,RHIDP-6502,3,[release-1.6] RHIDP-6502 Modularize Overriding Core Backend Service Configuration,2025-04-30,0.0,1,3,101,102,203,0,0,0,0,203,1,0,0,5
+1118,RHIDP-6507,5,[release-1.6] RHIDP-6507 - modularize _Monitoring and logging with AWS,2025-04-30,0.0,1,10,195,150,345,0,0,0,0,345,8,0,0,48
+1117,RHIDP-6566,5,[release-1.6] RHIDP-6566: Rename Create with Self-service,2025-04-29,0.0,1,7,25,60,85,4,0,0,0,85,0,0,4,5
+1116,RHIDP-6567,5,[release-1.6] RHIDP-6567: HA support for AKS,2025-04-29,0.0,1,1,11,3,14,0,0,0,0,14,0,0,0,2
+1115,RHIDP-6570,8,[release-1.6] RHIDP-6570: Document the permission support to RBAC plugin,2025-04-29,0.0,1,3,181,1,182,0,0,0,0,182,1,0,0,5
+1114,RHIDP-6508,3,[release-1.6] RHIDP-6508 - modularize _Supported ServiceNow custom actions_,2025-04-29,0.0,1,1,2,4,6,0,0,0,0,6,0,0,0,1
+1113,RHIDP-6500,3,[release-1.5] RHIDP-6500: Modularize customizing the Tech Radar page,2025-04-29,0.0,1,5,84,75,159,0,0,0,0,159,3,0,0,2
+1112,RHIDP-6500,3,[release-1.6] RHIDP-6500: Modularize customizing the Tech Radar page,2025-04-29,0.0,1,5,84,75,159,0,0,0,0,159,3,0,0,2
+1111,RHIDP-6882,3,[release-1.6] RHIDP-6882 - RHBK authentication: sub claim OIDC resolver is default,2025-04-29,0.0,0,1,7,3,10,0,0,0,0,10,0,0,0,1
+1110,RHIDP-5421,5,RHIDP-5421 - Document which plugins in RHDH have metrics,2025-05-13,14.6,4,1,58,0,58,0,0,0,0,58,1,0,0,12
+1109,,,Manual cherrypick for Pr-1107,2025-04-28,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1108,,,[release-1.5] RHIDP:7239: Updated the reference for Adoption Insights,2025-04-28,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1107,RHIDP-7239,1,RHIDP:7239: Updated the reference for Adoption Insights,2025-04-28,0.0,7,1,1,1,2,0,0,0,0,2,0,0,0,1
+1106,,,Manual cherrypick for Pr-1060,2025-05-02,3.9,1,2,6,1,7,0,0,0,0,7,0,0,0,1
+1105,RHIDP-6882,3,RHIDP-6882 - RHBK authentication: sub claim OIDC resolver is default,2025-04-29,1.1,3,1,7,3,10,0,0,0,0,10,0,0,0,1
+1104,,,[release-1.5] RHDHPAI-735: Configuration info and other issues to fix,2025-04-28,0.0,1,4,26,21,47,0,0,0,0,47,0,0,0,7
+1103,RHIDP-6525,2,[release-1.6] RHIDP-6525: Modularizing Customizing,2025-04-28,0.0,1,5,147,132,279,0,0,0,0,279,3,0,0,2
+1102,RHIDP-6525,2,[release-1.5] RHIDP-6525: Modularizing Customizing,2025-04-28,0.0,0,5,147,132,279,0,0,0,0,279,3,0,0,2
+1101,RHIDP-7038,,RHIDP-7038: Doc air-gapped installation on K8s platforms with Helm,2025-05-16,20.6,5,4,475,3,478,0,0,0,0,478,3,0,0,4
+1100,RHIDP-6567,5,RHIDP-6567: HA support for AKS,2025-04-29,4.8,3,1,11,3,14,0,0,0,0,14,0,0,0,2
+1099,RHIDP-6147,8,RHIDP-6147: Developer-focused content for Learning Paths,2025-05-13,18.7,5,4,30,1,31,0,0,0,0,31,2,0,0,3
+1098,RHIDP-6145,8,RHIDP-6145: Added developer-focused content for software templates,2025-05-14,19.8,12,6,83,24,107,3,0,0,0,107,2,0,3,11
+1097,RHIDP-6575,3,RHIDP-6575 - Promote RHDH-local to Dev preview status in RHDH Docs,2025-05-06,12.1,5,2,7,4,11,0,0,0,0,11,0,0,0,7
+1096,RHIDP-6571,5,RHIDP-6571 - remove configuring the base URL for Operator-based,2025-04-30,6.1,2,1,14,8,22,0,0,0,0,22,0,0,0,13
+1095,RHIDP-6217,2,[release-1.6] RHIDP-6217: Updates in Topology RBAC permissions,2025-04-24,0.0,1,2,47,4,51,0,0,0,0,51,0,0,0,1
+1094,RHIDP-6144,13,RHIDP-6144: Developer-focused content for software catalogs,2025-05-14,20.0,5,9,231,0,231,0,0,0,0,231,8,0,0,10
+1093,RHIDP-7076,2,[release-1.6] RHIDP-7076: Changing version number for RHBK,2025-04-23,0.0,1,3,5,10,15,0,0,0,0,15,0,0,0,3
+1090,RHIDP-6508,3,RHIDP-6508 - modularize _Supported ServiceNow custom actions_,2025-04-29,7.0,3,1,2,4,6,0,0,0,0,6,0,0,0,1
+1089,RHIDP-6507,5,RHIDP-6507 - modularize _Monitoring and logging with AWS,2025-04-30,7.8,5,10,195,150,345,0,0,0,0,345,8,0,0,48
+1088,RHIDP-6499,3,[release-1.6] RHIDP-6499: Modularize Customizing the Learning Paths,2025-04-22,0.0,1,5,88,83,171,0,0,0,0,171,3,0,0,9
+1087,RHIDP-6503,3,RHIDP-6503 - Modularize: Installing and configuring the Redis cache,2025-05-02,10.6,3,1,1,3,4,0,0,0,0,4,0,0,0,1
+1086,RHIDP-6506,3,RHIDP-6506: Modularize proc-rhdh-deploy-eks-operator.adoc,2025-05-01,9.6,3,3,12,8,20,0,0,0,0,20,1,0,0,1
+1085,RHIDP-6582,3,RHIDP-6582 - Dynamic Plugins - Update table of dynamic plugins for RHDH 1.6,2025-05-12,20.9,4,5,82,78,160,1,61,61,122,282,0,0,0,7
+1084,RHIDP-6584,8,RHIDP-6584 - Document how users can install and configure plugins from Marketplace in RHDH,2025-05-13,22.1,7,2,61,2,63,4,0,0,0,63,1,0,4,16
+1083,RHIDP-7076,2,RHIDP-7076: Changing version number for RHBK,2025-04-23,2.2,6,3,5,10,15,0,0,0,0,15,0,0,0,3
+1082,RHIDP-6146,13,RHIDP-6146: Create developer-focused TechDocs content,2025-05-01,13.5,7,7,141,0,141,0,0,0,0,141,6,0,0,2
+1081,RHIDP-6217,2,RHIDP-6217: Updates in Topology RBAC permissions,2025-04-24,6.8,3,2,47,4,51,0,0,0,0,51,0,0,0,1
+1080,RHIDP-6423,3,[release-1.6] RHIDP-6423 Remove references to the custom auditor implementation,2025-04-16,0.0,1,6,4,101,105,0,0,0,0,105,0,0,0,1
+1079,RHIDP-6570,8,RHIDP-6570: Document the permission support to RBAC plugin,2025-04-29,12.9,3,3,181,1,182,0,0,0,0,182,1,0,0,5
+1078,RHDHBUGS-232,2,RHDHBUGS-232: Changes to RHDH 1.5 release notes,2025-04-23,7.1,2,1,3,3,6,0,0,0,0,6,0,0,0,4
+1077,RHIDP-6566,5,RHIDP-6566: Rename Create with Self-service,2025-04-29,14.0,3,7,25,60,85,4,0,0,0,85,0,0,4,4
+1076,RHIDP-6970,1,[release-1.4] RHIDP-6970: Fix headings in Customizing doc,2025-04-14,0.0,1,3,7,11,18,0,0,0,0,18,0,0,0,1
+1075,RHIDP-6970,1,[release-1.6] RHIDP-6970: Fix headings in Customizing doc,2025-04-14,0.0,0,3,7,11,18,0,0,0,0,18,0,0,0,1
+1074,RHIDP-6970,1,[release-1.5] RHIDP-6970: Fix headings in Customizing doc,2025-04-14,0.0,1,3,7,11,18,0,0,0,0,18,0,0,0,1
+1073,RHIDP-6502,3,RHIDP-6502 Modularize Overriding Core Backend Service Configuration,2025-04-30,16.1,3,3,101,102,203,0,0,0,0,203,1,0,0,5
+1072,RHIDP-6850,,RHIDP-6850: Add TechDocs subtitle,2025-05-01,19.4,7,1,3,3,6,1,2,3,5,11,0,0,0,1
+1071,RHIDP-6970,1,RHIDP-6970: Fix headings in Customizing doc,2025-04-14,2.7,6,3,7,11,18,0,0,0,0,18,0,0,0,1
+1070,RHIDP-6568,5,RHIDP-6568: Create RHDH Metadata card customization content,2025-05-12,30.7,4,2,37,0,37,0,0,0,0,37,1,0,0,5
+1069,RHIDP-6500,3,RHIDP-6500: Modularize customizing the Tech Radar page,2025-04-29,18.9,5,5,84,75,159,0,0,0,0,159,3,0,0,2
+1068,RHIDP-6499,3,RHIDP-6499: Modularize Customizing the Learning Paths,2025-04-22,11.8,4,5,88,83,171,0,0,0,0,171,3,0,0,9
+1067,RHIDP-5515,3,RHIDP-5515: Document default PVC and Secret configuration update,2025-04-30,20.9,5,4,95,0,95,0,0,0,0,95,3,0,0,4
+1065,RHIDP-6504,8,RHIDP-6504: Modularize modules/dynamic-plugins/proc-topology-configure,2025-04-30,21.5,5,17,401,342,743,0,0,0,0,743,15,0,0,3
+1064,RHIDP-6760,1,RHIDP-6760: Incorrect link in Customizing RHDH Title,2025-04-16,7.8,3,1,1,1,2,0,0,0,0,2,0,0,0,1
+1063,RHIDP-6423,3,RHIDP-6423 Remove references to the custom auditor implementation,2025-04-16,8.0,5,6,4,101,105,0,0,0,0,105,0,0,0,1
+1062,RHIDP-6149,1,[release-1.6] RHIDP-6149: Supported platform list in installation docs,2025-04-08,0.0,1,1,1,7,8,0,0,0,0,8,0,0,0,2
+1061,RHIDP-6149,1,[release-1.5] RHIDP-6149: Supported platform list in installation docs,2025-04-08,0.0,1,1,1,7,8,0,0,0,0,8,0,0,0,2
+1060,,,RHDHPAI-735: Configuration info and other issues to fix,2025-04-28,19.9,10,4,26,21,47,0,0,0,0,47,0,0,0,7
+1059,RHIDP-6358,,RHIDP-6358: Added fixed security issues for 1.4.3,2025-04-07,0.0,1,3,16,0,16,2,3,0,3,19,1,0,0,1
+1058,RHIDP-6000,,chore: remove obsolete security RN files [release-1.6] (RHIDP-6000),2025-04-22,14.8,2,5,6,39,45,3,0,70,70,115,0,0,0,1
+1057,RHIDP-6000,,chore: remove obsolete security RN files [main] (RHIDP-6000),2025-04-22,14.8,2,5,6,39,45,3,0,70,70,115,0,0,0,1
+1056,RHIDP-6525,2,RHIDP-6525: Modularizing Customizing,2025-04-28,20.8,6,5,147,132,279,0,0,0,0,279,3,0,0,2
+1055,RHIDP-5585,1,RHIDP-5585: fix attribute in 1.4,2025-04-08,1.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1054,RHIDP-6149,1,RHIDP-6149: Supported platform list in installation docs,2025-04-08,1.0,7,1,1,7,8,0,0,0,0,8,0,0,0,2
+1053,RHIDP-6845,1,RHIDP-6845: Move dangerouslyAllowSignInWithoutUserInCatalog from Deprecated to Breaking changes section,2025-04-08,0.9,4,2,9,10,19,0,0,0,0,19,1,0,0,4
+1052,RHIDP-5483,1,RHIDP-5483: Update Authorization Preface,2025-05-01,27.4,8,3,8,18,26,0,0,0,0,26,0,0,0,3
+1051,,,chore: tagRelease.sh: bump to 1.4.3 in release-1.4 branch,2025-04-03,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1050,RHIDP-5604,5,[release-1.6] RHIDP-5604 Configuring entity tab titles and entity detail tab layout,2025-04-03,0.0,1,3,98,0,98,0,0,0,0,98,3,0,0,18
+1049,RHIDP-5604,5,[release-1.5] RHIDP-5604 Configuring entity tab titles and entity detail tab layout,2025-04-03,0.0,1,3,98,0,98,0,0,0,0,98,3,0,0,18
+1048,RHIDP-3504,2,[release-1.6] RHIDP-3504: Update the doc on changing RHDH logo,2025-04-03,0.0,1,1,18,2,20,0,0,0,0,20,0,0,0,4
+1047,RHIDP-3504,2,[release-1.5] RHIDP-3504: Update the doc on changing RHDH logo,2025-04-03,0.0,1,1,18,2,20,0,0,0,0,20,0,0,0,4
+1046,RHIDP-3504,2,[release-1.4] RHIDP-3504: Update the doc on changing RHDH logo,2025-04-03,0.0,1,1,18,2,20,0,0,0,0,20,0,0,0,4
+1045,RHIDP-6667,1,[release-1.6] RHIDP-6667: Update TechDocs add-ons doc,2025-04-03,0.0,1,2,4,2,6,0,0,0,0,6,0,0,0,2
+1044,RHIDP-6667,1,[release-1.5] RHIDP-6667: Update TechDocs add-ons doc,2025-04-02,0.0,1,2,4,2,6,0,0,0,0,6,0,0,0,2
+1043,,,[release-1.5] RHDHPAI-720: Minor comment,2025-04-02,0.0,1,1,2,2,4,4,0,0,0,4,0,0,4,2
+1042,,,RHDHPAI-720: Minor comment,2025-04-02,0.1,4,1,2,2,4,4,0,0,0,4,0,0,4,2
+1041,,,[release-1.5] RHDHPAI-720: Adding more info to the app-config-dynamic.yaml file in the install section,2025-04-01,0.0,1,1,16,7,23,0,0,0,0,23,0,0,0,4
+1040,RHIDP-5058,1,RHIDP-5058: Update documentation references to the Ansible BU supported plug-ins,2025-04-16,15.1,4,2,4,1,5,0,0,0,0,5,0,0,0,2
+1039,RHIDP-6550,,[release-1.4] RHIDP-6550 Update URL for Ansible plug-ins docs,2025-04-01,0.0,1,1,1,12,13,0,0,0,0,13,0,0,0,1
+1038,RHIDP-6550,,[release-1.5] RHIDP-6550 Update URL for Ansible plug-ins docs,2025-04-01,0.0,1,1,1,12,13,0,0,0,0,13,0,0,0,1
+1037,RHIDP-6560,1,[release-1.4] RHIDP-6560: Fix unterminated open blocks,2025-04-01,0.0,0,2,1,3,4,0,0,0,0,4,0,0,0,2
+1036,RHIDP-6560,1,[release-1.5] RHIDP-6560: Fix unterminated open blocks,2025-04-01,0.0,0,2,1,3,4,0,0,0,0,4,0,0,0,2
+1035,RHIDP-5975,3,[release-1.5] RHIDP-5975 document the `includeTransitiveGroupOwnership` option,2025-04-01,0.0,1,3,24,0,24,0,0,0,0,24,1,0,0,11
+1034,RHIDP-5653,5,RHIDP-5653: Reorganize Segment/Telemetry instructions into its own category,2025-05-05,34.8,13,14,79,69,148,0,0,0,0,148,3,0,0,7
+1033,RHIDP-3504,2,RHIDP-3504: Update the doc on changing RHDH logo,2025-04-03,2.8,10,1,18,2,20,0,0,0,0,20,0,0,0,4
+1032,RHIDP-4743,2,RHIDP-4743: Fixed links post-ga,2025-03-28,0.0,1,1,3,3,6,0,0,0,0,6,0,0,0,1
+1031,RHIDP-6674,1,[release-1.5] RHIDP-6674: Add screenshots to the Insights plugin docs,2025-03-28,0.0,1,4,11,3,14,4,0,0,0,14,0,0,4,1
+1030,RHIDP-6675,3,RHIDP-6675: Added screenshots to Extensions chapter (#1029),2025-03-28,0.0,2,3,10,2,12,3,0,0,0,12,0,0,3,1
+1029,RHIDP-6675,3,RHIDP-6675: Added screenshots to Extensions chapter,2025-03-28,0.0,4,3,10,2,12,3,0,0,0,12,0,0,3,3
+1028,RHIDP-6674,1,RHIDP-6674: Add screenshots to the Insights plugin docs,2025-03-28,0.1,3,4,11,3,14,4,0,0,0,14,0,0,4,1
+1027,,,chore: tagRelease.sh: bump to 1.5.1 in release-1.5 branch,2025-03-27,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1026,RHIDP-6667,1,RHIDP-6667: Update TechDocs add-ons doc,2025-04-02,5.7,6,2,4,2,6,0,0,0,0,6,0,0,0,2
+1025,,,RHDHPAI-720: Adding more info to the app-config-dynamic.yaml file in the install section,2025-04-01,5.1,4,1,16,7,23,0,0,0,0,23,0,0,0,4
+1023,,,RHDHPAI-510: Adoption insights DP feature in 1.5 RNs,2025-03-27,0.6,2,2,38,0,38,0,0,0,0,38,1,0,0,3
+1022,,,[release-1.5] RHDHPAI-716: Changing default date value,2025-03-26,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,2
+1021,,,RHDHPAI-716: Changing default date value,2025-03-26,0.1,5,1,1,1,2,0,0,0,0,2,0,0,0,2
+1020,RHIDP-6560,1,RHIDP-6560: Fix unterminated open blocks,2025-04-01,6.0,5,2,1,3,4,0,0,0,0,4,0,0,0,2
+1019,RHIDP-6396,1,RHIDP-6396: Modularize air-gapped installation doc-Operator (#1010),2025-03-25,0.0,1,5,166,163,329,0,0,0,0,329,3,0,0,1
+1018,RHIDP-6397,1,[release-1.5] RHIDP-6397: Modularize air-gapped installation doc Helm,2025-03-24,0.0,1,4,141,140,281,0,0,0,0,281,2,0,0,5
+1017,RHIDP-5681,3,[release-1.5] RHIDP-5681: Update the enabling authentication with rhbk,2025-03-24,0.0,1,1,48,10,58,0,0,0,0,58,0,0,0,5
+1016,RHIDP-5422,5,[release-1.5] RHIDP-5422: TechDocs add-ons doc,2025-03-24,0.0,1,17,672,7,679,0,0,0,0,679,14,0,0,9
+1015,RHIDP-3393,8,RHIDP-3393-1 - Document how users can access Plugin Marketplace in RHDH,2025-03-24,0.0,1,9,275,4,279,0,0,0,0,279,7,0,0,4
+1014,,,[release-1.5] RHDH Test Day - FAB Updates,2025-03-24,0.0,1,2,187,41,228,0,0,0,0,228,0,0,0,10
+1013,RHIDP-6550,,RHIDP-6550 Update URL for Ansible plug-ins docs,2025-04-01,7.8,6,1,1,12,13,0,0,0,0,13,0,0,0,1
+1012,RHIDP-6397,1,RHIDP-6397: Modularize air-gapped installation doc Helm,2025-03-24,0.2,4,4,141,140,281,0,0,0,0,281,2,0,0,4
+1011,RHIDP-6323,5,[main] RHIDP-6323 - Dynamic Plugins - Update table of dynamic plugins for RHDH 1.5,2025-03-24,0.0,1,6,114,96,210,2,74,70,144,354,0,0,0,5
+1010,RHIDP-6396,1,RHIDP-6396: Modularize air-gapped installation doc-Operator,2025-03-25,0.8,4,5,166,163,329,0,0,0,0,329,3,0,0,4
+1009,RHIDP-5490,8,[release-1.5] RHIDP-5490: Configure global header in RHDH,2025-03-21,0.0,1,4,262,0,262,0,0,0,0,262,3,0,0,20
+1007,RHIDP-5372,3,RHIDP-5372- Fix inconsistent reference to the app config file (#914),2025-03-24,2.7,1,30,94,83,177,0,0,0,0,177,0,0,0,1
+1006,RHIDP-5372,3,RHIDP-5372- Manual cherry-pick-1.4-Fix inconsistent reference to the app config file#914,2025-03-24,2.7,1,30,89,76,165,0,0,0,0,165,0,0,0,2
+1005,RHIDP-5881,2,Rhidp 5881: Manual cherry-pick944.1.4,2025-03-21,0.0,1,9,54,36,90,0,0,0,0,90,0,0,0,1
+1004,RHIDP-5881,2,RHIDP-5881: Fix inconsistencies with referencing my-rhdh-secrets #944,2025-03-21,0.0,1,9,54,36,90,0,0,0,0,90,0,0,0,1
+1003,,,[release-1.5] RHDHPAI-596: Added content for RHDH adoption insights plugin,2025-03-21,0.0,1,14,330,2,332,5,15,0,15,347,11,0,0,9
+1002,RHIDP-5433,8,[release-1.4] RHIDP-5433: Applied modularization changes for the Customizing title,2025-03-21,0.0,1,5,143,107,250,0,0,0,0,250,0,0,0,25
+1001,RHIDP-5433,8,[release-1.5] RHIDP-5433: Applied modularization changes for the Customizing title,2025-03-21,0.0,1,5,143,107,250,0,0,0,0,250,0,0,0,25
+1000,,,RHDHPAI-596: Added content for RHDH adoption insights plugin,2025-03-21,1.0,5,14,330,2,332,5,15,0,15,347,11,0,0,9
+999,RHIDP-1595,1,[release-1.5] RHIDP-1595: How to use HA in RHDH,2025-03-20,0.0,1,6,64,3,67,0,0,0,0,67,3,0,0,12
+998,RHIDP-5570,,RHIDP-5570-2 - Document that the Dynamic Plugin cache PVC is disabled by default,2025-03-19,0.5,1,1,90,5,95,0,0,0,0,95,0,0,0,1
+997,,,RHDH Test Day - FAB Updates,2025-03-24,5.9,6,2,187,41,228,0,0,0,0,228,0,0,0,10
+996,RHIDP-5605,3,[main] RHIDP-5605  - Plugin installation documentation improvement for adding 'forceDownload' field,2025-03-18,0.0,1,2,28,8,36,0,0,0,0,36,0,0,0,6
+995,RHIDP-3393,8,RHIDP-3393 - Document how users can access Plugin Marketplace in RHDH,2025-03-24,6.0,5,9,275,4,279,0,0,0,0,279,7,0,0,22
+994,RHIDP-4485,2,[release-1.3] RHIDP-4485: Topology plugin code block formatting,2025-03-18,1.0,1,4,44,18,62,0,0,0,0,62,2,0,0,9
+993,RHIDP-4485,2,[release-1.4] RHIDP-4485: Topology plugin code block formatting,2025-03-18,1.0,1,4,44,18,62,0,0,0,0,62,2,0,0,9
+992,RHIDP-4485,2,[release-1.5] RHIDP-4485: Topology plugin code block formatting,2025-03-18,1.0,1,4,44,18,62,0,0,0,0,62,2,0,0,9
+991,RHIDP-5494,3,[release-1.5] RHIDP-5494: Doc air-gapped installation using Operator,2025-03-14,0.0,1,2,139,40,179,0,0,0,0,179,1,0,0,7
+990,,,Update pull_request_template.md,2025-04-01,17.7,1,0,0,0,0,1,5,2,7,7,0,0,0,1
+989,RHIDP-5975,3,RHIDP-5975 document the `includeTransitiveGroupOwnership` option,2025-04-01,17.8,4,3,24,0,24,0,0,0,0,24,1,0,0,12
+988,RHIDP-5605,3,RHIDP-5605  - Plugin installation documentation improvement for adding 'forceDownload' field,2025-03-18,4.0,4,2,28,8,36,0,0,0,0,36,0,0,0,7
+987,RHIDP-5409,13,[release-1.5] RHIDP-5409 update book links,2025-03-13,0.0,1,14,62,68,130,0,0,0,0,130,0,0,0,25
+986,RHIDP-6130,2,RHIDP-6130: Update docs to refer to new secret name,2025-03-13,0.0,1,3,12,10,22,0,0,0,0,22,0,0,0,1
+985,RHIDP-6130,2,[release-1.5] RHIDP-6130: Update docs to refer to new secret name,2025-03-13,0.0,1,3,12,10,22,0,0,0,0,22,0,0,0,3
+984,RHIDP-6391,3,[release-1.5] RHIDP-6391 Release notes script to stop using the issue title,2025-03-13,0.0,1,1,46,0,46,3,6,9,15,61,1,0,0,3
+983,RHIDP-5423,8,[release-1.5] RHIDP-5423: Content for Kubernetes scaffolder actions,2025-03-13,0.0,1,7,224,2,226,0,0,0,0,226,5,0,0,9
+982,RHIDP-5959,8,[release-1.5] RHIDP-5959 Update dangerouslyAllowSignInWithoutUserInCatalog config ,2025-03-13,0.0,1,6,191,157,348,0,0,0,0,348,0,0,0,1
+981,RHIDP-5514,8,[release-1.5] RHIDP-5514: Floating action button,2025-03-13,0.0,1,3,160,0,160,0,0,0,0,160,2,0,0,18
+980,RHIDP-6391,3,RHIDP-6391 Release notes script to stop using the issue title,2025-03-13,0.9,6,1,46,0,46,3,6,9,15,61,1,0,0,4
+979,RHIDP-4741,,[release-1.5] RHIDP-4741: RHDH 1.5 Release Notes,2025-03-24,13.9,2,9,586,19,605,0,0,0,0,605,0,0,0,19
+978,RHIDP-5959,8,RHIDP-5959 Update dangerouslyAllowSignInWithoutUserInCatalog config,2025-03-13,2.9,4,6,164,158,322,0,0,0,0,322,0,0,0,26
+977,RHIDP-6323,5,RHIDP-6323 - Dynamic Plugins - Update table of dynamic plugins for RHDH 1.5,2025-03-24,15.6,6,6,114,96,210,2,74,70,144,354,0,0,0,13
+976,RHIDP-5409,13,RHIDP-5409 update book links,2025-03-13,6.0,4,14,62,68,130,0,0,0,0,130,0,0,0,26
+975,RHIDP-5422,5,RHIDP-5422: TechDocs add-ons doc,2025-03-24,17.9,7,17,672,7,679,0,0,0,0,679,14,0,0,9
+974,RHIDP-5139,5,[release-1.5] RHIDP-5139: Installing RHDH container image plugins,2025-03-06,0.0,1,3,40,1,41,0,0,0,0,41,1,0,0,4
+973,RHIDP-5139,5,[release-1.4] RHIDP-5139: Installing RHDH container image plugins,2025-03-06,0.0,1,3,40,1,41,0,0,0,0,41,1,0,0,4
+972,,,[release-1.5] Updated plugin doc for Argo CD Rollouts feature,2025-03-06,0.0,1,1,153,0,153,0,0,0,0,153,1,0,0,1
+971,RHIDP-6274,1,RHIDP-6274 update 1.4.2 release notes,2025-03-05,0.0,1,1,59,53,112,0,0,0,0,112,0,0,0,3
+970,RHIDP-4485,2,RHIDP-4485: Topology plugin code block formatting,2025-03-17,12.1,7,4,44,18,62,0,0,0,0,62,2,0,0,9
+969,RHIDP-5813,1,[release-1.5] [RHIDP-5813] update scaffolder permissions table to include the scaffolder.template.management permission,2025-03-05,0.0,1,1,5,0,5,0,0,0,0,5,0,0,0,2
+967,RHIDP-1595,1,RHIDP-1595: How to use HA in RHDH,2025-03-20,15.9,3,6,64,3,67,0,0,0,0,67,3,0,0,12
+966,RHIDP-1848,3,[release-1.5] RHIDP-1848: Updates the setting up RBAC permission,2025-02-28,0.0,2,4,71,0,71,0,0,0,0,71,3,0,0,5
+965,RHIDP-1848,3,[release-1.3] RHIDP-1848: Updates the setting up RBAC permission,2025-02-28,0.0,2,4,71,0,71,0,0,0,0,71,3,0,0,5
+964,RHIDP-1848,3,[release-1.4] RHIDP-1848: Updates the setting up RBAC permission,2025-02-28,0.0,2,4,71,0,71,0,0,0,0,71,3,0,0,5
+962,RHIDP-6130,2,RHIDP-6130: Update docs to refer to new secret name,2025-03-13,13.9,6,3,12,10,22,0,0,0,0,22,0,0,0,3
+961,RHIDP-5351,5,fix: Update the Helm procedure to use oc-mirror for air-gapped OCP en…,2025-02-27,0.0,1,1,216,69,285,0,0,0,0,285,0,0,0,1
+960,RHIDP-5681,3,RHIDP-5681: Update the enabling authentication with rhbk,2025-03-24,25.1,5,1,48,10,58,0,0,0,0,58,0,0,0,3
+959,RHIDP-5901,3,[release-1.5] RHIDP-5901: readOnlyRootFilesystem option,2025-02-27,0.0,1,6,59,3,62,0,0,0,0,62,3,0,0,7
+958,RHIDP-3206,3,[release-1.5] RHIDP-3206: Added attribute declaration to the relevant source code block,2025-02-27,0.0,1,4,10,10,20,0,0,0,0,20,0,0,0,2
+957,RHIDP-5949,1,[release-1.5] RHIDP-5949: Rectified the correct case for sidebarBackgroundColor,2025-02-27,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+956,RHIDP-5949,1,[release-1.4] RHIDP-5949: Rectified the correct case for sidebarBackgroundColor,2025-02-27,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+955,,,[release-1.4] Updated plugin doc for Argo CD Rollouts feature,2025-02-27,0.0,1,1,153,0,153,0,0,0,0,153,1,0,0,1
+954,RHIDP-5490,8,RHIDP-5490: Configure global header in RHDH,2025-03-21,23.3,3,4,262,0,262,0,0,0,0,262,3,0,0,20
+951,RHIDP-5423,8,RHIDP-5423: Content for Kubernetes scaffolder actions,2025-03-13,16.3,5,7,224,2,226,0,0,0,0,226,5,0,0,9
+950,RHIDP-5768,1,RHIDP-5768: Fix typo in 1.4 docs,2025-02-28,3.7,4,1,10,10,20,0,0,0,0,20,0,0,0,1
+948,RHIDP-5433,8,RHIDP-5433: Applied modularization changes for the Customizing title,2025-03-21,28.9,8,5,143,107,250,0,0,0,0,250,0,0,0,25
+947,RHIDP-3206,3,RHIDP-3206/5900: Added missing attributes,2025-02-27,7.1,2,1,23,0,23,0,0,0,0,23,1,0,0,2
+946,RHIDP-3206,3,RHIDP-3206: Added attribute declaration to the relevant source code block,2025-02-27,7.2,4,4,10,10,20,0,0,0,0,20,0,0,0,2
+945,RHIDP-3206,3,RHIDP-3206: Added missing attribute declaration in the source code,2025-02-27,7.2,1,4,10,11,21,0,0,0,0,21,0,0,0,2
+944,RHIDP-5881,2,RHIDP-5881: Fix inconsistencies with referencing my-rhdh-secrets,2025-03-21,29.9,7,9,54,36,90,0,0,0,0,90,0,0,0,6
+941,RHIDP-3206,3,[release-1.3] chore: bad link in code snippet points to non-existent branch (RHIDP-3206),2025-02-17,0.0,0,1,1,1,2,0,0,0,0,2,0,0,0,1
+940,RHIDP-3206,3,[release-1.5] chore: bad link in code snippet points to non-existent branch (RHIDP-3206),2025-02-17,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+939,RHIDP-3206,3,[release-1.4] chore: bad link in code snippet points to non-existent branch (RHIDP-3206),2025-02-17,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+938,RHIDP-5901,3,RHIDP-5901: readOnlyRootFilesystem option,2025-02-27,10.3,9,6,59,3,62,0,0,0,0,62,3,0,0,7
+937,RHIDP-5592,1,[release-1.5] RHIDP-5592:Wrong definition of Service Monitor for an RHDH instance by the Operator,2025-02-14,0.0,0,1,19,8,27,0,0,0,0,27,0,0,0,8
+936,RHIDP-5592,1,[release-1.4] RHIDP-5592:Wrong definition of Service Monitor for an RHDH instance by the Operator,2025-02-14,0.0,1,1,19,8,27,0,0,0,0,27,0,0,0,8
+935,RHIDP-5494,3,RHIDP-5494: Doc air-gapped installation using Operator,2025-03-14,28.8,6,2,139,40,179,0,0,0,0,179,1,0,0,7
+931,RHIDP-3206,3,chore: bad link in code snippet points to non-existent branch (RHIDP-3206),2025-02-17,3.7,8,1,1,1,2,0,0,0,0,2,0,0,0,1
+928,RHIDP-5544,2,[release-1.5] RHIDP-5544: Changed alpha2 to alpha3 API in docs,2025-02-13,0.0,0,2,8,8,16,0,0,0,0,16,0,0,0,1
+927,RHIDP-5544,2,[release-1.4] RHIDP-5544: Changed alpha2 to alpha3 API in docs,2025-02-13,0.0,1,2,8,8,16,0,0,0,0,16,0,0,0,1
+926,RHIDP-5949,1,RHIDP-5949: Rectified the correct case for sidebarBackgroundColor,2025-02-27,15.9,9,1,2,2,4,0,0,0,0,4,0,0,0,1
+925,RHIDP-5514,8,RHIDP-5514: Floating action button,2025-03-13,30.0,6,3,160,0,160,0,0,0,0,160,2,0,0,18
+924,,,"fix: fix timestamp, use PIP yq in workflow",2025-02-11,0.6,1,0,0,0,0,1,10,1,11,11,0,0,0,1
+919,RHIDP-5570,,RHIDP-5570 - Document that the Dynamic Plugin cache PVC is disabled by default,2025-03-18,36.7,14,1,91,4,95,0,0,0,0,95,0,0,0,26
+918,RHIDP-5881,2,RHIDP-5881: Fix inconsistencies with referencing my-rhdh-secrets,2025-02-13,5.9,9,4,10,10,20,0,0,0,0,20,0,0,0,1
+917,RHDH-5561,,[release-1.5] RHDH-5561: TechDocs content restructure,2025-02-07,0.2,1,3,35,28,63,5,17,0,17,80,2,0,0,1
+916,RHIDP-5765,1,[release-1.4] RHIDP-5765 comment out references to GitHub Enterprise,2025-02-07,0.1,1,1,3,1,4,0,0,0,0,4,0,0,0,1
+915,RHIDP-5544,2,RHIDP-5544: Changed alpha2 to alpha3 API in docs,2025-02-13,6.1,7,2,8,8,16,0,0,0,0,16,0,0,0,1
+914,RHIDP-5372,3,RHIDP-5372- Fix inconsistent reference to the app config file,2025-03-21,42.8,8,30,94,83,177,0,0,0,0,177,0,0,0,5
+912,RHIDP-5822,,RHIDP-5822 Release notes for Red Hat Developer Hub 1.3.5,2025-02-17,10.8,4,7,106,28,134,3,2,1,3,137,1,0,0,4
+911,RHIDP-5618,,RHIDP-5618 Release notes for Red Hat Developer Hub 1.4.2,2025-02-28,21.8,4,6,40,29,69,3,7,6,13,82,1,0,0,4
+910,,,Update CVE list and content for release-1.5,2025-02-07,1.0,1,5,28,113,141,4,8,32,40,181,1,0,0,1
+909,,,Update CVE content for release-1.3,2025-02-06,0.1,1,3,25,21,46,0,0,0,0,46,0,0,0,1
+908,,,"chore: release-1.3, update fixed CVE list",2025-02-06,0.8,2,0,0,0,0,1,5,1,6,6,0,0,0,1
+907,RHIDP-5852,3,RHIDP-5852 fix security issues,2025-02-06,1.2,3,5,30,114,144,4,8,32,40,184,1,0,0,3
+906,RHIDP-1848,3,RHIDP-1848: Updates the setting up RBAC permission,2025-02-28,23.6,10,4,71,0,71,0,0,0,0,71,3,0,0,5
+905,,,feat: add GitHub action to generate supported plugins PR,2025-02-04,0.1,2,0,0,0,0,1,36,0,36,36,0,0,0,2
+904,RHIDP-5725,1,CP to main for PR-883,2025-02-04,1.2,1,2,11,11,22,0,0,0,0,22,0,0,0,1
+903,RHIDP-5604,5,RHIDP-5604 Configuring entity tab titles and entity detail tab layout,2025-04-03,62.0,7,3,98,0,98,0,0,0,0,98,3,0,0,19
+902,,,[release-1.4] Add the correct reference to product,2025-01-31,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,2
+901,RHIDP-5004,2,RHIDP-5004 remove useRedisSets,2025-02-04,4.8,1,1,0,18,18,0,0,0,0,18,0,0,0,1
+900,RHIDP-5765,1,RHIDP-5765 comment out references to GitHub Enterprise,2025-02-07,7.9,4,1,3,1,4,0,0,0,0,4,0,0,0,1
+899,RHIDP-5491,3,RHIDP-5491 configure expiry on refresh token cookie,2025-03-07,36.0,1,3,43,0,43,0,0,0,0,43,3,0,0,1
+898,RHIDP-5681,3,RHIDP-5681: Added missing parameter in auth set up,2025-02-28,28.8,2,1,9,1,10,0,0,0,0,10,0,0,0,1
+896,,,[release-1.4] Remove link to Compatibility matrix,2025-01-31,0.6,1,1,0,4,4,0,0,0,0,4,0,0,0,1
+897,,,[release-1.3] Remove link to Compatibility matrix,2025-01-30,0.0,1,1,0,4,4,0,0,0,0,4,0,0,0,1
+895,RHIDP-5672,1,Update the product reference,2025-01-31,1.1,1,2,3,2,5,0,0,0,0,5,0,0,0,1
+894,RHIDP-5672,1,Add the correct reference to product,2025-01-31,1.1,4,1,2,2,4,0,0,0,0,4,0,0,0,1
+893,,,Change the layout of the next steps,2025-02-17,17.9,2,1,2,1,3,0,0,0,0,3,0,0,0,2
+892,,,manual cherrypick of update RHBK config docs with security consideration,2025-02-04,5.8,1,2,17,5,22,0,0,0,0,22,1,0,0,1
+890,RHIDP-5374,3,[release-1.4] RHIDP-5374: Consistent mentions to the product custom resource,2025-01-29,0.0,1,16,27,27,54,0,0,0,0,54,0,0,0,4
+888,RHIDP-5733,3,RHIDP-5733: Info about custom config in the Installation guides,2025-08-06,189.9,10,6,171,12,183,0,0,0,0,183,1,0,0,8
+887,,,chore: release note updates for GKE support and other misc updates,2025-01-29,0.9,1,5,31,63,94,0,0,0,0,94,0,0,0,3
+886,,,chore: emphasize Backstage version and dedupe the product name mentions,2025-04-01,62.8,1,1,3,1,4,0,0,0,0,4,0,0,0,5
+885,RHIDP-5070,2,Remove link to Compatibility matrix,2025-01-30,2.1,5,1,0,4,4,0,0,0,0,4,0,0,0,1
+884,RHIDP-5373,3,[release-1.4] RHIDP-5373: Setting baseUrl,2025-01-28,0.1,1,1,22,1,23,0,0,0,0,23,0,0,0,3
+883,RHIDP-5725,1,RHIDP-5725: Incorrect plugin name in the Customizing the Home page cards code snippet,2025-01-31,3.2,4,2,11,11,22,0,0,0,0,22,0,0,0,2
+882,,,chore: bump dynamic plugins versions in table for 1.4.2,2025-02-27,30.8,4,2,15,15,30,1,14,14,28,58,0,0,0,4
+881,,,manual cherrypick of update RHBK config docs with security consideration,2025-01-29,1.7,1,1,7,5,12,0,0,0,0,12,0,0,0,2
+880,,,[release-1.4] Rhidp 5375 consistent mentions to the product project,2025-01-27,0.0,0,9,18,18,36,0,0,0,0,36,0,0,0,2
+878,,,[release-1.4] Fix some typos in RHDH documentation adocs,2025-01-27,0.0,1,8,9,9,18,0,0,0,0,18,0,0,0,1
+877,RHDH-5561,,RHDH-5561: TechDocs content restructure,2025-02-07,13.8,3,3,35,28,63,5,17,0,17,80,2,0,0,1
+876,RHIDP-5373,3,RHIDP-5373: Setting baseUrl,2025-01-28,3.8,6,1,22,1,23,0,0,0,0,23,0,0,0,4
+874,RHIDP-5643,1,RHIDP-5643: Fix capitalization error,2025-01-27,4.2,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+873,RHIDP-5592,1,RHIDP-5592:Wrong definition of Service Monitor for an RHDH instance by the Operator,2025-02-14,22.4,16,1,19,8,27,0,0,0,0,27,0,0,0,8
+872,,,Fix some typos in RHDH documentation adocs,2025-01-27,4.6,6,8,9,9,18,0,0,0,0,18,0,0,0,1
+871,,,"chore: bump main to RHDH 1.5, BS 1.35, and OCP 4.18",2025-01-24,1.9,1,1,5,5,10,0,0,0,0,10,0,0,0,1
+870,,,Manual CP for PR-842 to Main,2025-01-22,0.0,3,4,79,1,80,0,0,0,0,80,1,0,0,8
+869,,,[release-1.4] update RHBK config docs with security consideration,2025-01-27,5.8,12,2,35,6,41,0,0,0,0,41,0,0,0,4
+868,RHIDP-5351,5,Update the Helm procedure to use oc-mirror for air-gapped OCP environments,2025-02-27,37.1,19,1,216,69,285,0,0,0,0,285,0,0,0,3
+867,,,[release-1.4] Replace links to docs.openshift.com,2025-01-22,0.9,1,10,23,23,46,0,0,0,0,46,0,0,0,1
+866,,,[release-1.4] HACDOCS-975: Adding JFrog Artifactory plugin content,2025-01-21,0.0,4,4,90,0,90,1,0,0,0,90,2,0,1,6
+864,RHIDP-5334,1,[release-1.4] RHIDP-5334 - Fix rbac-policies mount path for Helm,2025-01-20,0.1,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+863,RHIDP-5334,1,[release-1.3] RHIDP-5334 - Fix rbac-policies mount path for Helm,2025-01-20,0.1,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+862,RHIDP-5070,2,Updates the about guide,2025-01-17,0.0,1,5,50,7,57,0,0,0,0,57,2,0,0,1
+861,RHIDP-5070,2,[release-1.4] RHIDP-5070-Update supported platforms,2025-01-17,0.0,1,5,17,8,25,0,0,0,0,25,1,0,0,2
+860,,,[release-1.3] Fix attribute typo in Argo CD plugin,2025-01-17,0.0,1,2,2,2,4,0,0,0,0,4,0,0,0,1
+859,RHIDP-5374,3,RHIDP-5374: Consistent mentions to the product custom resource,2025-01-29,12.0,5,16,27,27,54,0,0,0,0,54,0,0,0,4
+858,RHIDP-5375,3,Rhidp 5375 consistent mentions to the product project,2025-01-27,11.1,4,9,18,18,36,0,0,0,0,36,0,0,0,3
+857,,,chore: release notes for 1.3.4,2025-01-24,9.5,2,10,408,341,749,3,25,6,31,780,3,0,0,13
+855,RHIDP-5469,1,[release-1.4] RHIDP-5469 Update proc-enabling-authentication-with-github.adoc,2025-01-14,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+854,RHIDP-5469,1,[release-1.3] RHIDP-5469 Update proc-enabling-authentication-with-github.adoc,2025-01-14,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+853,RHIDP-4840,1,RHIDP-4840 - Fix broken link,2025-01-14,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+852,RHIDP-4840,1,[release-1.4] RHIDP-4840 - Fix broken link,2025-01-14,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+851,RHIDP-4840,1,RHIDP-4840 - Fix broken link,2025-01-14,0.0,9,1,1,1,2,0,0,0,0,2,0,0,0,1
+850,RHIDP-5334,1,RHIDP-5334 - Fix rbac-policies mount path for Helm,2025-01-20,6.2,8,1,1,1,2,0,0,0,0,2,0,0,0,2
+849,,,chore: plugin version bumps for 1.4.1,2025-01-15,1.4,2,2,50,50,100,1,49,49,98,198,0,0,0,2
+848,RHIDP-5521,,chore: release notes for 1.4.1 (replace custom/manual content with JIRA-driven RN content too),2025-01-20,6.5,4,10,266,156,422,6,38,34,72,494,1,0,0,5
+847,RHIDP-1022,5,chore(migration): move from...,2025-01-14,0.8,1,5,10,10,20,0,0,0,0,20,0,0,0,1
+846,RHIDP-1022,5,[release-1.4] chore(migration): move from janus-idp/backstage-showcase to redhat-developer/rhdh and add more plugin repo,2025-01-13,0.0,1,4,14,9,23,0,0,0,0,23,0,0,0,1
+845,RHIDP-451,,chore: remove reference to RHIDP-451 as we have closed it as obsolete,2025-01-13,0.0,1,1,0,2,2,0,0,0,0,2,0,0,0,1
+844,RHIDP-1022,5,chore(migration): move from janus-idp/backstage-showcase to redhat-developer/rhdh and add more plugin repo links too (RH,2025-01-13,0.0,6,4,14,9,23,0,0,0,0,23,0,0,0,1
+843,RHIDP-5458,3,Fix release notes links,2025-01-27,13.9,5,4,40,58,98,0,0,0,0,98,0,0,0,8
+842,RHIDP-4780,5,RHIDP-4780: Document per-ConfigMap/Secret configuration of mountPath,2025-01-20,7.1,5,4,95,17,112,0,0,0,0,112,1,0,0,6
+841,RHIDP-4345,1,Fix attribute typo in Argo CD plugin,2025-01-17,4.7,6,2,2,2,4,0,0,0,0,4,0,0,0,1
+840,RHIDP-5396,,Replace links to docs.openshift.com,2025-01-21,9.6,3,10,23,23,46,0,0,0,0,46,0,0,0,1
+839,RHIDP-5456,1,[release-1.4] RHIDP-5456: Updated broken link Authorization Guide,2025-01-10,0.0,2,1,1,1,2,0,0,0,0,2,0,0,0,2
+838,RHIDP-5469,1,RHIDP-5469 Update proc-enabling-authentication-with-github.adoc,2025-01-14,4.7,5,1,1,1,2,0,0,0,0,2,0,0,0,1
+836,RHIDP-5456,1,RHIDP-5456: Updated broken link Authorization Guide,2025-01-10,1.2,10,1,1,1,2,0,0,0,0,2,0,0,0,2
+834,,,chore(dynamic plugins): add missing...,2025-01-27,19.0,1,2,12,3,15,2,5,3,8,23,0,0,0,2
+833,RHIDP-5070,2,RHIDP-5070-Update supported platforms,2025-01-17,9.9,6,5,17,8,25,0,0,0,0,25,1,0,0,2
+832,RHIDP-5409,13,RHIDP-5409 Consistent titles and subtitles,2025-02-04,27.9,5,18,44,23,67,19,35,42,77,144,0,0,0,17
+831,RHIDP-5139,5,RHIDP-5139: Installing RHDH container image plugins,2025-03-06,58.0,8,3,40,1,41,0,0,0,0,41,1,0,0,4
+830,RHIDP-4853,3,[release-1.4] chore: update references to plugins to use their new locations; remove refs to plugins that can't be insta,2025-01-02,0.0,1,4,15,73,88,0,0,0,0,88,0,0,0,5
+829,,,chore: cherrypick missing updates from main...,2025-01-02,0.0,1,1,1,0,1,1,1,0,1,2,0,0,0,1
+827,RHIDP-5367,,"RHIDP-5367 - Missing and incorrect information in ""breaking changes""",2025-01-06,13.8,2,1,56,98,154,0,0,0,0,154,0,0,0,18
+824,RHIDP-4853,3,chore: update references to plugins to use their new locations; remove refs to plugins that can't be installed in 1.4 (O,2025-01-02,12.9,7,4,15,73,88,0,0,0,0,88,0,0,0,5
+725,,,Updated plugin doc for Argo CD Rollouts feature,2025-02-27,98.1,9,1,153,0,153,0,0,0,0,153,1,0,0,2
+714,,,HACDOCS-975: Adding JFrog Artifactory plugin content,2025-01-21,66.5,12,4,90,0,90,1,0,0,0,90,2,0,1,6

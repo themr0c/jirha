@@ -21,9 +21,9 @@ from jirha.config import (
 # SP tier mapping
 SP_TIERS = dict(zip(SP_VALUES, range(len(SP_VALUES))))
 _TIER_TO_SP = dict(enumerate(SP_VALUES))
-_ADOC_TIER_THRESHOLDS = [(5, 0), (20, 1), (40, 2), (80, 3), (180, 4), (500, 5), (1200, 6)]
+_ADOC_TIER_THRESHOLDS = [(5, 0), (30, 1), (60, 2), (120, 3), (300, 4), (550, 5), (1200, 6)]
 # Floor for non-adoc-heavy PRs (tooling, scripts, config)
-_TOTAL_TIER_THRESHOLDS = [(20, 0), (100, 1), (200, 2), (500, 3), (1500, 4), (5000, 5), (15000, 6)]
+_TOTAL_TIER_THRESHOLDS = [(20, 0), (100, 1), (250, 2), (600, 3), (1500, 4), (5000, 5), (15000, 6)]
 
 _REVIEW_SUMMARIES = ("[DOC] Peer Review", "[DOC] Technical Review")
 REVIEW_FILTER = "".join(f' AND summary !~ "{s}"' for s in _REVIEW_SUMMARIES)
@@ -127,7 +127,7 @@ def _pr_metrics(files, commits):
     tier = max(tier, total_tier)
 
     # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
-    if sum([new_adoc >= 2, len(adoc_files) >= 6, commits >= 12]) >= 2:
+    if sum([new_adoc >= 2, len(adoc_files) >= 10, commits >= 12]) >= 2:
         tier = min(tier + 1, 5)
     # Mechanical discount only when adoc is the dominant change
     if is_mechanical and adoc_lines > total_lines * 0.5:

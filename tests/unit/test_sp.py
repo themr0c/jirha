@@ -121,9 +121,7 @@ def test_total_lines_floor_large_tooling_pr():
 
 def test_mechanical_only_when_adoc_dominant():
     """Mechanical discount doesn't apply when adoc is a small fraction."""
-    files = [
-        _adoc(f"docs/file{i}.adoc", 2, 2) for i in range(10)
-    ] + [
+    files = [_adoc(f"docs/file{i}.adoc", 2, 2) for i in range(10)] + [
         {"path": "scripts/big.py", "additions": 200, "deletions": 0},
     ]
     # 10 adoc files × 4 lines = 40 adoc lines (tier 1)

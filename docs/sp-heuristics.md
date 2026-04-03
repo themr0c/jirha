@@ -120,3 +120,37 @@ The bump requires 2 of 3 signals to fire. With the current thresholds, the bump 
 | 15000+ | 6 | 13 |
 
 **Mechanical discount** (tier -1): if >80% of .adoc files have ≤4 lines changed, there are 4+ .adoc files, and .adoc accounts for >50% of total lines changed.
+
+## Jira-Only Estimation (No PR)
+
+When a doc task has no linked PR, `--sp auto` falls back to Jira-only context. This section documents the investigation into Jira-based signals and why a statistical heuristic is not feasible.
+
+### Investigation (100 doc tasks, 2023–2026)
+
+**Hierarchy structure:** Doc tasks sit under epics, which sit under features (often in RHDHPLAN). Features also contain engineering epics with code PRs. The hypothesis was that engineering PR size could proxy doc effort.
+
+**Coverage problem:**
+- 86% of doc tasks have a parent epic
+- 40% have a feature (grandparent)
+- 12% have engineering PR data from sibling tasks
+- Engineering PRs are only available when eng work runs ahead of doc work (RHOAIENG pattern). For RHIDP, eng and doc work run in parallel — PRs don't exist yet at estimation time.
+
+**Signal evaluation (40 tasks with feature parents):**
+
+| Signal | Monotonicity | Finding |
+|---|---|---|
+| desc_len | 0.60 | SP 5 median is 0 — half have no description |
+| epic_desc_len | 0.60 | Clusters at ~1900 chars (template length) |
+| feature_desc_len | 0.60 | Higher for SP 2 than SP 8 (inverse) |
+| combined_desc | 0.60 | Best signal, but p25/p75 ranges overlap completely |
+| sibling_epic_count | 0.80 | Flat at 4 across all SP levels |
+| sibling_eng_task_count | 0.80 | Dominated by a few large features (clusters at 31) |
+
+**Why Jira metadata doesn't predict task-level SP:** PR metrics measure actual output (lines changed) — directly correlated with effort. Jira metadata measures planning intent — multiple tasks under the same feature receive different SP values based on *which part* of the feature they document. That granularity isn't captured in any Jira field.
+
+### Design: context assembler
+
+Instead of predicting SP, the Jira-only path assembles context for human estimation:
+1. Feature + epic + task descriptions
+2. Sibling engineering tasks and their PRs (when available)
+3. Structured summary for the human to judge

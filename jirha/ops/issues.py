@@ -15,6 +15,7 @@ from jirha.config import (
     CF_RN_STATUS,
     CF_RN_TEXT,
     CF_RN_TYPE,
+    CF_SIZE,
     CF_SPRINT,
     CF_STORY_POINTS,
     CF_TEAM,
@@ -96,7 +97,7 @@ def cmd_show(args):
         "summary,status,issuetype,priority,fixVersions,components,labels,"
         "reporter,versions,assignee,issuelinks,description,comment,"
         f"{CF_TEAM},{CF_SPRINT},{CF_STORY_POINTS},{CF_GIT_PR},"
-        f"{CF_RN_STATUS},{CF_RN_TYPE},{CF_RN_TEXT}"
+        f"{CF_RN_STATUS},{CF_RN_TYPE},{CF_RN_TEXT},{CF_SIZE}"
     )
     issue = jira.issue(args.key, fields=all_fields)
     f = issue.fields
@@ -115,6 +116,8 @@ def cmd_show(args):
     print(f"{'Components:':<{W}}{_fmt_components(f.components)}")
     print(f"{'Team:':<{W}}{_fmt_team(getattr(f, CF_TEAM, None))}")
     print(f"{'Labels:':<{W}}{_fmt_labels(f.labels)}")
+    size = getattr(f, CF_SIZE, None)
+    print(f"{'Size:':<{W}}{size or 'unset'}")
     print(f"{'Reporter:':<{W}}{f.reporter or 'unset'}")
     print(f"{'Affects versions:':<{W}}{_fmt_versions(f.versions)}")
 

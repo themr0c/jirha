@@ -71,7 +71,8 @@ def _print_hygiene_report(issue_gaps, team=False):
         if team:
             assignee_str = f" @{_assignee_name(issue)}"
         summary = issue.fields.summary
-        print(f"{_jira_url(issue.key)}{sp_str}{assignee_str} [{issue.fields.status}] [{priority}] — {summary}")
+        status = issue.fields.status
+        print(f"{_jira_url(issue.key)}{sp_str}{assignee_str} [{status}] [{priority}] — {summary}")
         print(f"  Components: {components}")
         print(f"  Missing: {', '.join(missing)}")
         print()
@@ -217,7 +218,8 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
     for i, m in enumerate(mismatches, 1):
         assignee_str = f" @{m['assignee']}" if team else ""
         current_label = f"{m['current_sp']}SP" if m["current_sp"] is not None else "no SP"
-        print(f"{i}. {_jira_url(m['key'])} {current_label} → suggested {m['suggested_sp']}SP{assignee_str}")
+        suggested = m['suggested_sp']
+        print(f"{i}. {_jira_url(m['key'])} {current_label} → suggested {suggested}SP{assignee_str}")
         print(f"   {m['reason']}")
         for url in m["pr_url"].strip().splitlines():
             url = url.strip()

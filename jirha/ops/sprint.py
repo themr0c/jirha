@@ -99,7 +99,7 @@ def _historical_velocities(jira, board_id):
 
 
 def _format_issue_line(issue, team=False, pr_status=None):
-    """Format a single issue as a pipe-separated line with Jira link, priority, SP, labels, summary."""
+    """Format an issue as a pipe-separated line: Jira link, priority, SP, labels, summary."""
     sp = _issue_sp(issue)
     sp_str = f"{int(sp):>2} SP"
     labels = ", ".join(issue.fields.labels or [])

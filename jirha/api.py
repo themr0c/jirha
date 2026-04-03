@@ -91,7 +91,8 @@ def _warn_in_progress_no_sprint(jira, team=False):
             tag = f"STALE (last: {closed[-1].name}, {len(closed)} prev sprints)"
         else:
             tag = "BACKLOG (no sprint)"
-        print(f"- {SERVER}/browse/{issue.key}{sp_str}{assignee_str} [{tag}] — {issue.fields.summary}")
+        url = f"{SERVER}/browse/{issue.key}"
+        print(f"- {url}{sp_str}{assignee_str} [{tag}] — {issue.fields.summary}")
 
 
 def _pr_metrics(files, commits):

@@ -108,7 +108,10 @@ def main():
     p.add_argument("--desc", help="Description text")
     p.add_argument("--file", "-f", help="Read description from file")
     p.add_argument("--affects-version", help="Affects version (e.g., 1.10.0)")
-    p.add_argument("--interactive", "-i", action="store_true", help="Walk through fields interactively")
+    p.add_argument(
+        "--interactive", "-i", action="store_true",
+        help="Walk through fields interactively",
+    )
     p.set_defaults(func=cmd_create)
 
     p = sub.add_parser("meta", help="Show project issue types and fields")

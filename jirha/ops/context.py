@@ -98,13 +98,18 @@ def _fetch_pr_bodies(pr_urls):
 def _walk_linked_issue(jira, link_info):
     """Walk a linked issue's full tree. Returns a dict describing what was found."""
     key = link_info["key"]
-    issue = _cached_issue(jira, key, _HIERARCHY_FIELDS + ",issuelinks")
-
-    issue_type = str(issue.fields.issuetype).lower()
     result = {
         "source_link_type": link_info["link_type"],
         "direction": link_info["direction"],
     }
+    try:
+        issue = _cached_issue(jira, key, _HIERARCHY_FIELDS + ",issuelinks")
+    except Exception:
+        result["type"] = "error"
+        result["error"] = f"Failed to fetch {key}"
+        return result
+
+    issue_type = str(issue.fields.issuetype).lower()
 
     if "feature" in issue_type or "initiative" in issue_type:
         # It's a feature — walk full tree down
@@ -127,7 +132,7 @@ def _walk_linked_issue(jira, link_info):
         tasks_raw = jira.search_issues(
             f"parent = {key} ORDER BY key",
             maxResults=100,
-            fields=_HIERARCHY_FIELDS + f",{CF_TEAM},{CF_GIT_PR}",
+            fields=_HIERARCHY_FIELDS,
         )
         result["type"] = "epic"
         result["epic"] = _issue_to_dict(issue, include_links=True)
@@ -323,7 +328,7 @@ def assemble_context_json(jira, issue_key, refresh=False):
     feature = hierarchy["feature"]
 
     # Fetch issue links at all levels
-    task_full = _cached_issue(jira, issue_key, _HIERARCHY_FIELDS + ",issuelinks," + CF_GIT_PR)
+    task_full = _cached_issue(jira, issue_key, _HIERARCHY_FIELDS + ",issuelinks")
     task_dict = _issue_to_dict(task_full, include_links=True, include_pr=True)
     task_dict["pr_bodies"] = _fetch_pr_bodies(task_dict.get("pr_urls", []))
 
@@ -354,8 +359,9 @@ def assemble_context_json(jira, issue_key, refresh=False):
             sibling_epics.append({"epic": epic_d, "tasks": tasks})
         eng_metrics = _collect_eng_pr_metrics(raw_siblings)
 
-    # Walk linked issues at all levels
+    # Walk linked issues at all levels (deduplicate to avoid cycles)
     all_links = []
+    visited_keys = {issue_key, epic.key if epic else None, feature.key if feature else None}
     for source_key, links in [
         (issue_key, task_dict.get("links", [])),
         (epic.key if epic else None, (epic_dict or {}).get("links", [])),
@@ -364,14 +370,9 @@ def assemble_context_json(jira, issue_key, refresh=False):
         if not source_key:
             continue
         for link in links:
-            # Skip links to issues already in the hierarchy
-            hierarchy_keys = {
-                issue_key,
-                epic.key if epic else None,
-                feature.key if feature else None,
-            }
-            if link["key"] in hierarchy_keys:
+            if link["key"] in visited_keys:
                 continue
+            visited_keys.add(link["key"])
             walked = _walk_linked_issue(jira, link)
             walked["source"] = source_key
             all_links.append(walked)

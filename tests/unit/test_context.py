@@ -188,6 +188,26 @@ def test_extract_links_outward():
     assert result[0]["direction"] == "outward"
 
 
+def test_extract_links_inward():
+    links = [_FakeLink("is blocked by", inward_key="RHIDP-300")]
+    result = _extract_links(links)
+    assert len(result) == 1
+    assert result[0]["key"] == "RHIDP-300"
+    assert result[0]["link_type"] == "is blocked by"
+    assert result[0]["direction"] == "inward"
+
+
+def test_extract_links_mixed():
+    links = [
+        _FakeLink("relates to", outward_key="RHIDP-200"),
+        _FakeLink("is blocked by", inward_key="RHIDP-300"),
+    ]
+    result = _extract_links(links)
+    assert len(result) == 2
+    assert result[0]["direction"] == "outward"
+    assert result[1]["direction"] == "inward"
+
+
 def test_extract_links_empty():
     assert _extract_links([]) == []
     assert _extract_links(None) == []

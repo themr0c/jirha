@@ -51,7 +51,36 @@ Where the midpoint and the chosen threshold differ, the threshold was rounded to
 
 Note that the lower SP p75 often exceeds the upper SP p25 (e.g., 1 SP p75=72 > 2 SP p25=18). This overlap is expected — SP measures effort, complexity, risk, and uncertainty, not just line count. The heuristic is a starting signal, not a definitive answer.
 
-**Signal selection:** 20 parameters were evaluated (line counts, file counts, commits, review rounds, days open, PR comments, images, assemblies, etc.). Each was scored for monotonicity (does the median consistently increase with SP?) and discrimination (how well does a threshold separate high-SP from low-SP tasks). Only signals with monotonicity ≥ 0.80 and discrimination ≥ +30 were retained. Assembly files and images scored 0.0 (zero signal across all SP levels) and were dropped.
+**Signal selection:** 22 parameters were evaluated across two rounds. The first round (from the base CSV) evaluated line counts, file counts, commits, images, and assemblies. The second round used enriched data (review rounds, approvals, reviewer count, CI results, PR body length, directory diversity, days open, PR comments, Jira comments, link count, subtask count, sprint count, cycle time, status changes). Each was scored for monotonicity (does the median consistently increase with SP?) and discrimination (how well does a threshold separate high-SP from low-SP tasks). Only signals with monotonicity ≥ 0.80 and discrimination ≥ +30 were retained.
+
+**Full signal evaluation (380 Jiras, 1088 PRs):**
+
+| Signal | Monotonicity | Discrimination | Verdict |
+|---|---|---|---|
+| adoc_total | 1.00 | +50.8 | **Primary signal** (base tier) |
+| total_lines | 1.00 | +51.2 | **Floor signal** (tooling PRs) |
+| adoc_files | 1.00 | +41.4 | **Bump signal** (≥12) |
+| commits | 0.80 | +37.4 | **Bump signal** (≥12) |
+| new_adoc_files | 1.00 | +51.7* | **Bump signal** (≥2, requires 2-of-3) |
+| dir_count | 1.00 | +33.5 | Redundant with adoc_files |
+| module_dir_count | 1.00 | +24.6 | Redundant with adoc_files |
+| reviewer_count | 0.80 | +17.2 | Too weak |
+| subtask_count | 0.80 | +17.3 | Non-monotonic at SP 13 |
+| jira_comment_count | 0.80 | +15.5 | Too weak |
+| pr_body_length | 0.60 | +14.6 | Flat for SP 1–5, spikes at 13 |
+| sprint_count | 0.80 | +13.0 | Non-monotonic at SP 13 |
+| days_open | 0.60 | +12.6 | Non-monotonic |
+| status_changes | 0.80 | +4.2 | Near-zero discrimination |
+| comments | 0.80 | −0.1 | Flat across all SP levels |
+| review_rounds | 1.00 | 0.0 | All zeros (rarely used in this repo) |
+| approvals | 0.80 | −8.9 | Inverse signal (drops at SP 13) |
+| in_progress_days | 1.00 | 0.0 | All zeros (not used for time tracking) |
+| ci_failures | 1.00 | 0.0 | All zeros |
+| ci_total | 0.80 | −4.9 | No signal |
+| assembly_files | — | 0.0 | Zero signal across all SP levels |
+| image_files | — | 0.0 | Zero signal across all SP levels |
+
+*new_adoc_files discrimination is measured at the ≥2 threshold within the bump system, not standalone.
 
 ### Thresholds
 

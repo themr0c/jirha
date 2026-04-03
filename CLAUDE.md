@@ -27,6 +27,7 @@ scripts/jirha <command>   # directly from repo root
 - `config.py` — constants, field IDs, `.env` loading
 - `api.py` — Jira connection (`get_jira()`), PR metrics (`_pr_metrics()`), shared query helpers
 - `ops/issues.py` — list, show, create, update, transition, close_subtasks commands
+- `ops/meta.py` — metadata discovery (issue types, fields per project)
 - `ops/sprint.py` — sprint_status, swimlane assignment, velocity/risk assessment
 - `ops/hygiene.py` — hygiene checks, SP reassessment
 - `cli.py` — argparse entry point (`jirha = jirha.cli:main`)

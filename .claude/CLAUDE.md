@@ -14,7 +14,8 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha short-sprint-status [--team]` | Sprint board showing only open issues |
 | `jirha update KEY [-s SUMMARY] [--desc TEXT] [--desc-file FILE] [--sp N\|auto] [--pr URL] [--priority P] [--component C] [--team T] [--add-label L] [--remove-label L] [--link-to KEY] [--link-type TYPE] [--sprint [NAME]] [-c "comment"] [-f FILE]` | Batch-update issue fields, link, or add to sprint |
 | `jirha transition KEY [STATUS]` | Transition issue, or list available transitions |
-| `jirha create PROJECT SUMMARY [--type TYPE] [--component NAME] [--priority NAME] [--parent KEY] [--desc TEXT] [-f FILE]` | Create a new issue (use `--parent` for sub-tasks) |
+| `jirha create PROJECT SUMMARY [--type TYPE] [--component NAME] [--priority NAME] [--parent KEY] [--desc TEXT] [-f FILE] [-i]` | Create a new issue (use `--parent` for sub-tasks, `-i` for interactive) |
+| `jirha meta PROJECT [--type TYPE]` | Show valid issue types and fields for a project |
 | `jirha close-subtasks [--dry-run]` | Close open subtasks of closed parents |
 
 For custom field IDs, JQL queries, description templates, SP heuristics, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md).
@@ -23,7 +24,7 @@ For custom field IDs, JQL queries, description templates, SP heuristics, and spr
 
 Each `jirha` subcommand is also available as a plugin slash command in Claude:
 `/jirha:list`, `/jirha:show KEY`, `/jirha:sprint-status`, `/jirha:sprint-status-short`, `/jirha:hygiene`,
-`/jirha:update KEY ...`, `/jirha:transition KEY`, `/jirha:create PROJECT SUMMARY`
+`/jirha:update KEY ...`, `/jirha:transition KEY`, `/jirha:create PROJECT SUMMARY`, `/jirha:meta PROJECT`
 
 ## pantheon-cli (moved)
 

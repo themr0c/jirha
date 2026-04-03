@@ -352,6 +352,38 @@ def _fetch_user_prs(start_date, end_date=None):
     return detailed
 
 
+def _createmeta(jira, project_key):
+    """Fetch createmeta for a project. Returns the project dict with issuetypes."""
+    meta = jira.createmeta(projectKeys=project_key, expand="projects.issuetypes.fields")
+    if not meta.get("projects"):
+        return None
+    return meta["projects"][0]
+
+
+def parse_fields(issue_type_dict):
+    """Extract field metadata from a createmeta issue type dict.
+
+    Returns list of dicts with keys: key, name, required, schema_type, allowed_values.
+    allowed_values is a list of strings or None for freeform fields.
+    """
+    result = []
+    for key, f in issue_type_dict["fields"].items():
+        allowed = None
+        if "allowedValues" in f:
+            allowed = [
+                v.get("name") or v.get("value") or str(v)
+                for v in f["allowedValues"]
+            ]
+        result.append({
+            "key": key,
+            "name": f.get("name", ""),
+            "required": f.get("required", False),
+            "schema_type": f.get("schema", {}).get("type", ""),
+            "allowed_values": allowed,
+        })
+    return result
+
+
 def _fetch_pr_statuses(issues):
     """Return dict of issue key -> formatted PR status string for non-closed issues."""
     statuses = {}

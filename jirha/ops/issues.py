@@ -5,8 +5,10 @@ import sys
 from jirha.api import (
     SP_TIERS,
     _assess_pr_sp,
+    _createmeta,
     _issue_sp,
     get_jira,
+    parse_fields,
 )
 from jirha.config import (
     CF_GIT_PR,
@@ -396,31 +398,153 @@ def cmd_transition(args):
     print(f"Transitioned {args.key} to {match['name']}")
 
 
+def _validate_create(jira, project_key, type_name):
+    """Validate issue type for a project. Returns canonical type name.
+
+    Exits with actionable error listing valid types if invalid.
+    """
+    proj = _createmeta(jira, project_key)
+    if not proj:
+        sys.exit(f"Error: project {project_key} not found or not accessible.")
+    match = next(
+        (t for t in proj["issuetypes"] if t["name"].lower() == type_name.lower()),
+        None,
+    )
+    if not match:
+        names = ", ".join(t["name"] for t in proj["issuetypes"])
+        sys.exit(
+            f"Error: '{type_name}' is not a valid issue type for {project_key}.\n"
+            f"Available types: {names}\n"
+            f"Run: jirha meta {project_key}"
+        )
+    return match["name"]
+
+
 def cmd_create(args):
     """Create a new issue."""
     jira = get_jira()
-    fields = {
-        "project": {"key": args.project},
-        "summary": args.summary,
-        "issuetype": {"name": args.type},
-    }
-    if args.component:
-        fields["components"] = [{"name": args.component}]
-    if args.priority:
-        fields["priority"] = {"name": args.priority}
-    if args.parent:
-        fields["parent"] = {"key": args.parent}
-    if args.file:
-        with open(args.file) as f:
-            fields["description"] = f.read()
-    elif args.desc:
-        fields["description"] = args.desc
-    if args.affects_version:
-        fields["versions"] = [{"name": args.affects_version}]
+
+    if getattr(args, "interactive", False):
+        fields = _interactive_create(jira, args.project)
+    else:
+        if not args.summary:
+            sys.exit("Error: summary is required. Use --interactive for guided creation.")
+        resolved_type = _validate_create(jira, args.project, args.type)
+        fields = {
+            "project": {"key": args.project},
+            "summary": args.summary,
+            "issuetype": {"name": resolved_type},
+        }
+        if args.component:
+            fields["components"] = [{"name": args.component}]
+        if args.priority:
+            fields["priority"] = {"name": args.priority}
+        if args.parent:
+            fields["parent"] = {"key": args.parent}
+        if args.file:
+            with open(args.file) as f:
+                fields["description"] = f.read()
+        elif args.desc:
+            fields["description"] = args.desc
+        if args.affects_version:
+            fields["versions"] = [{"name": args.affects_version}]
 
     issue = jira.create_issue(fields=fields)
-    print(f"Created {issue.key}: {args.summary}")
+    summary = fields.get("summary", getattr(args, "summary", ""))
+    print(f"Created {issue.key}: {summary}")
     print(f"{SERVER}/browse/{issue.key}")
+
+
+def _interactive_create(jira, project_key):
+    """Interactive issue creation. Returns fields dict."""
+    proj = _createmeta(jira, project_key)
+    if not proj:
+        sys.exit(f"Error: project {project_key} not found or not accessible.")
+
+    types = proj["issuetypes"]
+    print(f"Issue types for {project_key}:")
+    for i, t in enumerate(types, 1):
+        tag = " (subtask)" if t.get("subtask") else ""
+        print(f"  {i}. {t['name']}{tag}")
+
+    while True:
+        choice = input("\nSelect type [1]: ").strip() or "1"
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(types):
+                break
+        except ValueError:
+            match = next(
+                (i for i, t in enumerate(types) if t["name"].lower() == choice.lower()),
+                None,
+            )
+            if match is not None:
+                idx = match
+                break
+        print("Invalid choice.")
+
+    selected = types[idx]
+    fields = {
+        "project": {"key": project_key},
+        "issuetype": {"name": selected["name"]},
+    }
+
+    summary = input("Summary: ").strip()
+    if not summary:
+        sys.exit("Error: summary is required.")
+    fields["summary"] = summary
+
+    # Parse field metadata
+    skip_keys = {
+        "project", "issuetype", "summary", "reporter",
+        "attachment", "issuelinks", "comment", "worklog",
+        "timetracking", "watches", "votes",
+    }
+    all_fields = [f for f in parse_fields(selected) if f["key"] not in skip_keys]
+
+    required = [f for f in all_fields if f["required"]]
+    optional = [f for f in all_fields if not f["required"]]
+
+    for f in required:
+        val = _prompt_field(f, required=True)
+        if val is not None:
+            fields[f["key"]] = val
+
+    if optional:
+        fill = input("\nFill optional fields? [y/N]: ").strip().lower() == "y"
+        if fill:
+            for f in optional:
+                val = _prompt_field(f, required=False)
+                if val is not None:
+                    fields[f["key"]] = val
+
+    return fields
+
+
+def _prompt_field(field, required=True):
+    """Prompt user for a field value. Returns formatted value or None."""
+    if field["allowed_values"]:
+        vals = field["allowed_values"]
+        if len(vals) <= 10:
+            print(f"  Values for {field['name']}: {', '.join(vals)}")
+        else:
+            print(f"  Values for {field['name']}: {', '.join(vals[:10])}... ({len(vals)} total)")
+
+    suffix = "" if required else " (Enter to skip)"
+    val = input(f"{field['name']}{suffix}: ").strip()
+
+    if not val:
+        return None
+
+    if field["allowed_values"] and val not in field["allowed_values"]:
+        print(f"  Invalid value '{val}'. Choose from the values listed above.")
+        return _prompt_field(field, required)
+
+    if field["schema_type"] == "array":
+        return [{"name": val}]
+    if field["allowed_values"]:
+        return {"name": val}
+    return val
 
 
 def cmd_close_subtasks(args):

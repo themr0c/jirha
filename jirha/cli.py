@@ -12,6 +12,7 @@ from jirha.ops.issues import (
     cmd_transition,
     cmd_update,
 )
+from jirha.ops.meta import cmd_meta
 from jirha.ops.sprint import cmd_short_sprint_status, cmd_sprint_status
 
 
@@ -98,8 +99,8 @@ def main():
     p.set_defaults(func=cmd_transition)
 
     p = sub.add_parser("create", help="Create a new issue")
-    p.add_argument("project", help="Project key (e.g., RHIDP, RHDHBUG)")
-    p.add_argument("summary", help="Issue summary")
+    p.add_argument("project", help="Project key (e.g., RHIDP, RHDHBUGS)")
+    p.add_argument("summary", nargs="?", help="Issue summary (required unless --interactive)")
     p.add_argument("--type", default="Task", help="Issue type (default: Task)")
     p.add_argument("--component", help="Component name")
     p.add_argument("--priority", help="Priority name")
@@ -107,7 +108,13 @@ def main():
     p.add_argument("--desc", help="Description text")
     p.add_argument("--file", "-f", help="Read description from file")
     p.add_argument("--affects-version", help="Affects version (e.g., 1.10.0)")
+    p.add_argument("--interactive", "-i", action="store_true", help="Walk through fields interactively")
     p.set_defaults(func=cmd_create)
+
+    p = sub.add_parser("meta", help="Show project issue types and fields")
+    p.add_argument("project", help="Project key (e.g., RHIDP)")
+    p.add_argument("--type", help="Show fields for this issue type")
+    p.set_defaults(func=cmd_meta)
 
     p = sub.add_parser("close-subtasks", help="Close open subtasks of closed parents")
     p.add_argument("--dry-run", action="store_true", help="Show what would be closed")

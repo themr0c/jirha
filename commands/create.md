@@ -2,7 +2,15 @@
 description: Create a new Jira issue (--type, --component, --parent)
 ---
 
-Run the following command and show its complete output:
+Before creating, discover valid issue types and fields for the target project:
+
+```bash
+jirha meta <PROJECT> --type <TYPE>
+```
+
+where `<PROJECT>` is the project key from the arguments and `<TYPE>` is the intended issue type (default: Task).
+
+Review the output to confirm the type is valid and required fields are covered. Then run:
 
 ```bash
 jirha create $ARGUMENTS

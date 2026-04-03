@@ -79,6 +79,7 @@ Note that the lower SP p75 often exceeds the upper SP p25 (e.g., 1 SP p75=72 > 2
 | ci_total | 0.80 | −4.9 | No signal |
 | assembly_files | — | 0.0 | Zero signal across all SP levels |
 | image_files | — | 0.0 | Zero signal across all SP levels |
+| feature_size | 1.00 | contextual only | LLM context signal (doc-only features) |
 
 *new_adoc_files discrimination is measured at the ≥2 threshold within the bump system, not standalone.
 
@@ -147,6 +148,14 @@ When a doc task has no linked PR, `--sp auto` falls back to Jira-only context. T
 | sibling_eng_task_count | 0.80 | Dominated by a few large features (clusters at 31) |
 
 **Acceptance criteria:** Investigated as a potential signal — Jira checkbox-style AC items. Of 100 doc tasks sampled, only 2 out of 15 parent features use Jira checkboxes. The extracted AC item count is zero across all SP levels. Dead signal.
+
+**Feature size (T-shirt):** Feature-level T-shirt sizing (`customfield_10795`: XS, S, M, L, XL, XXL) was evaluated as a potential SP predictor. Of 380 doc tasks, only 42 (11%) have a sized feature parent.
+
+For doc-only features (all epics belong to RHDH Documentation team), size shows monotonic progression: S (median 2 SP, N=3), L (median 5 SP, N=8), XL (median 9 SP, N=2). However, sample sizes are too small for statistical calibration.
+
+For mixed features (engineering + doc epics), size is anti-correlated: L features have median 2 SP (N=18). A large engineering feature doesn't imply large doc effort — the doc task may cover only a small surface area.
+
+Verdict: useful contextual signal for the LLM estimation skill (especially doc-only features), not a standalone heuristic.
 
 **Why Jira metadata doesn't predict task-level SP:** PR metrics measure actual output (lines changed) — directly correlated with effort. Jira metadata measures planning intent — multiple tasks under the same feature receive different SP values based on *which part* of the feature they document. That granularity isn't captured in any Jira field.
 

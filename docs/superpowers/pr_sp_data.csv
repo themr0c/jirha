@@ -1,0 +1,337 @@
+pr,jira_key,sp,title,merged_at,days_open,comments,adoc_files,adoc_added,adoc_deleted,adoc_total,other_files,other_added,other_deleted,other_total,total_lines,new_adoc_files,assembly_files,image_files,commits
+2018,RHDHBUGS-2904,3,[RHDHBUGS-2904]: Migrate link validation from htmltest to lychee,2026-04-03,0.0,3,2,8,5,13,9,217,94,311,324,0,0,0,11
+2017,,,Fix PR check status not reflecting build failure,2026-04-03,0.0,2,0,0,0,0,1,4,0,4,4,0,0,0,1
+2016,,,Fix build orchestrator js-yaml dependency failure in CI,2026-04-03,0.0,3,0,0,0,0,4,79,76,155,155,0,0,0,1
+2015,,,Fix shellcheck workflow creating duplicate PR comments,2026-04-03,0.0,2,0,0,0,0,1,0,1,1,1,0,0,0,2
+2014,RHDHBUGS-2903,8,[RHDHBUGS-2903]: Parallel build orchestrator with filtered output and PR failure comments,2026-04-03,0.0,8,0,0,0,0,6,607,67,674,674,0,0,0,5
+2013,,,fix: CQA workflow fetch base branch from upstream repo,2026-04-02,0.0,2,0,0,0,0,1,3,2,5,5,0,0,0,1
+2012,RHIDP-10991,5,[RHIDP-10991]: Backport custom transformer modules to release-1.9,2026-04-02,0.0,3,9,323,5,328,0,0,0,0,328,4,0,0,18
+2011,,,[release-1.9-post-cqa] chore: clean up .claude/ config,2026-04-02,0.0,1,0,0,0,0,3,25,286,311,311,0,0,0,1
+2010,,,chore: clean up .claude/ config,2026-04-02,0.0,4,0,0,0,0,3,25,286,311,311,0,0,0,1
+2009,,,[release-1.9-post-cqa] fix: improve CQA-17 disclaimer detection accuracy,2026-04-02,0.0,1,0,0,0,0,2,24,7,31,31,0,0,0,1
+2008,,,fix: improve CQA-17 disclaimer detection accuracy,2026-04-02,0.0,6,0,0,0,0,2,24,7,31,31,0,0,0,1
+2006,RHDHBUGS-2640,3,[RHDHBUGS-2640]: Rename Integrating with GitHub to Integrating with your Git provider,2026-04-02,0.3,3,9,115,23,138,5,0,0,0,138,5,0,0,10
+2005,,,[release-1.9-post-cqa] Improve CQA PR comment: full command and timestamp,2026-04-01,0.0,1,0,0,0,0,3,4,3,7,7,0,0,0,1
+2004,,,Improve CQA PR comment: full command and timestamp,2026-04-01,0.0,5,0,0,0,0,3,4,3,7,7,0,0,0,1
+2003,,,[release-1.9-post-cqa] Fix PR preview comment duplication,2026-04-01,0.0,1,0,0,0,0,1,35,17,52,52,0,0,0,1
+2002,,,Fix PR preview comment duplication,2026-04-01,0.0,3,0,0,0,0,1,35,17,52,52,0,0,0,1
+2000,,,[release-1.9-post-cqa] Fix CQA workflow: base branch diff and comment duplication,2026-04-01,0.0,1,0,0,0,0,2,9,3,12,12,0,0,0,1
+1999,,,Fix CQA workflow: base branch diff and comment duplication,2026-04-01,0.0,4,0,0,0,0,2,9,3,12,12,0,0,0,1
+1998,RHDHBUGS-2896,1,[release-1.9-post-cqa] [RHDHBUGS-2896]: Fix broken link to dynamic-plugins.default.yaml and orphaned upgrade module,2026-04-01,0.0,2,2,6,4,10,2,47,17,64,74,0,0,0,4
+1997,RHIDP-12950,8,[release-1.9-post-cqa] [RHIDP-12950]: Rewrite CQA scripts from bash to Node.js ESM,2026-04-01,0.0,2,4,1,0,1,96,4914,7351,12265,12266,0,0,0,17
+1996,,,Fix: Add GitHub link to dynamic plugins in .htmltest.yml,2026-04-01,0.0,2,0,0,0,0,1,1,0,1,1,0,0,0,1
+1995,RHDHBUGS-2896,1,[RHDHBUGS-2896]: Fix broken link to dynamic-plugins.default.yaml and orphaned upgrade module,2026-04-01,0.0,7,2,6,4,10,2,47,17,64,74,0,0,0,3
+1994,RHDHBUGS-2802,3,[release-1.9-post-cqa] [RHDHBUGS-2802]: Remove !<plugin-name> suffixes from OCI artifact paths,2026-04-01,0.1,2,18,37,81,118,1,2,2,4,122,0,0,0,1
+1992,,,Update the htmltest-file-release-1.9-post-cqa,2026-04-01,0.3,2,0,0,0,0,1,2,0,2,2,0,0,0,5
+1991,,,1.9 branch: Update the htmltest-file,2026-04-01,0.1,2,0,0,0,0,1,1,0,1,1,0,0,0,1
+1990,,,Main-branch-Update the htmltest-file,2026-04-01,0.3,2,0,0,0,0,1,1,0,1,1,0,0,0,1
+1989,RHIDP-12950,8,[RHIDP-12950]: Rewrite CQA scripts from bash to Node.js ESM,2026-04-01,0.2,37,4,1,0,1,96,4914,7351,12265,12266,0,0,0,17
+1988,RHIDP-12467,3,[release-1.9-post-cqa] RHIDP-12467: Add instructions for upgrading Helm-based instance from 1.8 to 1.9,2026-04-01,0.0,2,1,67,0,67,0,0,0,0,67,1,0,0,4
+1987,RHIDP-12467,3,Manual cherry-pick: Upgrade Helm-based instance from 1.8 to 1.9,2026-04-02,1.3,2,2,69,0,69,0,0,0,0,69,1,0,0,2
+1986,,,[release-1.9-post-cqa] Fixing CQA 16,2026-04-02,2.1,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1985,,,Fixing CQA 16,2026-03-31,0.1,4,1,1,1,2,0,0,0,0,2,0,0,0,1
+1984,,,Update broken links in orchestrator documentation,2026-04-01,0.7,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1983,,,Update product bundle and chart versions to 1.9.3,2026-04-01,0.8,2,1,2,2,4,0,0,0,0,4,0,0,0,2
+1981,RHIDP-12940,2,chore: update instructions re: using DPDY file and how to also use {{inherit}} tag (RHIDP-12940),2026-04-01,1.8,21,8,65,51,116,2,17,23,40,156,0,0,0,12
+1980,RHIDP-12275,,RHIDP-12275: Release tasks for RHDH 1.8.5,2026-03-31,0.7,3,6,60,11,71,0,0,0,0,71,1,0,0,1
+1979,,,chore: tagRelease.sh: bump to 1.8.5 in release-1.8 branch [skip-build] [skip-e2e],2026-03-30,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1978,RHIDP-12467,3,RHIDP-12467: Add instructions for upgrading Helm-based instance from 1.8 to 1.9,2026-04-01,1.7,8,1,67,0,67,0,0,0,0,67,1,0,0,4
+1977,RHDHBUGS-2879,1,[release-1.8] RHDHBUGS-2879-1 - Fix broken link - Casbin,2026-03-30,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1976,,,Orchestrator plugin: Logging For Workflows: Error accessing LokiStack…,2026-03-30,0.1,2,1,36,14,50,0,0,0,0,50,0,0,0,1
+1975,RHDHBUGS-2879,1,RHDHBUGS-2879-1 - Fix broken link - Casbin,2026-03-30,0.0,3,1,1,1,2,0,0,0,0,2,0,0,0,1
+1974,RHDHBUGS-2740,3,[release-1.9-post-cqa] RHDHBUGS-2740: Orchestrator plugin: Logging For Workflows: Error accessing LokiStack Public Route,2026-03-30,0.1,2,1,36,14,50,0,0,0,0,50,0,0,0,2
+1973,RHDHBUGS-2879,1,RHDHBUGS-2879 - Fix broken link: Casbin link...,2026-03-30,0.0,2,2,3,3,6,0,0,0,0,6,0,0,0,1
+1972,RHDHBUGS-2879,1,[release-1.8] RHDHBUGS-2879 - Fix broken link: Casbin link in Orchestrator docs,2026-03-30,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1971,RHDHBUGS-2879,1,RHDHBUGS-2879 - Fix broken link: Casbin link in Orchestrator docs,2026-03-30,0.0,7,1,1,1,2,0,0,0,0,2,0,0,0,1
+1970,,,Manual cp pr 1911 to release 1 9,2026-03-30,0.5,1,2,69,76,145,0,0,0,0,145,0,0,0,10
+1969,RHDHBUGS-2760,2,[release-1.9-post-cqa] RHDHBUGS-2760: Lightspeed operator doc issues,2026-03-30,0.0,2,2,69,76,145,0,0,0,0,145,0,0,0,8
+1968,RHIDP-12939,2,chore: link to the release-1.9 branch...,2026-03-30,0.5,3,1,2,2,4,0,0,0,0,4,0,0,0,3
+1967,RHIDP-12939,2,chore: link to the release-1.8 branch...,2026-03-30,0.5,3,1,2,2,4,0,0,0,0,4,0,0,0,3
+1966,RHDHBUGS-2740,3,RHDHBUGS-2740: Orchestrator plugin: Logging For Workflows: Error accessing LokiStack Public Route,2026-03-30,0.6,10,1,36,14,50,0,0,0,0,50,0,0,0,2
+1965,,,chore: release-1.8: update dynamic plugins table,2026-03-30,2.8,3,2,9,13,22,1,4,5,9,31,0,0,0,1
+1963,RHDHBUGS-2802,3,[RHDHBUGS-2802]: Remove !<plugin-name> suffixes from OCI artifact paths,2026-04-01,6.2,8,18,37,81,118,1,2,2,4,122,0,0,0,2
+1962,RHIDP-12906,3,[release-1.9-post-cqa] [RHIDP-12906]: Audit and fix book-link/book-title attributes,2026-03-26,0.0,1,7,32,30,62,0,0,0,0,62,0,0,0,1
+1961,RHIDP-12906,3,[RHIDP-12906]: Audit and fix book-link/book-title attributes,2026-03-26,0.0,6,7,32,30,62,0,0,0,0,62,0,0,0,1
+1960,RHIDP-12900,1,[release-1.9-post-cqa] [RHIDP-12900]: Remove unused troubleshooting-rhdh-plugins title and fix broken xrefs,2026-03-26,0.0,1,6,4,23,27,5,0,17,17,44,0,0,0,1
+1959,RHIDP-12900,1,[RHIDP-12900]: Remove unused troubleshooting-rhdh-plugins title and fix broken xrefs,2026-03-26,0.0,6,6,4,23,27,5,0,17,17,44,0,0,0,1
+1958,RHIDP-12899,1,[RHIDP-12899]: Fix remaining CQA violations in 3 leftover files,2026-03-25,0.0,2,3,4,6,10,0,0,0,0,10,0,0,0,1
+1957,RHIDP-9152,,[RHIDP#12883]: Fix CQA-5 and CQA-17 violations across repo,2026-03-25,1.2,24,62,170,121,291,24,161,150,311,602,3,0,0,12
+1956,,,Update the Bump Openshift Serverless Logic version to 1.37.2,2026-03-24,0.8,2,10,21,16,37,0,0,0,0,37,0,0,0,1
+1955,RHIDP-12815,2,RHIDP-12815: Bump Openshift Serverless Logic version to 1.37.2,2026-03-23,0.2,7,10,18,16,34,0,0,0,0,34,0,0,0,3
+1954,RHIDP-12789,1,"[RHIDP#12789]: Clean up CQA output: suppress pass noise, unify formats, sentence case",2026-03-20,0.0,7,0,0,0,0,22,56,101,157,157,0,0,0,4
+1953,RHIDP-12789,1,[RHIDP#12789]: Remove unused SARIF step from CQA workflow,2026-03-20,0.0,2,0,0,0,0,1,0,16,16,16,0,0,0,1
+1952,RHIDP-12789,1,[RHIDP#12789]: Fix CQA PR comment rendering issues,2026-03-20,0.0,3,0,0,0,0,43,166,171,337,337,0,0,0,1
+1951,RHIDP-12788,1,[RHIDP-12788]: Fix CQA workflow PR comment failing on backticks,2026-03-20,0.0,2,0,0,0,0,1,3,1,4,4,0,0,0,1
+1950,RHIDP-12787,13,[RHIDP-12787]: Add local SonarCloud lint script and fix remaining CQA errors,2026-03-20,0.1,12,87,479,134,613,13,199,120,319,932,11,0,0,8
+1948,RHDHBUGS-2596,1,[release-1.9] RHDHBUGS-2596: User icon not displayed in chatbox UI,2026-03-20,0.3,2,1,8,1,9,0,0,0,0,9,0,0,0,3
+1947,RHIDP-12779,1,[RHIDP#12779]: CQA tooling optimization and content modularization,2026-03-20,0.7,41,51,379,157,536,49,3975,9112,13087,13623,10,0,0,23
+1946,,,RELEASE-1-9-2 - Update product versions for 1.9.2 in attributes.adoc,2026-03-19,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1945,RHIDP-12727,1,RHIDP-12727: CQA 2.1 compliance for configure_techdocs-for-rhdh,2026-03-19,0.0,5,1,1,1,2,1,1,1,2,4,0,0,0,2
+1944,RHIDP-12726,1,RHIDP-12726: CQA 2.1 compliance for integrate_interacting-with-model-context-protocol-tools-for-rhdh,2026-03-19,0.0,5,2,2,2,4,0,0,0,0,4,0,0,0,3
+1943,RHIDP-12721,1,RHIDP-12721: CQA 2.1 compliance for integrate_interacting-with-developer-lightspeed-for-rhdh,2026-03-19,0.0,5,12,15,15,30,1,1,1,2,32,0,0,0,2
+1942,RHIDP-12725,1,RHIDP-12725: CQA 2.1 compliance for install_installing-rhdh-on-ocp,2026-03-19,0.0,3,3,7,7,14,0,0,0,0,14,0,0,0,2
+1941,RHIDP-12724,1,RHIDP-12724: CQA 2.1 compliance for install_installing-rhdh-on-gke,2026-03-19,0.0,4,1,2,1,3,0,0,0,0,3,0,0,0,4
+1940,RHIDP-12723,1,RHIDP-12723: CQA 2.1 compliance for install_installing-rhdh-on-eks,2026-03-19,0.0,4,1,2,1,3,0,0,0,0,3,0,0,0,4
+1939,RHIDP-12722,1,RHIDP-12722: CQA 2.1 compliance for install_installing-rhdh-in-an-air-gapped-environment,2026-03-19,0.0,4,2,5,3,8,0,0,0,0,8,0,0,0,4
+1938,RHIDP-12717,5,RHIDP-12717: CQA regression fixes for authorization title,2026-03-19,0.0,7,16,40,40,80,2,18,0,18,98,0,0,0,9
+1937,RHIDP-12716,1,RHIDP-12716: CQA 2.1 regression fix for Authentication,2026-03-19,0.0,6,5,5,4,9,3,12,0,12,21,0,0,0,5
+1936,RHIDP-12715,1,RHIDP-12715: CQA 2.1 regression fix for Audit Logs,2026-03-19,0.0,6,2,3,3,6,0,0,0,0,6,0,0,0,5
+1935,RHIDP-12714,3,RHIDP-12714: CQA 2.1 regression fix for Adoption Insights,2026-03-19,0.0,5,10,21,21,42,0,0,0,0,42,0,0,0,4
+1934,RHIDP-12713,3,RHIDP-12713: CQA 2.1 regression fix for About Red Hat Developer Hub,2026-03-19,0.0,5,6,15,15,30,2,19,70,89,119,0,0,0,3
+1932,RHIDP-12740,13,RHIDP-12740: CQA 2.1 consistent file names and IDs based on title,2026-03-19,0.0,4,99,216,210,426,1,2,1,3,429,4,0,0,1
+1931,RHIDP-12703,13,RHIDP-12703: Simplify file hierarchy for simpler include statements,2026-03-18,0.0,7,98,665,1054,1719,2,109,2,111,1830,19,0,0,13
+1930,RHIDP-12719,13,RHIDP-12719: CQA 2.1 compliance for Customizing Red Hat Developer Hub,2026-03-18,0.0,3,93,468,383,851,7,20,6,26,877,12,0,0,2
+1929,,,1.9.2: regen dynamic plugins tables for orchestrator updates,2026-03-19,0.8,6,3,19,16,35,1,6,6,12,47,0,0,0,2
+1928,RHIDP-11271,3,Manual cherry-pick of RHIDP-11271,2026-03-19,1.0,3,2,70,0,70,0,0,0,0,70,1,0,0,1
+1927,RHIDP-12718,13,RHIDP-12718: CQA 2.1 compliance for Configuring Red Hat Developer Hub,2026-03-18,0.2,17,69,599,731,1330,8,22,3,25,1355,9,0,0,16
+1926,RHIDP-12234,5,RHIDP-12234: CQA 2.1 compliance for Dynamic plugins reference,2026-03-18,0.0,4,17,157,85,242,10,6,8,14,256,5,0,0,2
+1925,RHIDP-12230,13,RHIDP-12230: CQA 2.1 compliance: Introduction to plugins (remove title not published any more),2026-03-18,0.0,7,20,74,653,727,7,15,16,31,758,2,0,0,6
+1924,RHIDP-12708,13,RHIDP-12708: CQA 2.1 compliance for Navigate Red Hat Developer Hub on your first day,2026-03-18,0.4,3,42,238,212,450,1,7,0,7,457,4,0,0,2
+1923,RHIDP-11271,3,RHIDP-11271: fixing 404 error for clusters sharing 1 PVC,2026-03-18,0.7,7,2,70,0,70,0,0,0,0,70,1,0,0,4
+1922,RHIDP-12232,13,RHIDP-12232: CQA 2.1 compliance for Installing and viewing plugins in Red Hat Developer Hub,2026-03-17,0.1,7,84,814,824,1638,3,50,16,66,1704,14,0,0,2
+1921,RHIDP-12236,3,RHIDP-12236: CQA 2.1 compliance for Troubleshooting Red Hat Developer Hub plugins,2026-03-17,0.0,3,5,16,24,40,0,0,0,0,40,0,0,0,1
+1920,RHIDP-12238,5,RHIDP-12238: CQA 2.1 compliance for Using dynamic plugins in Red Hat Developer Hub,2026-03-17,0.0,4,12,76,80,156,0,0,0,0,156,1,0,0,3
+1919,RHIDP-12239,3,RHIDP-12239: CQA 2.1 compliance for Configuring dynamic plugins,2026-03-17,0.0,2,4,5,40,45,0,0,0,0,45,0,0,0,1
+1918,RHIDP-12240,13,RHIDP-12240: CQA 2.1 compliance for Evaluate project health using Scorecards,2026-03-17,0.0,3,33,312,264,576,1,4,9,13,589,7,0,0,2
+1917,RHIDP-12241,5,RHIDP-12241: CQA 2.1 compliance for Setting up and configuring your first Red Hat Developer Hub instance,2026-03-17,0.1,11,27,80,80,160,1,45,12,57,217,1,0,0,5
+1916,RHIDP-12242,5,RHIDP-12242: CQA 2.1 compliance for Streamline software development and management in Red Hat Developer Hub,2026-03-17,0.0,2,19,90,70,160,0,0,0,0,160,1,0,0,1
+1915,RHIDP-12243,8,RHIDP-12243: CQA 2.1 compliance for TechDocs for Red Hat Developer Hub,2026-03-17,0.0,3,28,171,125,296,0,0,0,0,296,4,0,0,2
+1914,RHIDP-12244,5,RHIDP-12244: CQA 2.1 compliance for Telemetry data collection and analysis,2026-03-17,0.0,3,13,70,59,129,0,0,0,0,129,2,0,0,1
+1912,RHIDP-12245,3,RHIDP-12245: CQA 2.1 compliance for Upgrading Red Hat Developer Hub,2026-03-17,0.1,2,3,29,18,47,0,0,0,0,47,0,0,0,1
+1911,RHDHBUGS-2760,2,RHDHBUGS-2760: Lightspeed operator doc issues,2026-03-30,12.9,22,2,69,76,145,0,0,0,0,145,0,0,0,8
+1910,RHIDP-12231,13,RHIDP-12231: CQA 2.1 compliance for Configuring dynamic plugins,2026-03-17,0.1,16,78,586,731,1317,4,71,51,122,1439,17,0,0,15
+1909,RHIDP-12673,1,RHIDP-12673: CQA 3 compliance - content modularization across all titles,2026-03-17,0.0,3,33,62,8,70,2,68,11,79,149,0,0,0,2
+1908,RHDHBUGS-2596,1,RHDHBUGS-2596: User icon not displayed in chatbox UI,2026-03-19,2.3,10,1,8,1,9,0,0,0,0,9,0,0,0,3
+1907,,,Removing orphaned files,2026-03-17,0.2,4,4,1,88,89,0,0,0,0,89,0,0,0,1
+1906,RHIDP-12228,13,RHIDP-12228: CQA 2.1 compliance for Orchestrator in Red Hat Developer Hub,2026-03-16,0.0,15,62,326,265,591,2,40,2,42,633,8,0,0,8
+1905,RHIDP-12227,3,RHIDP-12227: CQA 2.1 compliance for Accelerate AI development with OpenShift AI Connector for Red Hat Developer Hub,2026-03-16,0.0,2,9,68,44,112,0,0,0,0,112,0,0,0,1
+1903,RHIDP-12226,13,RHIDP-12226: CQA 2.1 compliance for Monitoring and logging,2026-03-16,0.0,16,30,354,300,654,12,40,43,83,737,11,0,0,8
+1901,RHIDP-12224,8,RHIDP-12224: CQA 2.1 compliance for Interacting with Model Context Protocol tools for Red Hat Developer Hub,2026-03-16,0.1,25,24,164,98,262,41,3258,466,3724,3986,2,0,0,13
+1900,RHIDP-12223,3,RHIDP-12223: CQA 2.1 compliance for Manage and consume technical documentation within Red Hat Developer Hub,2026-03-16,0.0,9,10,39,33,72,3,64,35,99,171,0,0,0,4
+1899,RHIDP-12221,8,RHIDP-12221: CQA 2.1 compliance for Integrating with GitHub,2026-03-16,0.1,13,19,113,86,199,22,1044,145,1189,1388,2,0,0,28
+1898,RHIDP-12220,13,RHIDP-12220: CQA 2.1 compliance for Installing RHDH on OSD on GCP,2026-03-13,0.2,47,18,21,1170,1191,42,21098,1254,22352,23543,0,0,0,24
+1897,,,Manual CP for PR-1874,2026-03-13,0.0,2,4,75,38,113,0,0,0,0,113,1,0,0,1
+1895,,,Manual cherrypick,2026-03-12,0.0,2,4,75,38,113,0,0,0,0,113,1,0,0,1
+1892,RHIDP-12637,13,RHIDP-12637: Add CQA automation scripts and GitHub workflow for persistent compliance,2026-03-13,1.2,3,87,138,2784,2922,13,2053,276,2329,5251,0,0,0,54
+1891,,,1.9.1 pre-GA backout,2026-03-11,0.0,2,0,0,0,0,0,0,0,0,0,0,0,0,5
+1890,,,Release 1.9.1: Changed product versions in attributes.adoc,2026-03-11,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,3
+1889,RHIDP-12218,5,RHIDP-12218: CQA 2.1 compliance for Installing Red Hat Developer Hub on OpenShift Container Platform,2026-03-11,0.1,2,13,75,67,142,6,825,39,864,1006,2,0,0,11
+1888,RHIDP-12213,13,"RHIDP-12213, RHIDP-12215, RHIDP-12216: CQA 2.1 compliance for Installing RHDH on AKS, EKS, and GKE",2026-03-11,0.1,2,24,231,195,426,3,30,0,30,456,6,0,0,11
+1887,RHIDP-12212,8,RHIDP-12212: CQA 2.1 compliance for Installing Red Hat Developer Hub in an air-gapped environment,2026-03-11,0.2,2,28,147,113,260,4,134,26,160,420,4,0,0,17
+1886,RHDHBUGS-2748,1,[release-1.9] chore: prevent running script if no yq or mikefarah yq is installed in the path (RHDHBUGS-2748),2026-03-19,8.9,2,0,0,0,0,1,9,1,10,10,0,0,0,1
+1885,RHIDP-12211,3,RHIDP-12211: CQA 2.1 compliance for Interacting with Red Hat Developer Lightspeed for Red Hat Developer Hub,2026-03-10,0.0,2,27,78,41,119,0,0,0,0,119,0,0,0,1
+1884,,,[release-1.9] chore: modify tech preview and supported plugins to reflect Gitlab G,2026-03-12,2.1,2,2,10,10,20,1,2,2,4,24,0,0,0,1
+1883,RHIDP-12210,13,RHIDP-12210: CQA 2.1 compliance for Customizing Red Hat Developer Hub title,2026-03-10,0.3,2,92,657,700,1357,3,345,56,401,1758,12,0,0,46
+1882,,,chore: modify tech preview and supported plugins to reflect Gitlab GA,2026-03-12,2.7,4,2,10,10,20,1,2,2,4,24,0,0,0,1
+1881,RHIDP-12477,2,RHIDP-12477: OCI path and plugin category corrections,2026-03-16,7.0,11,14,57,35,92,0,0,0,0,92,0,0,0,22
+1880,RHIDP-12209,13,RHIDP-12209: CQA 2.1 compliance for Configuring title,2026-03-10,0.8,2,70,618,564,1182,3,371,37,408,1590,8,0,0,36
+1879,RHDHBUGS-2748,1,chore: prevent running script if no yq or mikefarah yq is installed in the path (RHDHBUGS-2748),2026-03-10,4.0,15,0,0,0,0,1,9,1,10,10,0,0,0,2
+1878,RHIDP-12208,13,RHIDP-12208: CQA 2.1 compliance for Authorization in Red Hat Developer Hub,2026-03-10,3.8,3,57,1076,202,1278,1,3,2,5,1283,18,0,0,11
+1877,RHIDP-12205,5,RHIDP-12205: CQA 2.1 compliance for Audit logs in Red Hat Developer Hub,2026-03-09,2.9,2,5,69,84,153,1,79,0,79,232,1,0,0,9
+1876,RHIDP-12204,8,RHIDP-12204: CQA 2.1 compliance for Adoption Insights in Red Hat Deve…,2026-03-06,0.3,2,18,218,111,329,1,426,0,426,755,3,0,0,15
+1875,,,[release-1.9] Fixed scorecard broken link,2026-03-06,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1874,RHDHBUGS-2766,2,RHDHBUGS-2766: Added common icons,2026-03-12,6.2,8,5,92,36,128,0,0,0,0,128,2,0,0,6
+1873,,,Fixed scorecard broken link,2026-03-06,0.2,4,1,2,2,4,0,0,0,0,4,0,0,0,1
+1872,RHIDP-12203,3,RHIDP-12203: CQA 2.1 compliance for About Red Hat Developer Hub title,2026-03-06,0.7,2,8,30,18,48,0,0,0,0,48,0,0,0,6
+1871,,,[release-1.9] Rhidp 9758: Enable GitLab authentication,2026-03-06,0.7,2,8,192,5,197,0,0,0,0,197,4,0,0,27
+1870,RHDHBUGS-2769,2,RHDHBUGS-2769 - RHDH 1.9 GA release edits - formatting issue,2026-03-05,0.0,5,1,4,3,7,0,0,0,0,7,0,0,0,1
+1869,,,cherrypick 1.9 changes to main,2026-03-05,0.5,2,10,136,159,295,2,14,28,42,337,0,0,0,1
+1867,,,[main] DOCS-FIX-1 - RHDH 1.9 GA release edits,2026-03-04,0.1,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1866,,,DOCS-FIX-1 - RHDH 1.9 GA release edits,2026-03-04,0.0,5,1,2,2,4,0,0,0,0,4,0,0,0,1
+1865,RHIDP-12469,2,"[release-1.9] RHIDP-12469: Remove TP banner from JFrog, Nexus, and ServiceNow plugin docs",2026-03-04,0.0,2,5,1,49,50,0,0,0,0,50,0,0,0,1
+1864,RHIDP-12465,1,RHIDP-12465: add plugin versions to tables and re-org content,2026-03-04,0.7,2,4,122,86,208,1,8,6,14,222,0,0,0,1
+1863,RHIDP-12469,2,"RHIDP-12469: Remove TP banner from JFrog, Nexus, and ServiceNow plugin docs",2026-03-04,0.7,4,5,1,49,50,0,0,0,0,50,0,0,0,1
+1862,,,[release-1.9] Fix image statements,2026-03-03,0.0,1,0,0,0,0,1,0,0,0,0,0,0,1,1
+1861,,,Fix image statements,2026-03-03,0.0,3,0,0,0,0,1,0,0,0,0,0,0,1,4
+1860,,,[release-1.9] Fix image statements,2026-03-03,0.0,1,2,14,14,28,0,0,0,0,28,0,0,0,2
+1859,,,Fix image statements,2026-03-03,0.0,3,2,14,14,28,0,0,0,0,28,0,0,0,2
+1858,,,fix build,2026-03-03,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1857,,,fix build,2026-03-03,0.0,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1855,,,release-1.9: Update orchestrator digests,2026-03-02,0.0,2,2,5,5,10,1,5,5,10,20,0,0,0,1
+1853,RHIDP-9093,13,RHIDP-9093-3 - How To Create Dynamic Plugins for Red Hat Developer Hub,2026-03-02,0.0,3,22,858,74,932,2,1,0,1,933,14,0,1,1
+1851,,,[release-1.9] Lightspeed docs Minor changes,2026-03-02,0.0,2,2,4,2,6,0,0,0,0,6,0,0,0,1
+1850,,,Lightspeed docs Minor changes,2026-03-02,0.1,5,2,4,2,6,0,0,0,0,6,0,0,0,1
+1849,RHIDP-12410,,chore: RHIDP-12410 Update plugin statuses,2026-03-02,3.0,2,7,12,69,81,1,2,16,18,99,0,0,0,3
+1848,,,[release-1.9] Rhidp 12097 oc ipaths,2026-03-03,3.9,2,8,29,19,48,0,0,0,0,48,1,0,0,16
+1847,,,[release-1.8] fix: remove session-leaking parameters from documentation URLs,2026-02-27,0.1,2,2,2,2,4,0,0,0,0,4,0,0,0,1
+1846,,,[release-1.9] fix: remove session-leaking parameters from documentation URLs,2026-02-27,0.1,2,2,2,2,4,0,0,0,0,4,0,0,0,1
+1845,,,fix: remove session-leaking parameters from documentation URLs,2026-02-27,0.1,6,2,2,2,4,0,0,0,0,4,0,0,0,1
+1844,,,Bump Openshift Serverless Logic version to 1.37.1,2026-02-26,0.0,2,10,32,32,64,1,5,0,5,69,0,0,0,1
+1842,RHIDP-9757,8,RHIDP-9757-1-9 - [UPDATE] Mirroring OCI artifacts into an airgapped RHDH deployment documentation,2026-02-26,0.0,2,3,3,3,6,1,0,46,46,52,0,0,0,1
+1841,,,[release-1.9] Update the orchestrator plugins references,2026-02-26,0.0,2,5,162,141,303,0,0,0,0,303,0,0,0,9
+1840,RHIDP-9757,8,RHIDP-9757-1 - [UPDATE] Mirroring OCI artifacts into an airgapped RHDH deployment documentation,2026-02-26,0.0,8,3,3,3,6,0,0,0,0,6,0,0,0,20
+1839,RHIDP-9758,8,Rhidp 9758: Enable GitLab authentication,2026-03-05,8.0,4,8,192,5,197,0,0,0,0,197,4,0,0,27
+1838,RHIDP-12369,1,[release-1.9] RHIDP-12369: Add link to Streamline software development and management in the attribute file,2026-02-25,0.0,2,1,2,0,2,0,0,0,0,2,0,0,0,1
+1837,RHIDP-12369,1,[release-1.8] RHIDP-12369: Add link to Streamline software development and management in the attribute file,2026-02-25,0.0,2,1,2,0,2,0,0,0,0,2,0,0,0,1
+1836,,,"chore: add exception for http-request so it's labelled as GA even though it's Roadie, not RH [release-1.9]",2026-02-25,0.8,2,2,6,6,12,2,8,2,10,22,0,0,0,2
+1835,,,"chore: add exception for http-request so it's labelled as GA even though it's Roadie, not RH",2026-02-25,0.8,2,3,13,7,20,2,9,2,11,31,0,0,0,2
+1834,RHIDP-12369,1,RHIDP-12369: Add link to Streamline software development and management in the attribute file,2026-02-25,0.4,8,1,2,0,2,0,0,0,0,2,0,0,0,1
+1833,RHIDP-9537,5,[release-1.9] RHIDP-9537 - RHDH Installation Script Enhancement: Allow Tag Omission in OCI References for Dynamic Plugin,2026-02-24,0.0,2,1,79,8,87,1,46,0,46,133,0,0,0,10
+1831,RHDHBUGS-2680,2,[release-1.9] RHDHBUGS-2680: Logging for Workflows,2026-02-24,0.9,2,1,27,23,50,4,0,0,0,50,0,0,4,5
+1830,RHIDP-12162,,RHIDP-12162: 1.8.4 Release Notes,2026-02-25,1.8,2,3,6,4,10,0,0,0,0,10,0,0,0,5
+1829,RHIDP-11718,2,Update the orchestrator plugins references,2026-02-26,2.7,5,5,162,141,303,0,0,0,0,303,0,0,0,9
+1828,RHIDP-11208,,[release-1.9] RHIDP-11208 & RHDHBUGS-2727:Added screenshots and fixed errors,2026-02-23,0.0,2,4,35,5,40,10,0,0,0,40,0,0,10,2
+1827,RHDHBUGS-2680,2,RHDHBUGS-2680: Logging for Workflows,2026-02-23,0.4,5,1,27,23,50,4,0,0,0,50,0,0,4,4
+1826,RHIDP-11208,,RHIDP-11208 & RHDHBUGS-2727:Added screenshots and fixed errors,2026-02-23,0.0,5,4,35,5,40,10,0,0,0,40,0,0,10,2
+1825,,,[release-1.9] Minor structure related changes and typo,2026-02-23,0.0,2,2,4,4,8,0,0,0,0,8,0,0,0,1
+1824,RHIDP-9537,5,RHIDP-9537 - RHDH Installation Script Enhancement: Allow Tag Omission in OCI References for Dynamic Plugins,2026-02-24,3.8,6,1,79,8,87,1,46,0,46,133,0,0,0,26
+1823,RHDHBUGS-2614,3,chore: add migration tables to the install guide for dynamic plugins (RHDHBUGS-2614); also add a reminder note about thi,2026-02-19,0.1,2,9,53,68,121,2,57,37,94,215,0,0,0,9
+1822,,,Minor structure related changes and typo,2026-02-23,3.7,4,2,4,4,8,0,0,0,0,8,0,0,0,1
+1821,RHIDP-8377,13,[release-1.9] RHIDP-8377: End user documentation ,2026-02-19,0.0,2,52,1209,247,1456,5,5,0,5,1461,35,0,0,41
+1819,,,[release-1.9] Minor update,2026-02-23,3.8,2,1,1,1,2,0,0,0,0,2,0,0,0,1
+1818,RHDHBUGS-2694,1,[release-1.9] RHDHBUGS-2694: Added test day comments for Software Templates,2026-02-19,0.0,2,5,96,38,134,0,0,0,0,134,1,0,0,5
+1817,RHIDP-12207,13,[release-1.9] RHIDP-12207 CQA 2.1 compliance: Authentication in Red Hat Developer Hub,2026-02-19,0.0,1,49,327,317,644,2,36,4,40,684,9,0,0,1
+1816,,,Minor update,2026-02-19,0.1,5,1,1,1,2,0,0,0,0,2,0,0,0,1
+1815,RHIDP-12110,3,[release-1.9] RHIDP-12110: Add instructions for upgrading Operator-backed RHDH with Orchestrator to 1.9,2026-02-19,0.0,2,3,56,59,115,0,0,0,0,115,1,0,0,4
+1814,RHIDP-6043,8,RHIDP-6043: fix arrays not merged by default,2026-02-26,7.6,5,4,72,0,72,0,0,0,0,72,2,0,0,6
+1813,RHDHBUGS-2007,3,"RHDHBUGS-2007: Do not use ""foo""",2026-02-19,0.7,4,9,41,41,82,0,0,0,0,82,0,0,0,3
+1812,RHIDP-12097,5,Rhidp 12097 oc ipaths,2026-02-27,8.9,5,8,29,19,48,0,0,0,0,48,1,0,0,21
+1811,RHIDP-12083,1,[release-1.9] RHIDP-12083: remove dev preview banner from github events module as it is TP from 1.9,2026-02-18,0.0,2,2,3,12,15,0,0,0,0,15,0,0,0,5
+1810,RHIDP-12207,13,RHIDP-12207 CQA 2.1 compliance: Authentication in Red Hat Developer Hub,2026-02-19,0.8,4,49,327,317,644,2,36,4,40,684,9,0,0,1
+1809,RHDHBUGS-2694,1,RHDHBUGS-2694: Added test day comments for Software Templates,2026-02-19,0.9,5,5,96,38,134,0,0,0,0,134,1,0,0,5
+1808,RHIDP-9757,8,[release-1.9] RHIDP-9757 - Mirroring OCI artifacts into an airgapped RHDH deployment documentation,2026-02-18,0.0,2,7,199,0,199,0,0,0,0,199,6,0,0,25
+1807,,,[release-1.8] Update architecture diagram,2026-02-18,0.0,2,1,1,1,2,1,0,0,0,2,0,0,1,2
+1806,,,[release-1.7] Update architecture diagram,2026-02-18,0.0,2,1,1,1,2,1,0,0,0,2,0,0,1,2
+1805,,,[release-1.9] Update architecture diagram,2026-02-18,0.0,2,1,1,1,2,1,0,0,0,2,0,0,1,2
+1804,RHIDP-11718,2,[release-1.9] RHIDP-11718: Replace NPM references to the Orchestrator plugins with their official OCI refs in the Orches,2026-02-18,0.0,2,8,141,80,221,0,0,0,0,221,0,0,0,4
+1803,RHIDP-12110,3,RHIDP-12110: Add instructions for upgrading Operator-backed RHDH with Orchestrator to 1.9,2026-02-19,1.7,5,3,56,59,115,0,0,0,0,115,1,0,0,4
+1802,RHIDP-9078,5,[release-1.7] RHIDP-9078: Add an architecture section to documentation,2026-02-18,0.6,2,3,83,1,84,1,0,0,0,84,2,0,1,7
+1801,,,Update architecture diagram,2026-02-18,0.6,11,1,1,1,2,1,0,0,0,2,0,0,1,2
+1800,RHIDP-9078,5,[release-1.9] RHIDP-9078: Add an architecture section to documentation,2026-02-17,0.1,2,3,83,1,84,1,0,0,0,84,2,0,1,7
+1799,RHIDP-9078,5,[release-1.8] RHIDP-9078: Add an architecture section to documentation,2026-02-17,0.1,2,3,83,1,84,1,0,0,0,84,2,0,1,7
+1795,RHIDP-11447,2,[release-1.9] RHIDP-11447: Conditional permissions for Scorecards,2026-02-16,0.0,2,1,45,8,53,0,0,0,0,53,0,0,0,5
+1794,RHIDP-9781,5,[release-1.9] RHIDP-9781: Scorecard KPI aggregated value,2026-02-16,0.0,2,13,468,7,475,0,0,0,0,475,8,0,0,15
+1793,,,Log level content backport from PR 1715,2026-02-13,0.0,2,6,92,55,147,0,0,0,0,147,2,0,0,6
+1792,RHIDP-9078,5,RHIDP-9078: Add an architecture section to documentation,2026-02-17,4.6,11,3,83,1,84,1,0,0,0,84,2,0,1,7
+1791,RHIDP-11718,2,RHIDP-11718: Replace NPM references to the Orchestrator plugins with their official OCI refs in the Orchestrator docs,2026-02-18,6.6,4,8,141,80,221,0,0,0,0,221,0,0,0,4
+1790,,,[release-1.9] Fixing some mistakes I made previously,2026-02-11,0.0,2,4,8,8,16,0,0,0,0,16,0,0,0,1
+1789,,,[release-1.9] Integrating Loki logs for Orchestrator workflows Link,2026-02-11,0.0,2,0,0,0,0,1,1,0,1,1,0,0,0,1
+1788,,,Integrating Loki logs for Orchestrator workflows Link,2026-02-11,0.0,4,0,0,0,0,1,1,0,1,1,0,0,0,1
+1787,,,Fixing some mistakes I made previously,2026-02-11,0.0,5,4,8,8,16,0,0,0,0,16,0,0,0,1
+1785,RHDHBUGS-2621,1,[release-1.9] RHDHBUGS-2621 update ansible version,2026-02-10,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1784,RHDHBUGS-2621,1,RHDHBUGS-2621 update ansible version,2026-02-10,0.0,3,1,1,1,2,0,0,0,0,2,0,0,0,1
+1783,RHDHBUGS-942,3,[release-1.9] RHDHBUGS-942 RBAC REST API DELETE request requires a JSON body,2026-02-10,0.0,1,2,23,4,27,0,0,0,0,27,1,0,0,13
+1782,RHDHBUGS-2614,3,chore: add migration tables to the install guide for dynamic plugins (RHDHBUGS-2614); also add a reminder note about thi,2026-02-19,9.3,11,9,49,64,113,2,57,37,94,207,0,0,0,9
+1781,RHDHBUGS-2493,1,[release-1.9] RHDHBUGS-2493: Harden language around Orchestrator/OSL compatibility,2026-02-10,0.0,2,1,8,2,10,0,0,0,0,10,0,0,0,3
+1780,RHDHBUGS-2493,1,[release-1.8] RHDHBUGS-2493: Harden language around Orchestrator/OSL compatibility,2026-02-10,0.0,2,1,8,2,10,0,0,0,0,10,0,0,0,2
+1779,RHDHBUGS-2493,1,[release-1.7] RHDHBUGS-2493: Harden language around Orchestrator/OSL compatibility,2026-02-10,0.0,2,1,8,2,10,0,0,0,0,10,0,0,0,2
+1778,RHDHBUGS-2436,2,[release-1.9] RHDHBUGS-2436: Document ArgoCD limitation with Helm's lookup function when deploying RHDH with Orchestrato,2026-02-10,0.0,2,1,35,3,38,0,0,0,0,38,0,0,0,6
+1777,RHDHBUGS-2436,2,[release-1.8] RHDHBUGS-2436: Document ArgoCD limitation with Helm's lookup function when deploying RHDH with Orchestrato,2026-02-10,0.0,2,1,35,3,38,0,0,0,0,38,0,0,0,7
+1776,RHDHBUGS-2631,3,RHDHBUGS-2631 Quick fix for release-1.9 ,2026-02-10,0.0,2,2,25,25,50,0,0,0,0,50,0,0,0,1
+1775,RHDHBUGS-2631,3,RHDHBUGS-2631 quick fix to unblock the builds,2026-02-10,0.0,4,2,25,25,50,0,0,0,0,50,0,0,0,3
+1773,RHIDP-2626,,chore: regen dynamic plugins and add migration tables too (RHIDP-2626),2026-02-09,0.2,2,7,573,298,871,2,634,460,1094,1965,3,0,0,1
+1771,RHIDP-2626,,chore: improve rhdh-supported-plugins.sh to use overlays repo for catalog metadata,2026-02-09,0.3,3,7,162,301,463,2,516,535,1051,1514,1,0,0,3
+1770,RHDHBUGS-2317,2,[release-1.9] RHDHBUGS-2317: Orchestrator workflows not listed when RBAC is enabled,2026-02-09,0.0,2,2,37,1,38,0,0,0,0,38,1,0,0,3
+1769,RHDHBUGS-2317,2,[release-1.8] RHDHBUGS-2317: Orchestrator workflows not listed when RBAC is enabled,2026-02-09,0.0,2,2,37,1,38,0,0,0,0,38,1,0,0,3
+1767,RHIDP-10991,5,[RHIDP#10991]: Document custom transformers for user provisioning,2026-04-02,52.3,7,9,323,5,328,0,0,0,0,328,4,0,0,20
+1766,RHDHBUGS-942,3,RHDHBUGS-942 RBAC REST API DELETE request requires a JSON body,2026-02-10,1.2,5,2,23,4,27,0,0,0,0,27,1,0,0,15
+1765,RHIDP-11447,2,RHIDP-11447: Conditional permissions for Scorecards,2026-02-16,7.3,5,1,45,8,53,0,0,0,0,53,0,0,0,5
+1763,RHDHBUGS-2493,1,RHDHBUGS-2493: Harden language around Orchestrator/OSL compatibility,2026-02-10,3.8,10,1,8,2,10,0,0,0,0,10,0,0,0,2
+1761,RHDHBUGS-2317,2,RHDHBUGS-2317: Orchestrator workflows not listed when RBAC is enabled,2026-02-09,3.0,8,2,37,1,38,0,0,0,0,38,1,0,0,3
+1760,RHDHBUGS-2436,2,RHDHBUGS-2436: Document ArgoCD limitation with Helm's lookup function when deploying RHDH with Orchestrator using Helm,2026-02-10,4.2,11,1,35,3,38,0,0,0,0,38,0,0,0,6
+1759,RHIDP-9999,,[release-1.9] RHIDP-9999: MCP 1.9 doc changes - new Software Catalog tools,2026-02-06,0.0,2,19,161,108,269,0,0,0,0,269,7,0,0,3
+1758,RHDHBUGS-2536,3,[release-1.9] RHDHBUGS-2536 part 2 Typo Corrections,2026-02-06,1.0,2,20,34,34,68,0,0,0,0,68,0,0,0,6
+1757,RHIDP-9079,8,RHIDP-9079 - Added service-to-service authentication for release-1.9,2026-02-05,0.0,2,7,334,0,334,2,1,0,1,335,5,0,1,1
+1756,RHDHBUGS-2536,3,[release-1.9] RHDHBUGS-2536 part 1 Typo Corrections,2026-02-06,1.1,2,21,33,33,66,0,0,0,0,66,0,0,0,5
+1755,RHIDP-10987,3,[release-1.9] RHIDP-10987 enabling auto-logout,2026-02-05,0.0,2,2,72,0,72,0,0,0,0,72,1,0,0,5
+1754,RHDHBUGS-2410,2,[release-1.9] RHDHBUGS-2410 Added keycloak session support,2026-02-05,0.0,2,1,16,2,18,0,0,0,0,18,0,0,0,3
+1753,RHDHBUGS-2583,3,[release-1.9] RHDHBUGS-2583 clarify enable / disable the guest user,2026-02-04,0.0,2,6,32,77,109,0,0,0,0,109,1,0,0,2
+1752,RHIDP-11470,,RHIDP-11470: 1.8.3 Release Notes,2026-02-13,8.8,2,4,73,8,81,0,0,0,0,81,1,0,0,20
+1751,RHIDP-11680,2,RHIDP-11680: Bump Openshift Serverless Logic version to 1.37.1,2026-02-26,21.9,7,10,32,32,64,1,5,0,5,69,0,0,0,5
+1750,RHIDP-10994,5,[release-1.9] RHIDP-10994: Update the Bulk Import Plugin to Integrate Orchestrator Workflows,2026-02-04,0.0,2,2,83,0,83,0,0,0,0,83,1,0,0,2
+1749,RHDHBUGS-2299,3,[release-1.9] RHDHBUGS-2299-1 - Clarify Third-Party Plugin Installation Steps for Environments Using Corporate CA Bundle,2026-02-04,0.0,2,5,239,0,239,0,0,0,0,239,4,0,0,7
+1748,RHDHBUGS-2299,3,[release-1.8] RHDHBUGS-2299-1 - Clarify Third-Party Plugin Installation Steps for Environments Using Corporate CA Bundle,2026-02-04,0.0,2,5,239,0,239,0,0,0,0,239,4,0,0,7
+1747,RHIDP-10987,3,RHIDP-10987 enabling auto-logout,2026-02-05,1.1,5,2,72,0,72,0,0,0,0,72,1,0,0,7
+1746,RHDHBUGS-2410,2,RHDHBUGS-2410 Added keycloak session support,2026-02-05,1.1,6,1,16,2,18,0,0,0,0,18,0,0,0,4
+1745,RHDHBUGS-2583,3,RHDHBUGS-2583 clarify enable / disable the guest user,2026-02-04,0.5,6,6,32,77,109,0,0,0,0,109,1,0,0,3
+1744,RHIDP-9999,,RHIDP-9999: MCP 1.9 doc changes - new Software Catalog tools,2026-02-06,2.0,5,19,161,108,269,0,0,0,0,269,7,0,0,3
+1743,RHIDP-10994,5,RHIDP-10994: Update the Bulk Import Plugin to Integrate Orchestrator Workflows,2026-02-04,0.7,7,2,83,0,83,0,0,0,0,83,1,0,0,2
+1742,RHDHBUGS-761,5,[release-1.9] RHDHBUGS-761-filename-correction,2026-02-05,2.0,1,3,20,22,42,0,0,0,0,42,1,0,0,10
+1740,RHDHBUGS-761,5,RHDHBUGS-761-filename-correction,2026-02-03,0.0,4,3,20,22,42,0,0,0,0,42,1,0,0,11
+1738,RHDHBUGS-2536,3,RHDHBUGS-2536 part 2 Typo Corrections,2026-02-05,3.1,4,20,34,34,68,0,0,0,0,68,0,0,0,10
+1737,RHDHBUGS-2541,1,[release-1.9] RHDHBUGS-2541: MCP config and LCore config updates,2026-02-02,0.0,2,6,33,13,46,0,0,0,0,46,0,0,0,2
+1736,RHDHBUGS-2541,1,[release-1.8] RHDHBUGS-2541: MCP config and LCore config updates,2026-02-02,0.0,2,6,33,13,46,0,0,0,0,46,0,0,0,2
+1735,RHDHBUGS-2299,3,RHDHBUGS-2299-1 - Clarify Third-Party Plugin Installation Steps for Environments Using Corporate CA Bundles,2026-02-04,2.1,10,5,239,0,239,0,0,0,0,239,4,0,0,17
+1734,RHIDP-9757,8,RHIDP-9757 - Mirroring OCI artifacts into an airgapped RHDH deployment documentation,2026-02-18,16.9,7,7,199,0,199,0,0,0,0,199,6,0,0,37
+1733,RHIDP-9079,8,RHIDP-9079 - Added service-to-service authentication,2026-02-05,6.1,5,7,334,0,334,2,1,0,1,335,5,0,1,19
+1732,RHDHBUGS-2414,3,[release-1.8] RHDHBUGS-2414: YAML code indentation check,2026-02-02,2.7,2,1,62,72,134,0,0,0,0,134,0,0,0,5
+1731,RHDHBUGS-2414,3,[release-1.9] RHDHBUGS-2414: YAML code indentation check,2026-02-02,2.8,2,1,62,72,134,0,0,0,0,134,0,0,0,5
+1730,RHDHBUGS-2541,1,RHDHBUGS-2541: MCP config and LCore config updates,2026-02-02,3.3,6,6,33,13,46,0,0,0,0,46,0,0,0,2
+1729,RHIDP-10996,5,[release-1.9] RHIDP-10996:Logging for Workflows,2026-01-30,0.0,2,3,84,0,84,0,0,0,0,84,2,0,0,3
+1728,RHDHBUGS-2536,3,RHDHBUGS-2536 part 1 Typo Corrections,2026-02-05,6.8,4,21,33,33,66,0,0,0,0,66,0,0,0,9
+1727,,,Changing title to fix pantheon build error,2026-01-29,0.4,2,1,1,1,2,0,0,0,0,2,0,0,0,1
+1726,,,Manual cp of pr 1669 for release 1 8,2026-01-29,0.0,2,16,93,98,191,0,0,0,0,191,0,0,0,3
+1725,RHIDP-11225,3,[release-1.9] RHIDP-11225: JTBD implementation for Scorecards,2026-01-29,0.0,2,25,226,233,459,0,0,0,0,459,7,0,0,8
+1724,RHDHBUGS-761,5,RHDHBUGS-761 redux,2026-02-02,5.1,9,3,20,22,42,0,0,0,0,42,1,0,0,10
+1723,RHDHBUGS-2298,3,[release-1.9] RHDHBUGS-2298 Clarify rhbk permissions,2026-01-28,0.0,2,3,5,6,11,0,0,0,0,11,0,0,0,3
+1722,RHIDP-8176,,[release-1.9] RHIDP-8176 Disabling the guest login,2026-01-28,0.0,1,10,53,0,53,0,0,0,0,53,2,0,0,9
+1721,RHIDP-9820,3,[release-1.9] RHIDP-9820 bulk-import simplified ui,2026-01-28,0.0,1,2,19,36,55,0,0,0,0,55,0,0,0,7
+1720,RHIDP-10996,5,RHIDP-10996:Logging for Workflows,2026-01-30,1.8,5,3,84,0,84,0,0,0,0,84,2,0,0,4
+1719,RHIDP-9091,5,[release-1.9] RHIDP-9091: Creating Software templates for PE,2026-01-28,0.0,2,6,99,0,99,0,0,0,0,99,5,0,0,4
+1718,RHIDP-9088,8,[release-1.9] RHIDP-9088: Enhance Developer Experience with Orchestrator,2026-01-27,0.0,1,9,352,0,352,3,0,0,0,352,8,0,3,9
+1717,RHIDP-9088,8,[release-1.8] RHIDP-9088: Enhance Developer Experience with Orchestrator,2026-01-27,0.0,1,9,352,0,352,3,0,0,0,352,8,0,3,9
+1716,RHIDP-9088,8,[release-1.7] RHIDP-9088: Enhance Developer Experience with Orchestrator,2026-01-27,0.0,1,9,352,0,352,3,0,0,0,352,8,0,3,9
+1715,RHDHBUGS-1777,,RHDHBUGS-1777: Clarify instructions for setting log level to debug,2026-02-13,17.9,8,9,104,79,183,0,0,0,0,183,2,0,0,23
+1714,RHIDP-9093,13,RHIDP-9093-1 - How To Create Dynamic Plugins for Red Hat Developer Hub,2026-03-02,34.6,12,22,858,74,932,2,1,0,1,933,14,0,1,82
+1713,RHDHBUGS-2298,3,RHDHBUGS-2298 Clarify rhbk permissions,2026-01-28,1.9,5,3,5,6,11,0,0,0,0,11,0,0,0,3
+1712,RHIDP-8176,,RHIDP-8176 Disabling the guest login,2026-01-27,4.0,5,10,53,0,53,0,0,0,0,53,2,0,0,9
+1710,RHIDP-7609,3,[release-1.9] RHIDP-7609 - Clarify policy effect,2026-01-23,0.0,1,1,15,1,16,0,0,0,0,16,0,0,0,2
+1709,RHIDP-9820,3,RHIDP-9820 bulk-import simplified ui,2026-01-27,4.1,4,2,19,36,55,0,0,0,0,55,0,0,0,8
+1708,RHIDP-7609,3,RHIDP-7609 - Clarify policy effect,2026-01-23,0.1,4,1,15,1,16,0,0,0,0,16,0,0,0,3
+1707,,,[release-1.8] Fix typo in service account information section,2026-01-22,0.0,2,1,1,1,2,0,0,0,0,2,0,0,0,1
+1706,,,[release-1.9] Fix typo in service account information section,2026-01-22,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1705,,,[release-1.8] chore: Fix build on release branches,2026-01-22,0.0,1,0,0,0,0,1,1,0,1,1,0,0,0,1
+1704,,,[release-1.9] chore: Fix build on release branches,2026-01-22,0.0,1,0,0,0,0,1,1,0,1,1,0,0,0,1
+1703,,,chore: Fix build on release branches,2026-01-22,0.0,14,0,0,0,0,1,1,0,1,1,0,0,0,1
+1700,,,fix-asciidoc-warnings,2026-01-27,4.8,2,9,24,28,52,0,0,0,0,52,0,0,0,3
+1699,RHIDP-10990,1,cherry-pick RHIDP-10990,2026-01-22,0.0,2,5,38,29,67,0,0,0,0,67,0,0,0,1
+1698,RHIDP-9088,8,RHIDP-9088: Enhance Developer Experience with Orchestrator,2026-01-27,5.8,12,9,352,0,352,3,0,0,0,352,8,0,3,9
+1697,,,Fix typo in service account information section,2026-01-22,1.1,6,1,1,1,2,0,0,0,0,2,0,0,0,1
+1696,RHIDP-9091,5,RHIDP-9091: Creating Software templates for PE,2026-01-28,7.1,5,6,99,0,99,0,0,0,0,99,5,0,0,4
+1695,RHDHBUGS-2461,1,[release-1.8] RHDHBUGS-2461: Add a note about ISO datestyle requirement while using external database,2026-01-21,0.0,2,1,8,5,13,0,0,0,0,13,0,0,0,5
+1694,RHDHBUGS-2501,,[release-1.8] RHDHBUGS-2501: openshift-ai connector allow for 'rhdh.modelcatalog.io/model-name' override,2026-01-20,0.0,2,2,10,6,16,0,0,0,0,16,0,0,0,3
+1693,RHIDP-9831,5,RHIDP-9831 RHDHBUGS-2420 - Release notes have moved to Gitlab,2026-01-20,0.0,2,11,0,160,160,8,0,277,277,437,0,0,0,1
+1692,RHIDP-9540,3,RHIDP-9540: create dynamic plugins table re: wrapped plugins in 1.8 that will move to ghcr.io in 1.9,2026-02-06,17.2,9,2,414,0,414,1,208,15,223,637,2,0,0,48
+1691,RHDHBUGS-2128,2,"[release-1.8] RHDHBUGS-2128 part 2, Add missing $ prompt in code blocks for command examples",2026-01-20,0.4,2,29,95,95,190,0,0,0,0,190,0,0,0,7
+1689,,,Orchestrator permissions-Manual cherry-pick,2026-01-19,0.0,2,3,152,1,153,0,0,0,0,153,2,0,0,1
+1688,,,Orchestrator permissions,2026-01-19,0.0,2,3,152,1,153,0,0,0,0,153,2,0,0,1
+1687,RHIDP-9095,2,RHIDP-9095: Add a new step in the documentation regarding the upgrade,2026-01-19,0.2,3,2,10,1,11,0,0,0,0,11,0,0,0,1
+1686,RHDHBUGS-2414,3,RHDHBUGS-2414: YAML code indentation check,2026-01-30,11.1,6,1,62,72,134,0,0,0,0,134,0,0,0,5
+1685,RHIDP-9781,5,RHIDP-9781: Scorecard KPI aggregated value,2026-02-16,28.4,5,13,468,7,475,0,0,0,0,475,8,0,0,15
+1684,RHDHBUGS-2461,1,RHDHBUGS-2461: Add a note about ISO datestyle requirement while using external database,2026-01-21,4.5,5,1,8,5,13,0,0,0,0,13,0,0,0,8
+1683,RHDHBUGS-2501,,RHDHBUGS-2501: openshift-ai connector allow for 'rhdh.modelcatalog.io/model-name' override,2026-01-20,3.9,11,2,10,6,16,0,0,0,0,16,0,0,0,3
+1682,RHIDP-9739,5,RHIDP-9739: Orchestrator Permissions,2026-01-19,3.0,8,3,152,1,153,0,0,0,0,153,2,0,0,4
+1681,RHDHBUGS-2128,2,"RHDHBUGS-2128 part 2, Add missing $ prompt in code blocks for command examples",2026-01-19,4.0,4,29,95,95,190,0,0,0,0,190,0,0,0,8
+1680,RHDHBUGS-2498,1,[release-1.8] RHDHBUGS-2498: Update URL for argocd manifest,2026-01-15,0.0,3,2,2,2,4,0,0,0,0,4,0,0,0,1
+1679,RHDHBUGS-2498,1,RHDHBUGS-2498: Update URL for argocd manifest,2026-01-15,0.8,5,2,2,2,4,0,0,0,0,4,0,0,0,1
+1678,RHIDP-11163,,RHIDP-11163: Release notes for release 1.8.2,2026-01-14,0.0,1,1,2,0,2,0,0,0,0,2,0,0,0,2
+1677,,,chore: tagRelease.sh: bump to 1.8.2 in release-1.8 branch [skip-build] [skip-e2e],2026-01-14,0.6,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1676,,,Update the upgrade documentation with new update,2026-01-14,1.9,1,1,27,2,29,0,0,0,0,29,0,0,0,2
+1674,RHIDP-9831,5,RHIDP-9831 - Fix release notes script behavior (for release-1.8),2026-01-12,0.2,1,7,246,153,399,3,17,16,33,432,0,0,0,10
+1672,RHDHBUGS-2128,2,"[release-1.8] RHDHBUGS-2128 part 1, Add missing $ prompt in code blocks for command examples",2026-01-14,4.7,1,30,136,136,272,0,0,0,0,272,0,0,0,5
+1670,RHDHBUGS-2235,2,[release-1.8] RHDHBUGS-2235-1 - How to configure multiple mount paths in Backstage CR,2026-01-09,0.2,2,1,6,1,7,1,1,0,1,8,0,0,0,5
+1669,RHIDP-11225,3,RHIDP-11225: JTBD implementation for Scorecards,2026-01-29,20.0,6,25,226,233,459,0,0,0,0,459,7,0,0,8
+1668,RHIDP-11247,3,RHIDP-11247: Document upgrading an existing OpenShift Serverless Logic Operator subscription to v1.37,2026-01-12,3.9,2,2,55,1,56,0,0,0,0,56,1,0,0,2
+1667,,,[release-1.7] fix: update path for PR comment,2026-01-08,0.0,1,0,0,0,0,1,1,0,1,1,0,0,0,1
+1666,,,[release-1.8] fix: update path for PR comment,2026-01-08,0.0,1,0,0,0,0,1,1,0,1,1,0,0,0,1
+1665,RHIDP-11072,,[release-1.8] RHIDP-11072: update workflows to be more secure,2026-01-08,0.0,1,0,0,0,0,1,48,9,57,57,0,0,0,3
+1664,RHIDP-11072,,[release-1.7] RHIDP-11072: update workflows to be more secure,2026-01-08,0.0,1,0,0,0,0,1,48,9,57,57,0,0,0,3
+1663,RHDHBUGS-2235,2,RHDHBUGS-2235-1 - How to configure multiple mount paths in Backstage CR,2026-01-09,0.8,5,1,6,1,7,1,1,0,1,8,0,0,0,11
+1662,,,fix: update path for PR comment,2026-01-08,0.1,5,0,0,0,0,1,1,0,1,1,0,0,0,1
+1661,,,Fix broken link,2026-01-08,0.0,1,1,1,1,2,0,0,0,0,2,0,0,0,1
+1660,,,Update Installing Red Hat Developer Hub on OpenShift Dedicated on Google Cloud Platform Title,2026-01-08,0.1,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1659,,,chore: tagRelease.sh: bump to 1.7.4 in release-1.7 branch [skip-build] [skip-e2e],2026-01-08,0.5,2,1,2,2,4,0,0,0,0,4,0,0,0,1
+1658,,,Update broken links in documentation,2026-01-07,0.0,2,0,0,0,0,1,4,0,4,4,0,0,0,1
+1657,RHIDP-11267,2,RHIDP-11267: Release Notes for Red Hat Developer Hub 1.7.4,2026-01-08,0.9,2,1,2,0,2,0,0,0,0,2,0,0,0,2
+1656,RHIDP-11246,2,RHIDP-11246: Automate component upgrades through Pull Requests,2026-01-09,2.9,2,7,129,13,142,0,0,0,0,142,4,0,0,7
+1655,RHDHBUGS-2128,2,"RHDHBUGS-2128 part 1, Add missing $ prompt in code blocks for command examples",2026-01-08,2.9,15,30,136,136,272,0,0,0,0,272,0,0,0,7
+1654,,,chore: bump main branch to 1.9,2026-01-05,0.0,1,1,10,8,18,0,0,0,0,18,0,0,0,1
+1653,RHDHBUGS-2226,1,[release-1.8] RHDHBUGS-2226: GitHub authentication docs issue,2026-01-05,0.0,1,1,2,2,4,0,0,0,0,4,0,0,0,1
+1652,RHDHBUGS-2312,2,[release-1.8] RHDHBUGS-2312 Fix !:previouscontext:,2026-01-05,0.0,1,5,5,5,10,0,0,0,0,10,0,0,0,1
+1651,RHIDP-11244,1,RHIDP-11244: Bump Openshift Serverless Logic version to 1.37,2026-01-08,3.0,2,5,36,35,71,0,0,0,0,71,0,0,0,10
+1650,RHIDP-9701,2,RHIDP-9701: v1alpha3 deprecation,2026-01-05,18.0,4,14,25,25,50,0,0,0,0,50,0,0,0,5
+1649,RHIDP-8377,13,RHIDP-8377: End user documentation ,2026-02-19,63.3,6,52,1209,247,1456,5,5,0,5,1461,35,0,0,41
+1648,RHDHBUGS-2312,2,RHDHBUGS-2312 Fix !:previouscontext:,2026-01-05,20.9,12,5,5,5,10,0,0,0,0,10,0,0,0,3
+1647,RHIDP-11072,,RHIDP-11072: update workflows to be more secure,2026-01-08,23.8,6,0,0,0,0,1,48,9,57,57,0,0,0,8
+1615,RHIDP-10990,1,RHIDP-10990: adding Italian and Japanese to the list of supported languages,2026-01-22,50.6,6,5,38,29,67,0,0,0,0,67,0,0,0,8
+1582,RHDHBUGS-2226,1,RHDHBUGS-2226: GitHub authentication docs issue,2026-01-05,49.1,3,1,2,2,4,0,0,0,0,4,0,0,0,1

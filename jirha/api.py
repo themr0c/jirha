@@ -21,10 +21,9 @@ from jirha.config import (
 # SP tier mapping
 SP_TIERS = dict(zip(SP_VALUES, range(len(SP_VALUES))))
 _TIER_TO_SP = dict(enumerate(SP_VALUES))
-_ADOC_TIER_THRESHOLDS = [(30, 0), (150, 1), (400, 2), (800, 3)]
+_ADOC_TIER_THRESHOLDS = [(5, 0), (20, 1), (40, 2), (80, 3), (180, 4), (500, 5), (1200, 6)]
 # Floor for non-adoc-heavy PRs (tooling, scripts, config)
-_TOTAL_TIER_THRESHOLDS = [(500, 0), (2000, 1), (5000, 2), (15000, 3)]
-_IMAGE_EXTS = (".png", ".svg", ".jpg", ".gif")
+_TOTAL_TIER_THRESHOLDS = [(20, 0), (100, 1), (200, 2), (500, 3), (1500, 4), (5000, 5), (15000, 6)]
 
 _REVIEW_SUMMARIES = ("[DOC] Peer Review", "[DOC] Technical Review")
 REVIEW_FILTER = "".join(f' AND summary !~ "{s}"' for s in _REVIEW_SUMMARIES)
@@ -100,23 +99,18 @@ def _pr_metrics(files, commits):
     adoc_files = [f for f in files if f["path"].endswith(".adoc")]
     adoc_lines = sum(f["additions"] + f["deletions"] for f in adoc_files)
     new_adoc = sum(1 for f in adoc_files if f["deletions"] == 0 and f["additions"] > 5)
-    assemblies = sum(
-        1 for f in adoc_files if "/assemblies/" in f["path"] or f["path"].startswith("assemblies/")
-    )
-    images = sum(1 for f in files if f["path"].endswith(_IMAGE_EXTS))
     mechanical_files = sum(1 for f in adoc_files if f["additions"] + f["deletions"] <= 4)
     is_mechanical = len(adoc_files) > 3 and mechanical_files / len(adoc_files) > 0.8
 
     adds = sum(f["additions"] for f in files)
     dels = sum(f["deletions"] for f in files)
     parts = [f"{len(adoc_files)} .adoc files", f"+{adds}/-{dels} lines"]
-    for val, label in [(new_adoc, "new topics"), (assemblies, "assemblies"), (images, "images")]:
-        if val:
-            parts.append(f"{val} {label}")
+    if new_adoc:
+        parts.append(f"{new_adoc} new topics")
     if is_mechanical:
         parts.append("mechanical")
 
-    tier = 4
+    tier = 6
     for threshold, t in _ADOC_TIER_THRESHOLDS:
         if adoc_lines < threshold:
             tier = t
@@ -124,15 +118,16 @@ def _pr_metrics(files, commits):
 
     # Floor from total lines (catches tooling/script-heavy PRs)
     total_lines = adds + dels
-    total_tier = 4
+    total_tier = 6
     for threshold, t in _TOTAL_TIER_THRESHOLDS:
         if total_lines < threshold:
             total_tier = t
             break
     tier = max(tier, total_tier)
 
-    if sum([new_adoc >= 1, assemblies >= 2, images >= 3, commits >= 6]) >= 2:
-        tier = min(tier + 1, 4)
+    # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
+    if sum([new_adoc >= 2, len(adoc_files) >= 6, commits >= 12]) >= 2:
+        tier = min(tier + 1, 5)
     # Mechanical discount only when adoc is the dominant change
     if is_mechanical and adoc_lines > total_lines * 0.5:
         tier = max(tier - 1, 0)

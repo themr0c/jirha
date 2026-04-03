@@ -50,7 +50,7 @@ jirha update KEY [options]
 | `--type` | — | Issue type (Task, Bug, Story, ...) |
 | `--desc` | — | Description text |
 | `--desc-file` | — | Read description from file |
-| `--sp` | — | Story points (0, 1, 3, 5, 8, 13, or `auto`) |
+| `--sp` | — | Story points (0, 1, 2, 3, 5, 8, 13, 21, or `auto`) |
 | `--pr` | — | Git PR URL (appends to existing) |
 | `--priority` | — | Blocker, Critical, Major, Normal, Minor |
 | `--fix-version` | — | Add fix version |
@@ -192,7 +192,7 @@ Finds all user's closed parent issues and closes any open subtasks.
 
 - Component: Documentation (unless otherwise specified).
 - Team: RHDH Documentation.
-- Story points: 0, 1, 3, 5, 8, 13.
+- Story points: 0, 1, 2, 3, 5, 8, 13, 21.
 - Keep PR URL field populated.
 
 ## Custom Field IDs
@@ -293,35 +293,63 @@ h2. Acceptance Criteria
 (?) DOC - Downstream documentation merged: <link to meaningful PR>
 ```
 
+## SP Reference
+
+Story points are a relative measure of effort, complexity, risk, and uncertainty (not hours). The team uses the Fibonacci sequence: 1, 2, 3, 5, 8, 13, 21. Based on [Vidya Iyengar's SP Estimation guide](https://redhat.atlassian.net).
+
+| SP | Complexity | Risk | Uncertainty | Effort |
+|---|---|---|---|---|
+| 1 | Simple task, minimal work | Low | None | Very little effort needed |
+| 2 | Simple task, minimal work, acceptance criteria are short and can be satisfied with ease | Low | None | Little effort needed |
+| 3 | Simple task. Longer acceptance criteria, though they are clear and manageable | Low | Small — may need to consult with peers | Will take some time to complete |
+| 5 | Some difficulty but still feasible. Acceptance criteria are mostly clear and manageable | Medium — may need mitigation plan | Small — may need to consult with peers or other sources | Significant amount of sprint needed to complete |
+| 8 | Difficult and complicated. Lots of work and lots of acceptance criteria | High — must have a mitigation plan | Medium — may need a spike to investigate it | High effort and will take whole sprint to complete |
+| 13 | Story is too big and should be broken into smaller tasks if there is a possibility for a spillover | High — should not be in a sprint as a whole if there are other tasks in addition to this | Large — no idea how to do it, create a spike | Significant effort and may require an entire sprint as a dedicated effort |
+| 21 | Story is too big for a 3 week sprint and should be broken into smaller tasks | High — should not be in a sprint | Large — no idea how to do it, create a spike | Significant effort and will require more than one sprint to complete |
+
+**Key rules:**
+- Sub-tasks (peer review, SME review, QE review) do not get SP.
+- Epics do not get SP.
+- SP must be assigned before the sprint begins, never after work has started.
+- Do not modify SP of spillover tasks.
+- Tasks estimated at 13+ SP should be split into smaller Jiras.
+
 ## SP Heuristics
 
-`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing the linked GitHub PR. Hygiene only flags mismatches of 2+ tiers.
+`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing the linked GitHub PR. Hygiene only flags mismatches of 2+ tiers. Thresholds are derived from 137 Jira issues with SP merged in 2026 (see `docs/superpowers/pr_sp_data.csv`).
 
 **Base tier** — determined by .adoc line volume (additions + deletions):
 
 | Lines changed | Tier | SP |
 |---|---|---|
-| < 30 | 0 | 1 |
-| 30–149 | 1 | 3 |
-| 150–399 | 2 | 5 |
-| 400–799 | 3 | 8 |
-| 800+ | 4 | 13 |
+| < 5 | 0 | 0 |
+| 5–19 | 1 | 1 |
+| 20–39 | 2 | 2 |
+| 40–79 | 3 | 3 |
+| 80–179 | 4 | 5 |
+| 180–499 | 5 | 8 |
+| 500–1199 | 6 | 13 |
+| 1200+ | 6 | 13 |
 
-**Complexity bumps** (tier +1 if 2+ signals present):
+Auto-suggest caps at 13 SP. 21 SP is accepted as valid but never auto-suggested (the team guide says 21 SP should be split).
+
+**Complexity bumps** (tier +1, capped at tier 5 = 8 SP, if 2+ signals present):
 - 2+ new .adoc files (no deletions, >5 lines added)
-- 2+ assembly files changed
-- 3+ images added/changed
-- 6+ commits
+- 6+ total .adoc files touched
+- 12+ commits
 
 **Total-lines floor** (for tooling/script PRs): when non-.adoc changes dominate, total lines across all files set a minimum tier:
 
 | Total lines | Floor tier | SP |
 |---|---|---|
-| < 500 | — | — |
-| 500–1999 | 0 | 1 |
-| 2000–4999 | 1 | 3 |
-| 5000–14999 | 2 | 5 |
-| 15000+ | 3 | 8 |
+| < 20 | 0 | 0 |
+| 20–99 | 1 | 1 |
+| 100–199 | 2 | 2 |
+| 200–499 | 3 | 3 |
+| 500–1499 | 4 | 5 |
+| 1500–4999 | 5 | 8 |
+| 5000–14999 | 6 | 13 |
+| 15000+ | 6 | 13 |
 
 **Mechanical discount** (tier -1): if >80% of .adoc files have ≤4 lines changed, there are 4+ .adoc files, and .adoc accounts for >50% of total lines changed.
 

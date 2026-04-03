@@ -165,13 +165,15 @@ def _resolve_sp(args, jira):
                 sys.exit(f"Error: could not assess SP from PR: {pr_url}")
             sp_val, reason, _ = result
             return float(sp_val), f"Story points: {sp_val} (auto: {reason})"
-        # No PR — fall back to context assembler
-        from jirha.ops.context import assemble_context, format_context
+        # No PR — fall back to context assembler (JSON for skill pickup)
+        import json as json_mod
 
-        ctx = assemble_context(jira, args.key)
-        print(format_context(ctx))
-        if ctx["suggested_sp_range"]:
-            low, high = ctx["suggested_sp_range"]
+        from jirha.ops.context import assemble_context_json
+
+        ctx_json = assemble_context_json(jira, args.key)
+        print(json_mod.dumps(ctx_json, indent=2))
+        if ctx_json["suggested_sp_range"]:
+            low, high = ctx_json["suggested_sp_range"]
             print(f"\nNo PR linked. Suggested range: {low}–{high} SP")
         print(f"Use: jirha update {args.key} --sp <value>")
         return None

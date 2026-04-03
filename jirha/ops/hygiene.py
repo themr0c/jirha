@@ -463,23 +463,29 @@ def _report_context_suggestions(jira, issue_gaps, dry_run=False):
     if not candidates:
         return
 
-    from jirha.ops.context import assemble_context
+    from jirha.ops.context import assemble_context_json
 
     print("\n## SP Context (no PR linked)\n")
     for issue in candidates:
-        ctx = assemble_context(jira, issue.key)
+        ctx = assemble_context_json(jira, issue.key)
         assignee = _assignee_name(issue)
         print(f"- {_jira_url(issue.key)} @{assignee} — {issue.fields.summary}")
+        if ctx.get("cache_age") and ctx["cache_age"] != "fresh":
+            print(f"  (cached {ctx['cache_age']} ago)")
         if ctx["suggested_sp_range"]:
             low, high = ctx["suggested_sp_range"]
             quality = ctx["data_quality"]
             n = len(ctx["eng_metrics"])
             print(f"  Suggested: {low}–{high} SP ({quality}, {n} eng PRs)")
-        elif ctx["feature"]:
-            print(f"  Feature: {_jira_url(ctx['feature'].key)} — {ctx['feature'].fields.summary}")
+        elif ctx.get("feature"):
+            feat = ctx["feature"]
+            size = feat.get("size", "")
+            size_str = f" [{size}]" if size else ""
+            print(f"  Feature: {_jira_url(feat['key'])}{size_str} — {feat['summary']}")
             print("  No eng PRs found — estimate manually")
-        elif ctx["epic"]:
-            print(f"  Epic: {_jira_url(ctx['epic'].key)} — {ctx['epic'].fields.summary}")
+        elif ctx.get("epic"):
+            epic = ctx["epic"]
+            print(f"  Epic: {_jira_url(epic['key'])} — {epic['summary']}")
             print("  No feature parent — estimate manually")
         else:
             print("  Standalone task — estimate manually")

@@ -1,17 +1,30 @@
 """Context assembler: walk Jira hierarchy to build SP estimation context."""
 
 import re
+import time
 
 from jirha.api import (
     _assess_pr_sp,
     _is_doc_repo,
     _issue_sp,
+    _pr_body,
     get_jira,
 )
-from jirha.config import CF_GIT_PR, CF_STORY_POINTS, CF_TEAM, DEFAULT_TEAM, SERVER, SP_VALUES
+from jirha.cache import cache_age_str, read_cache, write_cache
+from jirha.config import (
+    CACHE_DIR,
+    CF_GIT_PR,
+    CF_SIZE,
+    CF_STORY_POINTS,
+    CF_TEAM,
+    DEFAULT_TEAM,
+    SERVER,
+    SP_VALUES,
+)
 
 _HIERARCHY_FIELDS = (
-    f"summary,description,status,issuetype,parent,components,{CF_STORY_POINTS},{CF_GIT_PR}"
+    f"summary,description,status,issuetype,parent,components,"
+    f"{CF_STORY_POINTS},{CF_GIT_PR},{CF_TEAM},{CF_SIZE}"
 )
 
 # Session-scoped cache for hierarchy walks (shared across hygiene calls)
@@ -45,6 +58,109 @@ def _extract_links(issuelinks):
                 "link_type": link.type.inward,
                 "direction": "inward",
             })
+    return result
+
+
+def _issue_to_dict(issue, include_links=False, include_pr=False):
+    """Convert a Jira issue to a serializable dict."""
+    result = {
+        "key": issue.key,
+        "summary": issue.fields.summary or "",
+        "description": issue.fields.description or "",
+        "status": str(issue.fields.status),
+        "sp": _issue_sp(issue) or None,
+        "components": [c.name for c in (issue.fields.components or [])],
+    }
+    team = getattr(issue.fields, CF_TEAM, None)
+    if team:
+        result["team"] = getattr(team, "name", str(team))
+    size = getattr(issue.fields, CF_SIZE, None)
+    if size:
+        result["size"] = str(size)
+    if include_links:
+        result["links"] = _extract_links(getattr(issue.fields, "issuelinks", None))
+    if include_pr:
+        pr_field = getattr(issue.fields, CF_GIT_PR, None) or ""
+        result["pr_urls"] = _extract_pr_urls(pr_field)
+    return result
+
+
+def _fetch_pr_bodies(pr_urls):
+    """Fetch PR description bodies for a list of PR URLs."""
+    bodies = []
+    for url in pr_urls:
+        body = _pr_body(url)
+        if body:
+            bodies.append(body)
+    return bodies
+
+
+def _walk_linked_issue(jira, link_info):
+    """Walk a linked issue's full tree. Returns a dict describing what was found."""
+    key = link_info["key"]
+    issue = _cached_issue(jira, key, _HIERARCHY_FIELDS + ",issuelinks")
+
+    issue_type = str(issue.fields.issuetype).lower()
+    result = {
+        "source_link_type": link_info["link_type"],
+        "direction": link_info["direction"],
+    }
+
+    if "feature" in issue_type or "initiative" in issue_type:
+        # It's a feature — walk full tree down
+        sibling_epics = _fetch_sibling_tasks(jira, key)
+        result["type"] = "feature"
+        result["feature"] = _issue_to_dict(issue, include_links=True)
+        result["epics"] = []
+        for entry in sibling_epics:
+            epic_dict = _issue_to_dict(entry["epic"])
+            tasks = []
+            for te in entry["tasks"]:
+                t = te["issue"]
+                task_dict = _issue_to_dict(t, include_pr=True)
+                if _is_eng_task(t):
+                    task_dict["is_eng"] = True
+                tasks.append(task_dict)
+            result["epics"].append({"epic": epic_dict, "tasks": tasks})
+    elif "epic" in issue_type:
+        # It's an epic — walk down to tasks, walk up for feature context
+        tasks_raw = jira.search_issues(
+            f"parent = {key} ORDER BY key",
+            maxResults=100,
+            fields=_HIERARCHY_FIELDS + f",{CF_TEAM},{CF_GIT_PR}",
+        )
+        result["type"] = "epic"
+        result["epic"] = _issue_to_dict(issue, include_links=True)
+        result["tasks"] = [_issue_to_dict(t, include_pr=True) for t in tasks_raw]
+        # Walk up to parent feature (summary/size only)
+        parent = getattr(issue.fields, "parent", None)
+        if parent:
+            feat = _cached_issue(jira, parent.key, _HIERARCHY_FIELDS)
+            result["parent_feature"] = {
+                "key": feat.key,
+                "summary": feat.fields.summary or "",
+                "size": str(getattr(feat.fields, CF_SIZE, "") or ""),
+            }
+    else:
+        # It's a task — get its PRs, walk up for context
+        result["type"] = "task"
+        result["issue"] = _issue_to_dict(issue, include_links=True, include_pr=True)
+        pr_urls = result["issue"].get("pr_urls", [])
+        result["issue"]["pr_bodies"] = _fetch_pr_bodies(pr_urls)
+        # Walk up
+        parent = getattr(issue.fields, "parent", None)
+        if parent:
+            epic = _cached_issue(jira, parent.key, _HIERARCHY_FIELDS)
+            result["parent_epic"] = {"key": epic.key, "summary": epic.fields.summary or ""}
+            feat_parent = getattr(epic.fields, "parent", None)
+            if feat_parent:
+                feat = _cached_issue(jira, feat_parent.key, _HIERARCHY_FIELDS)
+                result["parent_feature"] = {
+                    "key": feat.key,
+                    "summary": feat.fields.summary or "",
+                    "size": str(getattr(feat.fields, CF_SIZE, "") or ""),
+                }
+
     return result
 
 
@@ -91,7 +207,7 @@ def _fetch_sibling_tasks(jira, feature_key):
         tasks = jira.search_issues(
             f"parent = {epic.key} ORDER BY key",
             maxResults=100,
-            fields=f"summary,status,components,{CF_STORY_POINTS},{CF_GIT_PR}",
+            fields=f"summary,status,components,{CF_STORY_POINTS},{CF_GIT_PR},{CF_TEAM}",
         )
         task_list = []
         for t in tasks:
@@ -185,6 +301,108 @@ def assemble_context(jira, issue_key):
         "suggested_sp_range": sp_range,
         "data_quality": quality,
     }
+
+
+def assemble_context_json(jira, issue_key, refresh=False):
+    """Assemble full hierarchy context as a JSON-serializable dict.
+
+    Checks disk cache first. Returns dict with cache_age field.
+    """
+    # Check context cache
+    if not refresh:
+        cached = read_cache(CACHE_DIR, "contexts", issue_key)
+        if cached:
+            age = time.time() - cached["cached_at"]
+            result = cached["data"]
+            result["cache_age"] = cache_age_str(age)
+            return result
+
+    # Build fresh context
+    hierarchy = _walk_hierarchy(jira, issue_key)
+    epic = hierarchy["epic"]
+    feature = hierarchy["feature"]
+
+    # Fetch issue links at all levels
+    task_full = _cached_issue(jira, issue_key, _HIERARCHY_FIELDS + ",issuelinks," + CF_GIT_PR)
+    task_dict = _issue_to_dict(task_full, include_links=True, include_pr=True)
+    task_dict["pr_bodies"] = _fetch_pr_bodies(task_dict.get("pr_urls", []))
+
+    epic_dict = None
+    if epic:
+        epic_full = _cached_issue(jira, epic.key, _HIERARCHY_FIELDS + ",issuelinks")
+        epic_dict = _issue_to_dict(epic_full, include_links=True)
+
+    feature_dict = None
+    if feature:
+        feat_full = _cached_issue(jira, feature.key, _HIERARCHY_FIELDS + ",issuelinks")
+        feature_dict = _issue_to_dict(feat_full, include_links=True)
+
+    # Sibling epics with team-based classification
+    sibling_epics = []
+    eng_metrics = []
+    if feature:
+        raw_siblings = _fetch_sibling_tasks(jira, feature.key)
+        for entry in raw_siblings:
+            epic_d = _issue_to_dict(entry["epic"])
+            tasks = []
+            for te in entry["tasks"]:
+                t = te["issue"]
+                td = _issue_to_dict(t, include_pr=True)
+                if _is_eng_task(t):
+                    td["is_eng"] = True
+                tasks.append(td)
+            sibling_epics.append({"epic": epic_d, "tasks": tasks})
+        eng_metrics = _collect_eng_pr_metrics(raw_siblings)
+
+    # Walk linked issues at all levels
+    all_links = []
+    for source_key, links in [
+        (issue_key, task_dict.get("links", [])),
+        (epic.key if epic else None, (epic_dict or {}).get("links", [])),
+        (feature.key if feature else None, (feature_dict or {}).get("links", [])),
+    ]:
+        if not source_key:
+            continue
+        for link in links:
+            # Skip links to issues already in the hierarchy
+            hierarchy_keys = {
+                issue_key,
+                epic.key if epic else None,
+                feature.key if feature else None,
+            }
+            if link["key"] in hierarchy_keys:
+                continue
+            walked = _walk_linked_issue(jira, link)
+            walked["source"] = source_key
+            all_links.append(walked)
+
+    sp_range = _suggest_sp_range(eng_metrics)
+    if len(eng_metrics) >= 5:
+        quality = "strong"
+    elif len(eng_metrics) >= 2:
+        quality = "weak"
+    else:
+        quality = "none"
+
+    result = {
+        "task": task_dict,
+        "epic": epic_dict,
+        "feature": feature_dict,
+        "sibling_epics": sibling_epics,
+        "linked_trees": all_links,
+        "eng_metrics": [
+            {"url": m["url"], "sp": m["sp"], "reason": m["reason"], "number": m["number"]}
+            for m in eng_metrics
+        ],
+        "suggested_sp_range": list(sp_range) if sp_range else None,
+        "data_quality": quality,
+        "cache_age": "fresh",
+    }
+
+    # Write to cache
+    write_cache(CACHE_DIR, "contexts", issue_key, result)
+
+    return result
 
 
 def _jira_url(key):

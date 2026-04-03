@@ -3,6 +3,7 @@ from jirha.ops.context import (
     _extract_links,
     _extract_pr_urls,
     _is_eng_task,
+    _issue_to_dict,
     _suggest_sp_range,
     format_context,
 )
@@ -190,3 +191,24 @@ def test_extract_links_outward():
 def test_extract_links_empty():
     assert _extract_links([]) == []
     assert _extract_links(None) == []
+
+
+# --- _issue_to_dict ---
+
+
+def test_issue_to_dict_basic():
+    issue = _FakeIssue("RHIDP-100", "Fix link", "Some desc", "New", sp=3)
+    result = _issue_to_dict(issue)
+    assert result["key"] == "RHIDP-100"
+    assert result["summary"] == "Fix link"
+    assert result["description"] == "Some desc"
+    assert result["status"] == "New"
+    assert result["sp"] == 3
+    assert result["components"] == []
+
+
+def test_issue_to_dict_with_components():
+    comp = type("Comp", (), {"name": "Documentation"})()
+    issue = _FakeIssue("RHIDP-100", components=[comp])
+    result = _issue_to_dict(issue)
+    assert result["components"] == ["Documentation"]

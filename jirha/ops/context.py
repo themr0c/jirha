@@ -47,17 +47,21 @@ def _extract_links(issuelinks):
     result = []
     for link in issuelinks:
         if hasattr(link, "outwardIssue") and link.outwardIssue:
-            result.append({
-                "key": link.outwardIssue.key,
-                "link_type": link.type.outward,
-                "direction": "outward",
-            })
+            result.append(
+                {
+                    "key": link.outwardIssue.key,
+                    "link_type": link.type.outward,
+                    "direction": "outward",
+                }
+            )
         elif hasattr(link, "inwardIssue") and link.inwardIssue:
-            result.append({
-                "key": link.inwardIssue.key,
-                "link_type": link.type.inward,
-                "direction": "inward",
-            })
+            result.append(
+                {
+                    "key": link.inwardIssue.key,
+                    "link_type": link.type.inward,
+                    "direction": "inward",
+                }
+            )
     return result
 
 
@@ -65,11 +69,11 @@ def _issue_to_dict(issue, include_links=False, include_pr=False):
     """Convert a Jira issue to a serializable dict."""
     result = {
         "key": issue.key,
-        "summary": issue.fields.summary or "",
-        "description": issue.fields.description or "",
-        "status": str(issue.fields.status),
+        "summary": getattr(issue.fields, "summary", "") or "",
+        "description": getattr(issue.fields, "description", "") or "",
+        "status": str(getattr(issue.fields, "status", "")),
         "sp": _issue_sp(issue) or None,
-        "components": [c.name for c in (issue.fields.components or [])],
+        "components": [c.name for c in (getattr(issue.fields, "components", None) or [])],
     }
     team = getattr(issue.fields, CF_TEAM, None)
     if team:

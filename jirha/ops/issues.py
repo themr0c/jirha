@@ -159,13 +159,22 @@ def _resolve_sp(args, jira):
         return None
     if args.sp == "auto":
         pr_url = args.pr or getattr(jira.issue(args.key, fields=CF_GIT_PR).fields, CF_GIT_PR, None)
-        if not pr_url:
-            sys.exit("Error: --sp auto requires a PR URL (use --pr or set it on the issue first).")
-        result = _assess_pr_sp(pr_url)
-        if not result:
-            sys.exit(f"Error: could not assess SP from PR: {pr_url}")
-        sp_val, reason, _ = result
-        return float(sp_val), f"Story points: {sp_val} (auto: {reason})"
+        if pr_url:
+            result = _assess_pr_sp(pr_url)
+            if not result:
+                sys.exit(f"Error: could not assess SP from PR: {pr_url}")
+            sp_val, reason, _ = result
+            return float(sp_val), f"Story points: {sp_val} (auto: {reason})"
+        # No PR — fall back to context assembler
+        from jirha.ops.context import assemble_context, format_context
+
+        ctx = assemble_context(jira, args.key)
+        print(format_context(ctx))
+        if ctx["suggested_sp_range"]:
+            low, high = ctx["suggested_sp_range"]
+            print(f"\nNo PR linked. Suggested range: {low}–{high} SP")
+        print(f"Use: jirha update {args.key} --sp <value>")
+        return None
     sp_val = int(args.sp)
     if sp_val not in SP_TIERS:
         sys.exit(f'Error: SP must be {", ".join(str(s) for s in SP_VALUES)}, or "auto".')

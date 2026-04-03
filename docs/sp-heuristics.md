@@ -146,11 +146,29 @@ When a doc task has no linked PR, `--sp auto` falls back to Jira-only context. T
 | sibling_epic_count | 0.80 | Flat at 4 across all SP levels |
 | sibling_eng_task_count | 0.80 | Dominated by a few large features (clusters at 31) |
 
+**Acceptance criteria:** Investigated as a potential signal — Jira checkbox-style AC items. Of 100 doc tasks sampled, only 2 out of 15 parent features use Jira checkboxes. The extracted AC item count is zero across all SP levels. Dead signal.
+
 **Why Jira metadata doesn't predict task-level SP:** PR metrics measure actual output (lines changed) — directly correlated with effort. Jira metadata measures planning intent — multiple tasks under the same feature receive different SP values based on *which part* of the feature they document. That granularity isn't captured in any Jira field.
 
-### Design: context assembler
+### Context assembler
 
-Instead of predicting SP, the Jira-only path assembles context for human estimation:
-1. Feature + epic + task descriptions
-2. Sibling engineering tasks and their PRs (when available)
-3. Structured summary for the human to judge
+Instead of predicting SP, the Jira-only path assembles hierarchy context for human estimation:
+
+1. Walks task → epic → feature hierarchy
+2. Fetches sibling epics and their child tasks under the same feature
+3. Collects engineering PR metrics from non-doc-repo siblings
+4. Suggests an SP range based on the median of engineering PR assessments (when ≥2 data points)
+
+**Usage:**
+
+- `jirha context KEY` — standalone command, prints full hierarchy context
+- `jirha update KEY --sp auto` — when no PR is linked, falls back to context assembler output with a suggested range (if available), then prompts for manual `--sp <value>`
+- `jirha hygiene` — reports context suggestions for tasks missing SP with no linked PR
+
+**Data quality tiers:**
+
+| Engineering PRs found | Quality | Meaning |
+|---|---|---|
+| ≥ 5 | strong | Enough data for a reliable range |
+| 2–4 | weak | Directional signal only |
+| 0–1 | none | Estimate manually from descriptions |

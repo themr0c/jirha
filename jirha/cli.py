@@ -3,6 +3,7 @@
 import argparse
 
 from jirha.config import DEFAULT_COMPONENT, DEFAULT_TEAM, SP_VALUES
+from jirha.ops.context import cmd_context
 from jirha.ops.hygiene import cmd_hygiene
 from jirha.ops.issues import (
     cmd_close_subtasks,
@@ -120,6 +121,10 @@ def main():
     p.add_argument("project", help="Project key (e.g., RHIDP)")
     p.add_argument("--type", help="Show fields for this issue type")
     p.set_defaults(func=cmd_meta)
+
+    p = sub.add_parser("context", help="Show hierarchy context for SP estimation")
+    p.add_argument("key", help="Issue key")
+    p.set_defaults(func=cmd_context)
 
     p = sub.add_parser("close-subtasks", help="Close open subtasks of closed parents")
     p.add_argument("--dry-run", action="store_true", help="Show what would be closed")

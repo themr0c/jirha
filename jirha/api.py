@@ -174,6 +174,11 @@ def _parse_pr_url(pr_url):
     return (m.group(1), m.group(2)) if m else None
 
 
+def _is_doc_repo(pr_url):
+    """Return True if the PR URL points to a documentation repo."""
+    return "red-hat-developers-documentation-" in pr_url
+
+
 def _pr_body(pr_url):
     """Fetch PR body/description text. Returns string or None."""
     parsed = _parse_pr_url(pr_url)

@@ -448,6 +448,46 @@ def _parse_sp_choice(choice, mismatches):
     return apply_indices, overrides
 
 
+def _report_context_suggestions(jira, issue_gaps, dry_run=False):
+    """Report hierarchy context for tasks missing SP that have no PR."""
+    candidates = []
+    for key, entry in issue_gaps.items():
+        if "SP" not in entry["missing"]:
+            continue
+        issue = entry["issue"]
+        pr_url = getattr(issue.fields, CF_GIT_PR, None)
+        if pr_url:
+            continue  # Has PR — will be handled by SP reassessment
+        candidates.append(issue)
+
+    if not candidates:
+        return
+
+    from jirha.ops.context import assemble_context
+
+    print("\n## SP Context (no PR linked)\n")
+    for issue in candidates:
+        ctx = assemble_context(jira, issue.key)
+        assignee = _assignee_name(issue)
+        print(f"- {_jira_url(issue.key)} @{assignee} — {issue.fields.summary}")
+        if ctx["suggested_sp_range"]:
+            low, high = ctx["suggested_sp_range"]
+            quality = ctx["data_quality"]
+            n = len(ctx["eng_metrics"])
+            print(f"  Suggested: {low}–{high} SP ({quality}, {n} eng PRs)")
+        elif ctx["feature"]:
+            print(f"  Feature: {_jira_url(ctx['feature'].key)} — {ctx['feature'].fields.summary}")
+            print("  No eng PRs found — estimate manually")
+        elif ctx["epic"]:
+            print(f"  Epic: {_jira_url(ctx['epic'].key)} — {ctx['epic'].fields.summary}")
+            print("  No feature parent — estimate manually")
+        else:
+            print("  Standalone task — estimate manually")
+        if dry_run:
+            print(f"  To set: jirha update {issue.key} --sp <value>")
+        print()
+
+
 def cmd_hygiene(args):
     """Full sprint hygiene audit."""
     from jirha.ops.sprint import _get_active_sprint
@@ -511,6 +551,9 @@ def cmd_hygiene(args):
     _warn_in_progress_no_sprint(jira, args.team)
     _print_hygiene_report(issue_gaps, args.team)
     _fill_missing_descriptions(jira, issue_gaps, dry_run)
+
+    # Step 2.5: Context assembly for SP-less, PR-less tasks
+    _report_context_suggestions(jira, issue_gaps, dry_run)
 
     # Step 3: Fetch user PRs and auto-link (non-destructive, no confirmation needed)
     if sprint:

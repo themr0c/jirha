@@ -183,7 +183,9 @@ def _pr_body(pr_url):
     try:
         result = subprocess.run(
             ["gh", "pr", "view", number, "--repo", repo, "--json", "body,title"],
-            capture_output=True, text=True, timeout=15,
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
         if result.returncode != 0:
             return None
@@ -202,10 +204,18 @@ def _pr_details(pr_url):
     try:
         result = subprocess.run(
             [
-                "gh", "pr", "view", number, "--repo", repo,
-                "--json", "state,title,baseRefName,url,mergedAt",
+                "gh",
+                "pr",
+                "view",
+                number,
+                "--repo",
+                repo,
+                "--json",
+                "state,title,baseRefName,url,mergedAt",
             ],
-            capture_output=True, text=True, timeout=15,
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
         if result.returncode != 0:
             return None
@@ -222,12 +232,23 @@ def _find_cherry_picks(repo, pr_number):
     try:
         result = subprocess.run(
             [
-                "gh", "pr", "list", "--repo", repo, "--state", "all",
-                "--search", f"cherry-pick {pr_number}",
-                "--json", "number,title,url,state,baseRefName",
-                "--limit", "10",
+                "gh",
+                "pr",
+                "list",
+                "--repo",
+                repo,
+                "--state",
+                "all",
+                "--search",
+                f"cherry-pick {pr_number}",
+                "--json",
+                "number,title,url,state,baseRefName",
+                "--limit",
+                "10",
             ],
-            capture_output=True, text=True, timeout=15,
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
         if result.returncode != 0:
             return []
@@ -310,13 +331,18 @@ def _fetch_user_prs(start_date, end_date=None):
     try:
         result = subprocess.run(
             [
-                "gh", "search", "prs",
+                "gh",
+                "search",
+                "prs",
                 "--author=@me",
                 "--limit=100",
                 f"--updated={query.split('updated:')[1]}",
-                "--json", "number,title,url,state,repository",
+                "--json",
+                "number,title,url,state,repository",
             ],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         if result.returncode != 0:
             return []
@@ -333,11 +359,18 @@ def _fetch_user_prs(start_date, end_date=None):
         try:
             detail_result = subprocess.run(
                 [
-                    "gh", "pr", "view", str(pr["number"]),
-                    "--repo", repo_name,
-                    "--json", "number,title,url,state,baseRefName,headRefName,body",
+                    "gh",
+                    "pr",
+                    "view",
+                    str(pr["number"]),
+                    "--repo",
+                    repo_name,
+                    "--json",
+                    "number,title,url,state,baseRefName,headRefName,body",
                 ],
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             if detail_result.returncode == 0:
                 data = json.loads(detail_result.stdout)
@@ -366,17 +399,16 @@ def parse_fields(issue_type_dict):
     for key, f in issue_type_dict["fields"].items():
         allowed = None
         if "allowedValues" in f:
-            allowed = [
-                v.get("name") or v.get("value") or str(v)
-                for v in f["allowedValues"]
-            ]
-        result.append({
-            "key": key,
-            "name": f.get("name", ""),
-            "required": f.get("required", False),
-            "schema_type": f.get("schema", {}).get("type", ""),
-            "allowed_values": allowed,
-        })
+            allowed = [v.get("name") or v.get("value") or str(v) for v in f["allowedValues"]]
+        result.append(
+            {
+                "key": key,
+                "name": f.get("name", ""),
+                "required": f.get("required", False),
+                "schema_type": f.get("schema", {}).get("type", ""),
+                "allowed_values": allowed,
+            }
+        )
     return result
 
 

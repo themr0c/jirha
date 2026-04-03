@@ -496,9 +496,17 @@ def _interactive_create(jira, project_key):
 
     # Parse field metadata
     skip_keys = {
-        "project", "issuetype", "summary", "reporter",
-        "attachment", "issuelinks", "comment", "worklog",
-        "timetracking", "watches", "votes",
+        "project",
+        "issuetype",
+        "summary",
+        "reporter",
+        "attachment",
+        "issuelinks",
+        "comment",
+        "worklog",
+        "timetracking",
+        "watches",
+        "votes",
     }
     all_fields = [f for f in parse_fields(selected) if f["key"] not in skip_keys]
 

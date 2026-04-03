@@ -98,12 +98,14 @@ def _fill_missing_descriptions(jira, issue_gaps, dry_run=False):
         body = _pr_body(first_url)
         if not body or len(body.strip()) < 10:
             continue
-        candidates.append({
-            "key": key,
-            "summary": issue.fields.summary,
-            "pr_url": first_url,
-            "body": body.strip(),
-        })
+        candidates.append(
+            {
+                "key": key,
+                "summary": issue.fields.summary,
+                "pr_url": first_url,
+                "body": body.strip(),
+            }
+        )
 
     if not candidates:
         return
@@ -174,8 +176,7 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
     """Report and optionally fix SP mismatches between Jira and linked PRs."""
     print("\n## SP Reassessment (from PRs)\n")
     sp_issues = jira.search_issues(
-        f"{scope} AND sprint in openSprints() AND type not in (Epic, Feature)"
-        f"{REVIEW_FILTER}",
+        f"{scope} AND sprint in openSprints() AND type not in (Epic, Feature){REVIEW_FILTER}",
         maxResults=max_results,
         fields=f"summary,status,assignee,{CF_STORY_POINTS},{CF_GIT_PR}",
     )
@@ -199,15 +200,17 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
             or abs(SP_TIERS[current_sp] - SP_TIERS[suggested_sp]) >= 2
         )
         if is_mismatch:
-            mismatches.append({
-                "key": issue.key,
-                "current_sp": current_sp,
-                "suggested_sp": suggested_sp,
-                "reason": reason,
-                "pr_url": pr_url,
-                "pr_number": pr_number,
-                "assignee": _assignee_name(issue),
-            })
+            mismatches.append(
+                {
+                    "key": issue.key,
+                    "current_sp": current_sp,
+                    "suggested_sp": suggested_sp,
+                    "reason": reason,
+                    "pr_url": pr_url,
+                    "pr_number": pr_number,
+                    "assignee": _assignee_name(issue),
+                }
+            )
         else:
             confirmed += 1
 
@@ -218,7 +221,7 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
     for i, m in enumerate(mismatches, 1):
         assignee_str = f" @{m['assignee']}" if team else ""
         current_label = f"{m['current_sp']}SP" if m["current_sp"] is not None else "no SP"
-        suggested = m['suggested_sp']
+        suggested = m["suggested_sp"]
         print(f"{i}. {_jira_url(m['key'])} {current_label} → suggested {suggested}SP{assignee_str}")
         print(f"   {m['reason']}")
         for url in m["pr_url"].strip().splitlines():
@@ -279,19 +282,23 @@ def _status_cross_check(jira, sprint_issues, team=False, dry_run=False):
 
         if status in ("Closed", "Resolved") and has_open:
             open_prs = [url for url, s in pr_states if s == "OPEN"]
-            reopen_candidates.append({
-                "key": issue.key,
-                "summary": issue.fields.summary,
-                "status": status,
-                "open_prs": open_prs,
-            })
+            reopen_candidates.append(
+                {
+                    "key": issue.key,
+                    "summary": issue.fields.summary,
+                    "status": status,
+                    "open_prs": open_prs,
+                }
+            )
         elif status not in ("Closed", "Resolved") and all_closed:
-            close_candidates.append({
-                "key": issue.key,
-                "summary": issue.fields.summary,
-                "status": status,
-                "pr_states": pr_states,
-            })
+            close_candidates.append(
+                {
+                    "key": issue.key,
+                    "summary": issue.fields.summary,
+                    "status": status,
+                    "pr_states": pr_states,
+                }
+            )
 
     # Check for open review subtasks on closed issues
     closed_issues = [i for i in sprint_issues if str(i.fields.status) in ("Closed", "Resolved")]
@@ -299,11 +306,13 @@ def _status_cross_check(jira, sprint_issues, team=False, dry_run=False):
         subtasks = getattr(issue.fields, "subtasks", None) or []
         for st in subtasks:
             if "Review" in st.fields.summary and str(st.fields.status) != "Closed":
-                review_subtasks.append({
-                    "parent_key": issue.key,
-                    "key": st.key,
-                    "summary": st.fields.summary,
-                })
+                review_subtasks.append(
+                    {
+                        "parent_key": issue.key,
+                        "key": st.key,
+                        "summary": st.fields.summary,
+                    }
+                )
 
     if not reopen_candidates and not close_candidates and not review_subtasks:
         print("PR and Jira statuses are consistent.")
@@ -319,7 +328,7 @@ def _status_cross_check(jira, sprint_issues, team=False, dry_run=False):
             print()
 
         if dry_run:
-            print("To reopen: jirha transition KEY \"In Progress\"\n")
+            print('To reopen: jirha transition KEY "In Progress"\n')
         else:
             choice = _prompt_choice("Reopen? [a]ll / [n]one / [1,2,...]: ")
             if choice and choice not in ("n", "none"):
@@ -328,8 +337,11 @@ def _status_cross_check(jira, sprint_issues, team=False, dry_run=False):
                     issue_obj = jira.issue(item["key"])
                     transitions = jira.transitions(issue_obj)
                     reopen_id = next(
-                        (t["id"] for t in transitions
-                         if t["name"].lower() in ("in progress", "reopen", "open", "new")),
+                        (
+                            t["id"]
+                            for t in transitions
+                            if t["name"].lower() in ("in progress", "reopen", "open", "new")
+                        ),
                         None,
                     )
                     if reopen_id:
@@ -459,7 +471,9 @@ def cmd_hygiene(args):
         f"{CF_STORY_POINTS},{CF_GIT_PR}"
     )
     sprint_issues = jira.search_issues(
-        sprint_base, maxResults=args.max, fields=sprint_fields,
+        sprint_base,
+        maxResults=args.max,
+        fields=sprint_fields,
     )
 
     # Step 2: Metadata checks (on all sprint issues)
@@ -504,7 +518,9 @@ def cmd_hygiene(args):
         if user_prs:
             _auto_link_prs(jira, sprint_issues, user_prs)
             sprint_issues = jira.search_issues(
-                sprint_base, maxResults=args.max, fields=sprint_fields,
+                sprint_base,
+                maxResults=args.max,
+                fields=sprint_fields,
             )
 
     # Step 4: SP reassessment

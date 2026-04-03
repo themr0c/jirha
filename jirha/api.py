@@ -127,7 +127,7 @@ def _pr_metrics(files, commits):
     tier = max(tier, total_tier)
 
     # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
-    if sum([new_adoc >= 2, len(adoc_files) >= 10, commits >= 12]) >= 2:
+    if sum([new_adoc >= 2, len(adoc_files) >= 12, commits >= 12]) >= 2:
         tier = min(tier + 1, 5)
     # Mechanical discount only when adoc is the dominant change
     if is_mechanical and adoc_lines > total_lines * 0.5:

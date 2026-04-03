@@ -335,7 +335,7 @@ Auto-suggest caps at 13 SP. 21 SP is accepted as valid but never auto-suggested 
 
 **Complexity bumps** (tier +1, capped at tier 5 = 8 SP, if 2+ signals present):
 - 2+ new .adoc files (no deletions, >5 lines added)
-- 10+ total .adoc files touched
+- 12+ total .adoc files touched
 - 12+ commits
 
 **Total-lines floor** (for tooling/script PRs): when non-.adoc changes dominate, total lines across all files set a minimum tier:

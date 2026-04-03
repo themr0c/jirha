@@ -1,5 +1,11 @@
 from jirha.api import _is_doc_repo
-from jirha.ops.context import _extract_pr_urls, _suggest_sp_range, format_context
+from jirha.ops.context import (
+    _extract_links,
+    _extract_pr_urls,
+    _is_eng_task,
+    _suggest_sp_range,
+    format_context,
+)
 
 # --- _is_doc_repo ---
 
@@ -132,3 +138,55 @@ def test_format_context_with_range():
     assert "2–5 SP" in output
     assert "weak" in output
     assert "Feature X" in output
+
+
+# --- _is_eng_task ---
+
+
+def test_is_eng_task_different_team():
+    """Task with a non-doc team is engineering."""
+    task = _FakeIssue("RHIDP-100")
+    task.fields.customfield_10001 = type("Team", (), {"name": "rhdh-core"})()
+    assert _is_eng_task(task) is True
+
+
+def test_is_eng_task_doc_team():
+    """Task with RHDH Documentation team is not engineering."""
+    task = _FakeIssue("RHIDP-100")
+    task.fields.customfield_10001 = type("Team", (), {"name": "RHDH Documentation"})()
+    assert _is_eng_task(task) is False
+
+
+def test_is_eng_task_no_team():
+    """Task with no team field defaults to not engineering."""
+    task = _FakeIssue("RHIDP-100")
+    assert _is_eng_task(task) is False
+
+
+# --- _extract_links ---
+
+
+class _FakeLink:
+    def __init__(self, link_type, outward_key=None, inward_key=None):
+        link_attrs = {"outward": link_type, "inward": link_type, "name": link_type}
+        self.type = type("LinkType", (), link_attrs)()
+        if outward_key:
+            self.outwardIssue = type("Issue", (), {"key": outward_key})()
+            self.inwardIssue = None
+        else:
+            self.outwardIssue = None
+            self.inwardIssue = type("Issue", (), {"key": inward_key})()
+
+
+def test_extract_links_outward():
+    links = [_FakeLink("relates to", outward_key="RHIDP-200")]
+    result = _extract_links(links)
+    assert len(result) == 1
+    assert result[0]["key"] == "RHIDP-200"
+    assert result[0]["link_type"] == "relates to"
+    assert result[0]["direction"] == "outward"
+
+
+def test_extract_links_empty():
+    assert _extract_links([]) == []
+    assert _extract_links(None) == []

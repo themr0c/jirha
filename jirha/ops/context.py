@@ -8,7 +8,7 @@ from jirha.api import (
     _issue_sp,
     get_jira,
 )
-from jirha.config import CF_GIT_PR, CF_STORY_POINTS, SERVER, SP_VALUES
+from jirha.config import CF_GIT_PR, CF_STORY_POINTS, CF_TEAM, DEFAULT_TEAM, SERVER, SP_VALUES
 
 _HIERARCHY_FIELDS = (
     f"summary,description,status,issuetype,parent,components,{CF_STORY_POINTS},{CF_GIT_PR}"
@@ -16,6 +16,36 @@ _HIERARCHY_FIELDS = (
 
 # Session-scoped cache for hierarchy walks (shared across hygiene calls)
 _cache = {}
+
+
+def _is_eng_task(issue):
+    """Return True if the issue belongs to an engineering (non-doc) team."""
+    team = getattr(issue.fields, CF_TEAM, None)
+    if not team:
+        return False
+    team_name = getattr(team, "name", str(team))
+    return team_name != DEFAULT_TEAM
+
+
+def _extract_links(issuelinks):
+    """Extract issue links as list of dicts with key, link_type, direction."""
+    if not issuelinks:
+        return []
+    result = []
+    for link in issuelinks:
+        if hasattr(link, "outwardIssue") and link.outwardIssue:
+            result.append({
+                "key": link.outwardIssue.key,
+                "link_type": link.type.outward,
+                "direction": "outward",
+            })
+        elif hasattr(link, "inwardIssue") and link.inwardIssue:
+            result.append({
+                "key": link.inwardIssue.key,
+                "link_type": link.type.inward,
+                "direction": "inward",
+            })
+    return result
 
 
 def _cached_issue(jira, key, fields):

@@ -511,5 +511,11 @@ def format_context(ctx):
 def cmd_context(args):
     """Show hierarchy context for SP estimation."""
     jira = get_jira()
-    ctx = assemble_context(jira, args.key)
-    print(format_context(ctx))
+    if getattr(args, "json", False):
+        import json as json_mod
+
+        ctx = assemble_context_json(jira, args.key, refresh=getattr(args, "refresh", False))
+        print(json_mod.dumps(ctx, indent=2))
+    else:
+        ctx = assemble_context(jira, args.key)
+        print(format_context(ctx))

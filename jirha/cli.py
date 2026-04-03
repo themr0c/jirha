@@ -124,6 +124,8 @@ def main():
 
     p = sub.add_parser("context", help="Show hierarchy context for SP estimation")
     p.add_argument("key", help="Issue key")
+    p.add_argument("--json", action="store_true", help="Output as JSON")
+    p.add_argument("--refresh", action="store_true", help="Force re-fetch (ignore cache)")
     p.set_defaults(func=cmd_context)
 
     p = sub.add_parser("close-subtasks", help="Close open subtasks of closed parents")

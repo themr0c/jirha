@@ -47,3 +47,56 @@ def test_dimensions_spread_across_comments():
 class _mock_comment:
     def __init__(self, body):
         self.body = body
+
+
+from unittest.mock import MagicMock
+from jirha.ops.estimate import _classify_issues
+
+
+def _make_issue(key, summary, sp=None, comments=None):
+    """Create a mock Jira issue."""
+    issue = MagicMock()
+    issue.key = key
+    issue.fields.summary = summary
+    issue.fields.status = MagicMock(__str__=lambda self: "New")
+    issue.fields.assignee = MagicMock()
+    issue.fields.assignee.displayName = "Test User"
+    # SP field
+    from jirha.config import CF_STORY_POINTS
+    setattr(issue.fields, CF_STORY_POINTS, sp)
+    # Comments
+    if comments is None:
+        comments = []
+    comment_obj = MagicMock()
+    comment_obj.comments = [_mock_comment(c) for c in comments]
+    issue.fields.comment = comment_obj
+    return issue
+
+
+def test_classify_missing_sp():
+    issues = [_make_issue("RHIDP-1", "Some task", sp=None)]
+    result = _classify_issues(issues)
+    assert len(result) == 1
+    assert result[0]["missing"] == "sp"
+
+
+def test_classify_missing_reasoning():
+    issues = [_make_issue("RHIDP-1", "Some task", sp=3.0, comments=["just a note"])]
+    result = _classify_issues(issues)
+    assert len(result) == 1
+    assert result[0]["missing"] == "reasoning"
+
+
+def test_classify_has_both():
+    reasoning = "Complexity: Low\nRisk: Low\nUncertainty: None\nEffort: Minimal"
+    issues = [_make_issue("RHIDP-1", "Some task", sp=3.0, comments=[reasoning])]
+    result = _classify_issues(issues)
+    assert len(result) == 0
+
+
+def test_classify_sp_zero_is_valid():
+    """0 SP is a valid value, not 'missing'."""
+    issues = [_make_issue("RHIDP-1", "Some task", sp=0.0, comments=["no reasoning"])]
+    result = _classify_issues(issues)
+    assert len(result) == 1
+    assert result[0]["missing"] == "reasoning"

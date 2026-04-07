@@ -3,7 +3,7 @@
 import json
 
 from jirha.api import get_jira, REVIEW_FILTER
-from jirha.config import CF_STORY_POINTS, SERVER
+from jirha.config import CF_STORY_POINTS, SERVER, SP_VALUES
 from jirha.ops.context import assemble_context_json
 
 _REASONING_KEYWORDS = ("Complexity", "Risk", "Uncertainty", "Effort")
@@ -26,7 +26,7 @@ def _has_reasoning_comment(comments):
 def _classify_issues(issues):
     """Classify issues as missing SP, missing reasoning, or OK.
 
-    Returns list of dicts: {key, summary, status, current_sp, missing, issue}.
+    Returns list of dicts: {key, summary, status, current_sp, missing}.
     """
     results = []
     for issue in issues:
@@ -52,7 +52,6 @@ def _classify_issues(issues):
             "status": status,
             "current_sp": current_sp,
             "missing": missing,
-            "issue": issue,
         })
     return results
 
@@ -154,7 +153,6 @@ def _interactive_loop(classified, jira):
         except ValueError:
             print(f"  Invalid value: {choice}")
             continue
-        from jirha.config import SP_VALUES
         if sp_val not in SP_VALUES:
             print(f"  Invalid SP value. Valid: {', '.join(str(s) for s in SP_VALUES)}")
             continue

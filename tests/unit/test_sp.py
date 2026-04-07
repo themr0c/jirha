@@ -254,3 +254,72 @@ def test_mixed_uses_higher_of_adoc_and_total():
     tier, reason, pr_type = _pr_metrics(files, commits=1)
     assert pr_type == "mixed"
     assert tier == 4  # 5 SP — total-lines wins
+
+
+# --- Multi-PR aggregation ---
+
+
+from unittest.mock import patch
+from jirha.api import _assess_multi_pr_sp
+
+
+def _mock_gh_pr_view(files, title="Add docs", commits=1):
+    """Build a mock gh pr view JSON response."""
+    import json
+    return json.dumps({
+        "files": files,
+        "commits": [{"oid": f"abc{i}"} for i in range(commits)],
+        "title": title,
+    })
+
+
+def test_assess_multi_pr_aggregation():
+    """Multiple PRs aggregate their file metrics."""
+    pr_field = (
+        "https://github.com/org/repo/pull/100\n"
+        "https://github.com/org/repo/pull/101\n"
+    )
+    pr100_files = [{"path": "docs/a.adoc", "additions": 30, "deletions": 5}]
+    pr101_files = [{"path": "docs/b.adoc", "additions": 40, "deletions": 10}]
+
+    def mock_run(cmd, **kwargs):
+        class Result:
+            returncode = 0
+        r = Result()
+        if "100" in cmd:
+            r.stdout = _mock_gh_pr_view(pr100_files)
+        else:
+            r.stdout = _mock_gh_pr_view(pr101_files)
+        return r
+
+    with patch("jirha.api.subprocess.run", side_effect=mock_run):
+        result = _assess_multi_pr_sp(pr_field)
+
+    assert result is not None
+    sp, reason, pr_numbers = result
+    assert set(pr_numbers) == {"100", "101"}
+    # Combined: 30+5 + 40+10 = 85 adoc lines → tier 3 (60-119)
+    assert sp == 3
+    assert "2 PRs" in reason
+
+
+def test_assess_multi_pr_single_url():
+    """Single PR URL works like _assess_pr_sp."""
+    pr_field = "https://github.com/org/repo/pull/42\n"
+    files = [{"path": "docs/a.adoc", "additions": 10, "deletions": 5}]
+
+    def mock_run(cmd, **kwargs):
+        class Result:
+            returncode = 0
+            stdout = _mock_gh_pr_view(files)
+        return Result()
+
+    with patch("jirha.api.subprocess.run", side_effect=mock_run):
+        result = _assess_multi_pr_sp(pr_field)
+
+    assert result is not None
+    sp, reason, pr_numbers = result
+    assert pr_numbers == ["42"]
+    # 15 adoc lines → tier 1
+    assert sp == 1
+    assert "1 PR" in reason

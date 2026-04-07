@@ -132,10 +132,11 @@ def _fill_missing_descriptions(jira, issue_gaps, dry_run=False):
         print(f"  → {_jira_url(c['key'])}: description updated from PR")
 
 
-def _auto_link_prs(jira, sprint_issues, user_prs):
+def _auto_link_prs(jira, sprint_issues, user_prs, dry_run=False):
     """Match unlinked PRs to sprint Jiras and auto-update the PR field.
 
-    Matches by Jira key found in PR title, body, or branch name.
+    Matches by Jira key found in PR title (authoritative), then falls back
+    to branch name and body only if the title contains no key.
     Returns count of links added.
     """
     sprint_keys = {i.key for i in sprint_issues}
@@ -150,14 +151,19 @@ def _auto_link_prs(jira, sprint_issues, user_prs):
         pr_url = pr.get("url", "")
         if not pr_url:
             continue
-        candidates = set()
-        candidates |= _extract_jira_keys(pr.get("title", ""))
-        candidates |= _extract_jira_keys(pr.get("headRefName", ""))
-        candidates |= _extract_jira_keys(pr.get("body", ""))
+        # Title is authoritative; only fall back to branch/body if title has no keys
+        candidates = _extract_jira_keys(pr.get("title", ""))
+        if not candidates:
+            candidates = _extract_jira_keys(pr.get("headRefName", ""))
+            candidates |= _extract_jira_keys(pr.get("body", ""))
         matched_keys = candidates & sprint_keys
         for key in matched_keys:
             current_pr = issue_pr_urls.get(key, "")
             if pr_url in current_pr:
+                continue
+            if dry_run:
+                print(f"  + {_jira_url(key)} ← {pr_url}")
+                linked += 1
                 continue
             updated_pr = (current_pr.rstrip() + "\n" + pr_url).strip()
             jira.issue(key).update(fields={CF_GIT_PR: updated_pr})
@@ -565,7 +571,7 @@ def cmd_hygiene(args):
     if sprint:
         user_prs = _fetch_user_prs(sprint["start"], sprint["end"])
         if user_prs:
-            _auto_link_prs(jira, sprint_issues, user_prs)
+            _auto_link_prs(jira, sprint_issues, user_prs, dry_run)
             sprint_issues = jira.search_issues(
                 sprint_base,
                 maxResults=args.max,

@@ -8,7 +8,7 @@ description: Full sprint hygiene — metadata, PR linking, SP reassessment, and 
 jirha hygiene --dry-run $ARGUMENTS
 ```
 
-**Step 2:** Present findings to the user, grouped by section. For each actionable finding, ask the user what to do.
+**Step 2:** Present findings to the user, grouped by section. For each actionable finding, ask the user what to do. When mentioning a Jira issue, always include the URL (`https://redhat.atlassian.net/browse/KEY`). When mentioning a GitHub PR, always include the full URL.
 
 **Step 3:** For each accepted action, run the corresponding `jirha` command:
 

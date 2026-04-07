@@ -10,7 +10,7 @@ jirha hygiene --check-sp --dry-run $ARGUMENTS
 
 If there are **no mismatches**, report "No SP mismatches" and stop.
 
-If there **are mismatches**, present them in a table and ask the user which to apply. Options:
+If there **are mismatches**, present them in a table and ask the user which to apply. When mentioning a Jira issue, always include the URL (`https://redhat.atlassian.net/browse/KEY`). When mentioning a GitHub PR, always include the full URL. Options:
 - **all** — apply all suggested changes
 - **none** — skip
 - **1,2,...** — apply specific numbered entries

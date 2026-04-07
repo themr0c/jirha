@@ -32,6 +32,10 @@ Use this SP reference table to reason across each dimension independently:
 - Consider feature size (T-shirt) as a scope multiplier for doc-only features: S~2, L~5, XL~9.
 - If `cache_age` is more than 7 days, note that context may be stale.
 
+**Presentation:**
+- When mentioning a Jira issue, always include the URL: `https://redhat.atlassian.net/browse/KEY`
+- When mentioning a GitHub PR, always include the full URL.
+
 **Output format:** Present your assessment as:
 
 ```

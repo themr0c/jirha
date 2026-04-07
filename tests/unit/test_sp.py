@@ -1,4 +1,6 @@
-from jirha.api import _pr_metrics
+from unittest.mock import patch
+
+from jirha.api import _assess_multi_pr_sp, _pr_metrics
 
 
 def _adoc(path, additions, deletions):
@@ -257,10 +259,6 @@ def test_mixed_uses_higher_of_adoc_and_total():
 
 
 # --- Multi-PR aggregation ---
-
-
-from unittest.mock import patch
-from jirha.api import _assess_multi_pr_sp
 
 
 def _mock_gh_pr_view(files, title="Add docs", commits=1):

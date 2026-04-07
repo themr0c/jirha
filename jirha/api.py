@@ -206,6 +206,8 @@ def _assess_multi_pr_sp(pr_field):
     GitHub PR URL, deduplicates cherry-picks, aggregates metrics, and
     returns (sp, reason, pr_numbers) or None.
     """
+    if not pr_field:
+        return None
     urls = [u.strip() for u in pr_field.strip().splitlines() if u.strip()]
     pr_data = []  # list of dicts
 

@@ -6,7 +6,7 @@ from collections import Counter
 from jirha.api import (
     REVIEW_FILTER,
     SP_TIERS,
-    _assess_pr_sp,
+    _assess_multi_pr_sp,
     _assignee_filter,
     _assignee_name,
     _extract_jira_keys,
@@ -189,11 +189,11 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
             continue
         raw_sp = getattr(issue.fields, CF_STORY_POINTS, None)
         current_sp = int(raw_sp) if raw_sp is not None else None
-        result = _assess_pr_sp(pr_url)
+        result = _assess_multi_pr_sp(pr_url)
         if not result:
             skipped += 1
             continue
-        suggested_sp, reason, pr_number = result
+        suggested_sp, reason, pr_numbers = result
         is_mismatch = (
             current_sp is None
             or current_sp not in SP_TIERS
@@ -207,7 +207,7 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
                     "suggested_sp": suggested_sp,
                     "reason": reason,
                     "pr_url": pr_url,
-                    "pr_number": pr_number,
+                    "pr_number": pr_numbers[0] if pr_numbers else "",
                     "assignee": _assignee_name(issue),
                 }
             )
@@ -243,7 +243,7 @@ def _sp_reassessment(jira, scope, max_results, team=False, dry_run=False):
     for idx in sorted(apply_indices):
         m = mismatches[idx]
         new_sp = overrides.get(idx, m["suggested_sp"])
-        comment = f"SP reassessed from PR #{m['pr_number']}: {m['reason']}"
+        comment = f"SP reassessed from PRs: {m['reason']}"
         jira.issue(m["key"]).update(fields={CF_STORY_POINTS: float(new_sp)})
         old_label = f"{m['current_sp']}" if m["current_sp"] is not None else "empty"
         jira.add_comment(m["key"], f"Updated SP: {old_label} → {new_sp}\n\n{comment}")

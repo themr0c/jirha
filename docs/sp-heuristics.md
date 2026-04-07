@@ -23,7 +23,38 @@ Story points are a relative measure of effort, complexity, risk, and uncertainty
 
 ## SP Heuristics
 
-`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing the linked GitHub PR. Hygiene only flags mismatches of 2+ tiers.
+`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing all linked GitHub PRs. Hygiene only flags mismatches of 2+ tiers.
+
+### Multi-PR aggregation
+
+Most Jiras have multiple PRs (60% in the dataset — cherry-picks, follow-ups, backports). The heuristic evaluates all linked PRs:
+
+1. Splits the PR field by newlines, filters valid GitHub PR URLs
+2. Fetches file-level data for each via `gh pr view`
+3. Deduplicates cherry-picks (see below)
+4. Aggregates: union of files by path (summing additions/deletions), max commits across PRs
+5. Classifies the aggregated result as doc/tooling/mixed
+6. Returns a single SP assessment
+
+**Cherry-pick detection:** A PR is excluded from aggregation if:
+- Its title starts with `[release-` (branch backport convention), OR
+- Its `total_lines` matches exactly another PR on the same Jira AND the file lists overlap by >80%
+
+Cherry-pick file metrics are excluded from aggregation. The reason string distinguishes: `3 PRs (2 cherry-picks)`.
+
+### Task-type classification
+
+Applied to the aggregated PR set:
+
+| Type | Rule | Effect |
+|---|---|---|
+| **doc** | `.adoc` lines > 50% of total lines | Adoc thresholds primary, total-lines as floor, complexity bump applies |
+| **tooling** | 0 `.adoc` files | Total-lines thresholds as primary, complexity bump skipped |
+| **mixed** | `.adoc` files present but < 50% of total lines | Higher of adoc tier and total-lines tier, complexity bump applies |
+
+### Threshold re-derivation
+
+`scripts/derive_thresholds.py` reads both CSVs, aggregates per Jira, segments by type, and re-derives thresholds. Output is for human review — does not auto-patch `api.py`.
 
 ### How thresholds were derived
 

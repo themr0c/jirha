@@ -96,7 +96,10 @@ def _warn_in_progress_no_sprint(jira, team=False):
 
 
 def _pr_metrics(files, commits):
-    """Compute PR metrics and return (tier, reason) for SP assessment."""
+    """Compute PR metrics and return (tier, reason, pr_type).
+
+    pr_type is 'doc', 'tooling', or 'mixed' based on adoc line share.
+    """
     adoc_files = [f for f in files if f["path"].endswith(".adoc")]
     adoc_lines = sum(f["additions"] + f["deletions"] for f in adoc_files)
     new_adoc = sum(1 for f in adoc_files if f["deletions"] == 0 and f["additions"] > 5)
@@ -105,35 +108,52 @@ def _pr_metrics(files, commits):
 
     adds = sum(f["additions"] for f in files)
     dels = sum(f["deletions"] for f in files)
+    total_lines = adds + dels
+
+    # Classify task type
+    if not adoc_files:
+        pr_type = "tooling"
+    elif total_lines > 0 and adoc_lines > total_lines * 0.5:
+        pr_type = "doc"
+    else:
+        pr_type = "mixed"
+
     parts = [f"{len(adoc_files)} .adoc files", f"+{adds}/-{dels} lines"]
     if new_adoc:
         parts.append(f"{new_adoc} new topics")
     if is_mechanical:
         parts.append("mechanical")
+    parts.append(pr_type)
 
+    # Primary tier from adoc lines
     tier = 6
     for threshold, t in _ADOC_TIER_THRESHOLDS:
         if adoc_lines < threshold:
             tier = t
             break
 
-    # Floor from total lines (catches tooling/script-heavy PRs)
-    total_lines = adds + dels
+    # Total-lines tier
     total_tier = 6
     for threshold, t in _TOTAL_TIER_THRESHOLDS:
         if total_lines < threshold:
             total_tier = t
             break
-    tier = max(tier, total_tier)
 
-    # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
-    if sum([new_adoc >= 2, len(adoc_files) >= 12, commits >= 12]) >= 2:
-        tier = min(tier + 1, 5)
+    if pr_type == "tooling":
+        # Tooling: total-lines is primary, skip complexity bump
+        tier = total_tier
+    else:
+        # Doc/mixed: adoc primary, total-lines as floor
+        tier = max(tier, total_tier)
+        # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
+        if sum([new_adoc >= 2, len(adoc_files) >= 12, commits >= 12]) >= 2:
+            tier = min(tier + 1, 5)
+
     # Mechanical discount only when adoc is the dominant change
     if is_mechanical and adoc_lines > total_lines * 0.5:
         tier = max(tier - 1, 0)
 
-    return tier, ", ".join(parts)
+    return tier, ", ".join(parts), pr_type
 
 
 def _assess_pr_sp(pr_url):
@@ -164,7 +184,7 @@ def _assess_pr_sp(pr_url):
     except (subprocess.TimeoutExpired, json.JSONDecodeError):
         return None
 
-    tier, reason = _pr_metrics(data.get("files", []), len(data.get("commits", [])))
+    tier, reason, _ = _pr_metrics(data.get("files", []), len(data.get("commits", [])))
     return _TIER_TO_SP[tier], reason, number
 
 
@@ -177,6 +197,104 @@ def _parse_pr_url(pr_url):
 def _is_doc_repo(pr_url):
     """Return True if the PR URL points to a documentation repo."""
     return "red-hat-developers-documentation-" in pr_url
+
+
+def _assess_multi_pr_sp(pr_field):
+    """Assess SP from all PRs linked to a Jira.
+
+    Splits pr_field by newlines, fetches file-level data for each valid
+    GitHub PR URL, deduplicates cherry-picks, aggregates metrics, and
+    returns (sp, reason, pr_numbers) or None.
+    """
+    if not pr_field:
+        return None
+    urls = [u.strip() for u in pr_field.strip().splitlines() if u.strip()]
+    pr_data = []  # list of dicts
+
+    for url in urls:
+        parsed = _parse_pr_url(url)
+        if not parsed:
+            continue
+        repo, number = parsed
+        try:
+            result = subprocess.run(
+                [
+                    "gh", "pr", "view", number, "--repo", repo,
+                    "--json", "additions,deletions,changedFiles,commits,files,title",
+                ],
+                capture_output=True, text=True, timeout=15,
+            )
+            if result.returncode != 0:
+                continue
+            data = json.loads(result.stdout)
+        except (subprocess.TimeoutExpired, json.JSONDecodeError):
+            continue
+        files = data.get("files", [])
+        commits = len(data.get("commits", []))
+        title = data.get("title", "")
+        total_lines = sum(f["additions"] + f["deletions"] for f in files)
+        pr_data.append({
+            "number": number,
+            "repo": repo,
+            "files": files,
+            "commits": commits,
+            "title": title,
+            "total_lines": total_lines,
+        })
+
+    if not pr_data:
+        return None
+
+    # Detect cherry-picks
+    cherry_picks = set()
+    for i, pr in enumerate(pr_data):
+        if pr["title"].startswith("[release-"):
+            cherry_picks.add(i)
+            continue
+        for j, other in enumerate(pr_data):
+            if j <= i or j in cherry_picks:
+                continue
+            if pr["total_lines"] == other["total_lines"] and pr["total_lines"] > 0:
+                # Check file overlap > 80%
+                paths_i = {f["path"] for f in pr["files"]}
+                paths_j = {f["path"] for f in other["files"]}
+                if paths_i and paths_j:
+                    overlap = len(paths_i & paths_j) / max(len(paths_i), len(paths_j))
+                    if overlap > 0.8:
+                        cherry_picks.add(j)
+
+    # Aggregate files from non-cherry-pick PRs
+    aggregated = {}  # path → {path, additions, deletions}
+    max_commits = 0
+    for i, pr in enumerate(pr_data):
+        if i in cherry_picks:
+            continue
+        max_commits = max(max_commits, pr["commits"])
+        for f in pr["files"]:
+            path = f["path"]
+            if path in aggregated:
+                aggregated[path]["additions"] += f["additions"]
+                aggregated[path]["deletions"] += f["deletions"]
+            else:
+                aggregated[path] = {
+                    "path": path,
+                    "additions": f["additions"],
+                    "deletions": f["deletions"],
+                }
+
+    files_list = list(aggregated.values())
+    tier, reason, pr_type = _pr_metrics(files_list, max_commits)
+
+    # Build reason string
+    n_prs = len(pr_data)
+    n_cherry = len(cherry_picks)
+    pr_count = f"{n_prs} PR{'s' if n_prs != 1 else ''}"
+    if n_cherry:
+        pr_count += f" ({n_cherry} cherry-pick{'s' if n_cherry != 1 else ''})"
+    reason = f"{pr_count}, {reason}"
+
+    pr_numbers = [pr["number"] for pr in pr_data]
+    return _TIER_TO_SP[tier], reason, pr_numbers
 
 
 def _pr_body(pr_url):

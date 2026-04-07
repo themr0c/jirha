@@ -1,6 +1,9 @@
 """Batch SP estimation: find issues missing SP or reasoning comments."""
 
+import json
+
 from jirha.config import CF_STORY_POINTS, SERVER
+from jirha.ops.context import assemble_context_json
 
 _REASONING_KEYWORDS = ("Complexity", "Risk", "Uncertainty", "Effort")
 
@@ -51,3 +54,52 @@ def _classify_issues(issues):
             "issue": issue,
         })
     return results
+
+
+def _format_context_summary(ctx):
+    """Format a one-line context summary from assemble_context_json output."""
+    parts = []
+    epic = ctx.get("epic")
+    if epic:
+        parts.append(f"  Epic: {epic['key']} — {epic['summary']}")
+
+    feature = ctx.get("feature")
+    if feature:
+        size = feature.get("size", "")
+        size_str = f" [{size}]" if size else ""
+        parts.append(f"  Feature: {feature['key']}{size_str} — {feature['summary']}")
+
+    eng_metrics = ctx.get("eng_metrics", [])
+    sp_range = ctx.get("suggested_sp_range")
+    quality = ctx.get("data_quality", "none")
+    if eng_metrics:
+        n = len(eng_metrics)
+        if sp_range:
+            parts.append(f"  Eng PRs: {n} (suggested {sp_range[0]}-{sp_range[1]} SP, {quality})")
+        else:
+            parts.append(f"  Eng PRs: {n} (no range)")
+    else:
+        parts.append("  No eng PRs — estimate manually")
+
+    return "\n".join(parts)
+
+
+def _print_results(classified, jira):
+    """Print text-format results with context summaries."""
+    for entry in classified:
+        sp_label = f"{entry['current_sp']}SP" if entry["current_sp"] is not None else "no SP"
+        if entry["missing"] == "reasoning":
+            tag = f"{sp_label}, no reasoning"
+        else:
+            tag = sp_label
+        print(f"{entry['key']}  [{tag}]  {entry['summary']}")
+
+        ctx = assemble_context_json(jira, entry["key"])
+        entry["_ctx"] = ctx  # cache for JSON output
+        print(_format_context_summary(ctx))
+        print(f"  {SERVER}/browse/{entry['key']}")
+        print()
+
+    n_sp = sum(1 for e in classified if e["missing"] == "sp")
+    n_reason = sum(1 for e in classified if e["missing"] == "reasoning")
+    print(f"Found {len(classified)} issues: {n_sp} missing SP, {n_reason} missing reasoning.")

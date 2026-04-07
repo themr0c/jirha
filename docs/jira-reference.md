@@ -122,7 +122,7 @@ jirha hygiene [--max N] [--team] [--dry-run]
 
 3. **Missing descriptions** — for issues with empty descriptions that have a linked PR, fetches the PR body and proposes it as the description. Interactive: `[a]ll / [n]one / [1,2,...]`.
 
-4. **Auto-link PRs** — fetches all PRs authored by the user and modified during the sprint (via `gh search prs`). Matches PRs to Jiras by key in PR title, branch name, or body. Auto-updates the Jira PR field without confirmation.
+4. **Auto-link PRs** — fetches all PRs authored by the user and modified during the sprint (via `gh search prs`). Matches PRs to Jiras by Jira key found in the PR title (authoritative). Falls back to branch name and body only if the title contains no Jira key. Auto-updates the Jira PR field without confirmation. Skipped in `--dry-run` mode (reports matches but does not write to Jira).
 
 5. **SP reassessment** — compares current SP against PR-based assessment. Flags mismatches of 2+ tiers. Interactive: `[a]ll / [n]one / [1,2,...] / [1=5] override`.
 

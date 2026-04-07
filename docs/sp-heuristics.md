@@ -23,7 +23,7 @@ Story points are a relative measure of effort, complexity, risk, and uncertainty
 
 ## SP Heuristics
 
-`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing all linked GitHub PRs. Hygiene only flags mismatches of 2+ tiers.
+`jirha update KEY --sp auto` and `jirha hygiene` assess story points by analyzing all linked GitHub PRs. Hygiene auto-links unmatched PRs before SP reassessment (see [jira-reference.md](jira-reference.md) for matching rules). Hygiene only flags mismatches of 2+ tiers.
 
 ### Multi-PR aggregation
 

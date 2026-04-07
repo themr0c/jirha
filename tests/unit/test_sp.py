@@ -323,3 +323,88 @@ def test_assess_multi_pr_single_url():
     # 15 adoc lines → tier 1
     assert sp == 1
     assert "1 PR" in reason
+
+
+def test_assess_multi_pr_cherry_pick_by_title():
+    """PRs with [release-*] title prefix are treated as cherry-picks."""
+    pr_field = (
+        "https://github.com/org/repo/pull/100\n"
+        "https://github.com/org/repo/pull/101\n"
+    )
+    files = [{"path": "docs/a.adoc", "additions": 50, "deletions": 10}]
+
+    def mock_run(cmd, **kwargs):
+        class Result:
+            returncode = 0
+        r = Result()
+        if "100" in cmd:
+            r.stdout = _mock_gh_pr_view(files, title="Add new feature docs")
+        else:
+            r.stdout = _mock_gh_pr_view(files, title="[release-1.8] Add new feature docs")
+        return r
+
+    with patch("jirha.api.subprocess.run", side_effect=mock_run):
+        result = _assess_multi_pr_sp(pr_field)
+
+    sp, reason, pr_numbers = result
+    # PR 101 is a cherry-pick, only PR 100 metrics counted
+    # 60 adoc lines → tier 3 (60-119) → 3 SP
+    assert sp == 3
+    assert "1 cherry-pick" in reason
+    assert len(pr_numbers) == 2  # both PRs listed, but metrics from 1
+
+
+def test_assess_multi_pr_cherry_pick_by_total_lines():
+    """PRs with identical total_lines and >80% file overlap are cherry-picks."""
+    pr_field = (
+        "https://github.com/org/repo/pull/100\n"
+        "https://github.com/org/repo/pull/101\n"
+    )
+    files = [
+        {"path": "docs/a.adoc", "additions": 30, "deletions": 5},
+        {"path": "docs/b.adoc", "additions": 10, "deletions": 5},
+    ]
+
+    def mock_run(cmd, **kwargs):
+        class Result:
+            returncode = 0
+            # Same files, same totals → cherry-pick
+            stdout = _mock_gh_pr_view(files, title="Add docs")
+        return Result()
+
+    with patch("jirha.api.subprocess.run", side_effect=mock_run):
+        result = _assess_multi_pr_sp(pr_field)
+
+    sp, reason, pr_numbers = result
+    # Only 1 PR's metrics counted: 50 adoc lines → tier 2
+    assert "1 cherry-pick" in reason
+
+
+def test_assess_multi_pr_no_false_cherry_pick():
+    """PRs with same total_lines but different files are NOT cherry-picks."""
+    pr_field = (
+        "https://github.com/org/repo/pull/100\n"
+        "https://github.com/org/repo/pull/101\n"
+    )
+    pr100_files = [{"path": "docs/a.adoc", "additions": 25, "deletions": 25}]
+    pr101_files = [{"path": "docs/z.adoc", "additions": 25, "deletions": 25}]
+    # Same total (50) but 0% file overlap → NOT a cherry-pick
+
+    def mock_run(cmd, **kwargs):
+        class Result:
+            returncode = 0
+        r = Result()
+        if "100" in cmd:
+            r.stdout = _mock_gh_pr_view(pr100_files)
+        else:
+            r.stdout = _mock_gh_pr_view(pr101_files)
+        return r
+
+    with patch("jirha.api.subprocess.run", side_effect=mock_run):
+        result = _assess_multi_pr_sp(pr_field)
+
+    sp, reason, pr_numbers = result
+    # Both PRs counted — no cherry-pick dedup
+    assert "cherry-pick" not in reason
+    # Combined: 100 adoc lines → tier 3
+    assert sp == 3

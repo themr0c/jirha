@@ -96,7 +96,10 @@ def _warn_in_progress_no_sprint(jira, team=False):
 
 
 def _pr_metrics(files, commits):
-    """Compute PR metrics and return (tier, reason) for SP assessment."""
+    """Compute PR metrics and return (tier, reason, pr_type).
+
+    pr_type is 'doc', 'tooling', or 'mixed' based on adoc line share.
+    """
     adoc_files = [f for f in files if f["path"].endswith(".adoc")]
     adoc_lines = sum(f["additions"] + f["deletions"] for f in adoc_files)
     new_adoc = sum(1 for f in adoc_files if f["deletions"] == 0 and f["additions"] > 5)
@@ -105,35 +108,52 @@ def _pr_metrics(files, commits):
 
     adds = sum(f["additions"] for f in files)
     dels = sum(f["deletions"] for f in files)
+    total_lines = adds + dels
+
+    # Classify task type
+    if not adoc_files:
+        pr_type = "tooling"
+    elif total_lines > 0 and adoc_lines > total_lines * 0.5:
+        pr_type = "doc"
+    else:
+        pr_type = "mixed"
+
     parts = [f"{len(adoc_files)} .adoc files", f"+{adds}/-{dels} lines"]
     if new_adoc:
         parts.append(f"{new_adoc} new topics")
     if is_mechanical:
         parts.append("mechanical")
+    parts.append(pr_type)
 
+    # Primary tier from adoc lines
     tier = 6
     for threshold, t in _ADOC_TIER_THRESHOLDS:
         if adoc_lines < threshold:
             tier = t
             break
 
-    # Floor from total lines (catches tooling/script-heavy PRs)
-    total_lines = adds + dels
+    # Total-lines tier
     total_tier = 6
     for threshold, t in _TOTAL_TIER_THRESHOLDS:
         if total_lines < threshold:
             total_tier = t
             break
-    tier = max(tier, total_tier)
 
-    # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
-    if sum([new_adoc >= 2, len(adoc_files) >= 12, commits >= 12]) >= 2:
-        tier = min(tier + 1, 5)
+    if pr_type == "tooling":
+        # Tooling: total-lines is primary, skip complexity bump
+        tier = total_tier
+    else:
+        # Doc/mixed: adoc primary, total-lines as floor
+        tier = max(tier, total_tier)
+        # Complexity bump: +1 tier if 2+ structural signals present (cap at 13 SP)
+        if sum([new_adoc >= 2, len(adoc_files) >= 12, commits >= 12]) >= 2:
+            tier = min(tier + 1, 5)
+
     # Mechanical discount only when adoc is the dominant change
     if is_mechanical and adoc_lines > total_lines * 0.5:
         tier = max(tier - 1, 0)
 
-    return tier, ", ".join(parts)
+    return tier, ", ".join(parts), pr_type
 
 
 def _assess_pr_sp(pr_url):
@@ -164,7 +184,7 @@ def _assess_pr_sp(pr_url):
     except (subprocess.TimeoutExpired, json.JSONDecodeError):
         return None
 
-    tier, reason = _pr_metrics(data.get("files", []), len(data.get("commits", [])))
+    tier, reason, _ = _pr_metrics(data.get("files", []), len(data.get("commits", [])))
     return _TIER_TO_SP[tier], reason, number
 
 

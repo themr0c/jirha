@@ -103,3 +103,59 @@ def _print_results(classified, jira):
     n_sp = sum(1 for e in classified if e["missing"] == "sp")
     n_reason = sum(1 for e in classified if e["missing"] == "reasoning")
     print(f"Found {len(classified)} issues: {n_sp} missing SP, {n_reason} missing reasoning.")
+
+
+def _print_json(classified):
+    """Print JSON output for slash command consumption."""
+    output = []
+    for entry in classified:
+        ctx = entry.get("_ctx", {})
+        epic = ctx.get("epic")
+        feature = ctx.get("feature")
+        item = {
+            "key": entry["key"],
+            "summary": entry["summary"],
+            "status": entry["status"],
+            "current_sp": entry["current_sp"],
+            "missing": entry["missing"],
+        }
+        if epic:
+            item["epic"] = {"key": epic["key"], "summary": epic["summary"]}
+        if feature:
+            item["feature"] = {
+                "key": feature["key"],
+                "summary": feature["summary"],
+                "size": feature.get("size"),
+            }
+        item["suggested_sp_range"] = ctx.get("suggested_sp_range")
+        item["data_quality"] = ctx.get("data_quality", "none")
+        item["eng_pr_count"] = len(ctx.get("eng_metrics", []))
+        output.append(item)
+    print(json.dumps(output, indent=2))
+
+
+def _interactive_loop(classified, jira):
+    """Prompt user to set SP for each issue."""
+    for entry in classified:
+        sp_label = f"{entry['current_sp']}SP" if entry["current_sp"] is not None else "no SP"
+        prompt = f"{entry['key']} [{sp_label}] — Set SP? [value/skip/quit]: "
+        try:
+            choice = input(prompt).strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+        if choice == "quit" or choice == "q":
+            break
+        if choice == "skip" or choice == "s" or not choice:
+            continue
+        try:
+            sp_val = int(choice)
+        except ValueError:
+            print(f"  Invalid value: {choice}")
+            continue
+        from jirha.config import SP_VALUES
+        if sp_val not in SP_VALUES:
+            print(f"  Invalid SP value. Valid: {', '.join(str(s) for s in SP_VALUES)}")
+            continue
+        jira.issue(entry["key"]).update(fields={CF_STORY_POINTS: float(sp_val)})
+        print(f"  → Set {entry['key']} to {sp_val} SP")

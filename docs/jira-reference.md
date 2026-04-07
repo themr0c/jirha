@@ -188,6 +188,29 @@ jirha close-subtasks [--dry-run]
 
 Finds all user's closed parent issues and closes any open subtasks.
 
+### estimate
+
+Find open issues assigned to the current user that are missing SP or missing an SP reasoning comment. Queries issues not in Closed, Resolved, In Progress, or In Review. Excludes Epics, Features, and review subtasks.
+
+```
+jirha estimate [--max N] [--dry-run] [--json]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--max` | 50 | Maximum results |
+| `--dry-run` | false | Report only, no interactive prompts |
+| `--json` | false | Output as JSON (for `/jirha:estimate-batch` slash command) |
+
+**Two checks per issue:**
+
+1. **Missing SP** — story_points field is None (0 SP is valid).
+2. **Missing reasoning** — SP is set but no comment contains all four keywords: Complexity, Risk, Uncertainty, Effort (matching the format from `/jirha:estimate`).
+
+**Interactive mode** (default): after listing issues, prompts per issue to set SP. Does not write reasoning comments — use `/jirha:estimate-batch` for LLM-generated reasoning.
+
+**JSON mode** (`--json`): outputs a JSON array with issue details, context summary, and suggested SP range. Used by the `/jirha:estimate-batch` slash command.
+
 ## Conventions
 
 - Component: Documentation (unless otherwise specified).

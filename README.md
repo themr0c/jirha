@@ -4,8 +4,9 @@ Workflow automation for the RHDH documentation team. Content lives in the [conte
 
 ## Install
 
-```
-claude plugins add --git-url https://github.com/themr0c/jirha.git
+```bash
+claude plugins marketplace add git@github.com:themr0c/jirha.git
+claude plugins install jirha
 ```
 
 First use auto-bootstraps: Python venv, dependencies, and Jira credentials.

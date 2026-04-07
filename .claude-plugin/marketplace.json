@@ -5,7 +5,7 @@
   "plugins": [
     {
       "name": "jirha",
-      "source": ".",
+      "source": "./",
       "description": "List, show, update, create, transition issues and sprint status",
       "version": "1.0.0"
     }

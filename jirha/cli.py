@@ -4,6 +4,7 @@ import argparse
 
 from jirha.config import DEFAULT_COMPONENT, DEFAULT_TEAM, SP_VALUES
 from jirha.ops.context import cmd_context
+from jirha.ops.estimate import cmd_estimate
 from jirha.ops.hygiene import cmd_hygiene
 from jirha.ops.issues import (
     cmd_close_subtasks,
@@ -131,6 +132,12 @@ def main():
     p = sub.add_parser("close-subtasks", help="Close open subtasks of closed parents")
     p.add_argument("--dry-run", action="store_true", help="Show what would be closed")
     p.set_defaults(func=cmd_close_subtasks)
+
+    p = sub.add_parser("estimate", help="Find issues missing SP or reasoning comments")
+    p.add_argument("--max", type=int, default=50)
+    p.add_argument("--dry-run", action="store_true", help="Report only, no interactive prompts")
+    p.add_argument("--json", action="store_true", help="Output as JSON (for slash command)")
+    p.set_defaults(func=cmd_estimate)
 
     args = parser.parse_args()
     args.func(args)

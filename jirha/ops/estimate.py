@@ -2,6 +2,7 @@
 
 import json
 
+from jirha.api import get_jira, REVIEW_FILTER
 from jirha.config import CF_STORY_POINTS, SERVER
 from jirha.ops.context import assemble_context_json
 
@@ -159,3 +160,38 @@ def _interactive_loop(classified, jira):
             continue
         jira.issue(entry["key"]).update(fields={CF_STORY_POINTS: float(sp_val)})
         print(f"  → Set {entry['key']} to {sp_val} SP")
+
+
+def cmd_estimate(args):
+    """Find open issues missing SP or SP reasoning comments."""
+    jira = get_jira()
+
+    jql = (
+        f'assignee = currentUser()'
+        f' AND status not in (Closed, Resolved, "In Progress", "In Review")'
+        f' AND type not in (Epic, Feature)'
+        f'{REVIEW_FILTER}'
+    )
+    issues = jira.search_issues(
+        jql,
+        maxResults=args.max,
+        fields=f"summary,status,assignee,comment,{CF_STORY_POINTS}",
+    )
+
+    classified = _classify_issues(issues)
+    if not classified:
+        print("All open issues have SP and reasoning comments.")
+        return
+
+    if args.json:
+        # Fetch context for each issue before JSON output
+        for entry in classified:
+            entry["_ctx"] = assemble_context_json(jira, entry["key"])
+        _print_json(classified)
+        return
+
+    _print_results(classified, jira)
+
+    if not args.dry_run:
+        print()
+        _interactive_loop(classified, jira)

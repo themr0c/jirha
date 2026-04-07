@@ -2,13 +2,15 @@
 description: Estimate story points for a Jira doc task using hierarchy context
 ---
 
-**Step 1:** Fetch the hierarchy context for the issue:
+**Step 1:** Fetch the hierarchy context for the issue. Do not display the raw JSON output to the user — process it internally:
 
 ```bash
 jirha context $ARGUMENTS --json
 ```
 
-**Step 2:** Analyze the JSON context and estimate story points.
+**Step 2:** If the issue summary matches `[DOC] Peer Review` or `[DOC] Technical Review`, inform the user that review subtasks are skipped for SP estimation and stop.
+
+Otherwise, analyze the JSON context and estimate story points.
 
 Use this SP reference table to reason across each dimension independently:
 
@@ -46,7 +48,7 @@ Suggested: <N> SP
 **Step 4:** If confirmed, run:
 
 ```bash
-jirha update <KEY> --sp <N> -c "SP estimated from hierarchy context"
+jirha update <KEY> --sp <N> -c "<compose a comment from your assessment: one line per dimension (Complexity, Risk, Uncertainty, Effort) with the level and key reasoning>"
 ```
 
 If the user wants to adjust, ask for their preferred value and use that instead.

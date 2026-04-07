@@ -408,3 +408,31 @@ def test_assess_multi_pr_no_false_cherry_pick():
     assert "cherry-pick" not in reason
     # Combined: 100 adoc lines → tier 3
     assert sp == 3
+
+
+def test_assess_multi_pr_returns_none_on_no_valid_urls():
+    """Returns None when pr_field has no valid GitHub PR URLs."""
+    result = _assess_multi_pr_sp("not a url\nalso not a url\n")
+    assert result is None
+
+
+def test_assess_multi_pr_skips_invalid_urls():
+    """Valid URLs are processed, invalid ones skipped."""
+    pr_field = (
+        "not-a-url\n"
+        "https://github.com/org/repo/pull/42\n"
+    )
+    files = [{"path": "docs/a.adoc", "additions": 10, "deletions": 5}]
+
+    def mock_run(cmd, **kwargs):
+        class Result:
+            returncode = 0
+            stdout = _mock_gh_pr_view(files)
+        return Result()
+
+    with patch("jirha.api.subprocess.run", side_effect=mock_run):
+        result = _assess_multi_pr_sp(pr_field)
+
+    assert result is not None
+    sp, reason, pr_numbers = result
+    assert pr_numbers == ["42"]

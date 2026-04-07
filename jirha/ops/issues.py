@@ -4,7 +4,7 @@ import sys
 
 from jirha.api import (
     SP_TIERS,
-    _assess_pr_sp,
+    _assess_multi_pr_sp,
     _createmeta,
     _issue_sp,
     get_jira,
@@ -163,7 +163,7 @@ def _resolve_sp(args, jira):
     if args.sp == "auto":
         pr_url = args.pr or getattr(jira.issue(args.key, fields=CF_GIT_PR).fields, CF_GIT_PR, None)
         if pr_url:
-            result = _assess_pr_sp(pr_url)
+            result = _assess_multi_pr_sp(pr_url)
             if not result:
                 sys.exit(f"Error: could not assess SP from PR: {pr_url}")
             sp_val, reason, _ = result

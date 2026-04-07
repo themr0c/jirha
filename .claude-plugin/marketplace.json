@@ -1,14 +1,13 @@
 {
-  "name": "jirha-local",
-  "description": "Local jirha plugin marketplace",
-  "owner": {
-    "name": "themr0c"
-  },
+  "name": "jirha",
+  "description": "Jira workflow helper for RHDH documentation",
+  "owner": { "name": "Fabrice Flore-Thébault" },
   "plugins": [
     {
       "name": "jirha",
-      "description": "Jira workflow helper for RHDH documentation",
-      "source": "./"
+      "source": ".",
+      "description": "List, show, update, create, transition issues and sprint status",
+      "version": "1.0.0"
     }
   ]
 }

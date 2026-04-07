@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
-"""Thin shim: bootstraps repo venv, then delegates to the installed jirha CLI."""
+"""Thin shim: loads user config, bootstraps cached venv, then delegates to jirha CLI."""
 
 import os
 import sys
 from pathlib import Path
 
-_repo_root = Path(__file__).resolve().parent.parent
-_venv_python = _repo_root / 'venv' / 'bin' / 'python'
+_venv_dir = Path.home() / ".cache" / "jirha" / "venv"
+_venv_python = _venv_dir / "bin" / "python"
+_venv_jirha = _venv_dir / "bin" / "jirha"
 
-_venv_dir = _repo_root / 'venv'
+# Load .env from user config
+_env_file = Path.home() / ".config" / "jirha" / ".env"
+if _env_file.is_file():
+    for line in _env_file.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
+
 if _venv_python.is_file() and Path(sys.prefix).resolve() != _venv_dir.resolve():
-    # Re-exec under venv Python, running the installed jirha entry point
-    _venv_jirha = _venv_python.parent / 'jirha'
     os.execv(str(_venv_python), [str(_venv_python), str(_venv_jirha)] + sys.argv[1:])
 
 # Already running under venv — delegate directly

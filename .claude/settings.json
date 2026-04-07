@@ -3,18 +3,7 @@
     "allow": [
       "Bash(jirha:*)",
       "Bash(~/bin/jirha:*)",
-      "Bash(bash scripts/setup.sh:*)",
-      "Edit(.claude/**)",
-      "Write(.claude/**)",
-      "Skill(update-config)",
-      "Skill(update-config:*)",
-      "Bash(python3 -c \":*)",
-      "Bash(pip install:*)"
-    ],
-    "additionalDirectories": [
-      "//.claude",
-      "/home/ffloreth/.claude",
-      "/home/ffloreth/src/gh/themr0c"
+      "Bash(bash scripts/setup.sh:*)"
     ]
   }
 }

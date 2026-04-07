@@ -1,7 +1,6 @@
 {
   "name": "jirha",
   "description": "Jira workflow helper for RHDH documentation — list, show, update, create, transition issues and sprint status",
-  "author": {
-    "name": "themr0c"
-  }
+  "author": { "name": "themr0c" },
+  "version": "1.0.0"
 }

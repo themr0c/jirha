@@ -203,3 +203,54 @@ def test_pr_type_mixed():
     # adoc = 25, total = 225, adoc/total = 11% → mixed
     tier, reason, pr_type = _pr_metrics(files, commits=1)
     assert pr_type == "mixed"
+
+
+# --- Tooling PR tier behavior ---
+
+
+def test_tooling_uses_total_lines_as_primary():
+    """Tooling PRs (0 adoc) use total-lines thresholds as primary tier."""
+    files = [{"path": "scripts/build.py", "additions": 400, "deletions": 200}]
+    # total = 600 → tier 4 (600-1499)
+    tier, reason, pr_type = _pr_metrics(files, commits=1)
+    assert pr_type == "tooling"
+    assert tier == 4  # 5 SP
+
+
+def test_tooling_skips_complexity_bump():
+    """Tooling PRs skip the complexity bump (adoc-specific signals don't apply)."""
+    files = [{"path": f"scripts/s{i}.py", "additions": 15, "deletions": 0} for i in range(15)]
+    # total = 225 → tier 2 (100-249), many files + commits but no adoc
+    tier, reason, pr_type = _pr_metrics(files, commits=15)
+    assert pr_type == "tooling"
+    assert tier == 2  # no bump despite 15 commits and 15 files
+
+
+def test_tooling_small_pr():
+    """Small tooling PR → tier 0."""
+    files = [{"path": ".github/workflows/ci.yml", "additions": 5, "deletions": 3}]
+    # total = 8 → tier 0 (<20)
+    tier, reason, pr_type = _pr_metrics(files, commits=1)
+    assert pr_type == "tooling"
+    assert tier == 0  # 0 SP
+
+
+def test_tooling_large_pr():
+    """Large tooling PR → high tier."""
+    files = [{"path": "build/index.js", "additions": 3000, "deletions": 2500}]
+    # total = 5500 → tier 6 (5000-14999)
+    tier, reason, pr_type = _pr_metrics(files, commits=5)
+    assert pr_type == "tooling"
+    assert tier == 6  # 13 SP
+
+
+def test_mixed_uses_higher_of_adoc_and_total():
+    """Mixed PRs use the higher of adoc tier and total-lines tier."""
+    files = [
+        _adoc("docs/file.adoc", 20, 5),  # 25 adoc → tier 1
+        {"path": "scripts/build.py", "additions": 400, "deletions": 200},  # 600 non-adoc
+    ]
+    # total = 625 → total tier 4 (600-1499), adoc tier 1 → max(1, 4) = 4
+    tier, reason, pr_type = _pr_metrics(files, commits=1)
+    assert pr_type == "mixed"
+    assert tier == 4  # 5 SP — total-lines wins

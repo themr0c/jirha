@@ -6,7 +6,7 @@ Workflow automation for the RHDH documentation team. Content lives in the [conte
 
 ```bash
 claude plugins marketplace add git@github.com:themr0c/jirha.git
-claude plugins install jirha
+claude plugins install jirha@jirha
 ```
 
 To update to the latest version:

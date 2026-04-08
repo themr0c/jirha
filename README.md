@@ -11,7 +11,7 @@ claude plugins install jirha@jirha
 
 To update to the latest version:
 ```bash
-claude plugins marketplace update jirha
+claude plugins update jirha@jirha
 ```
 
 First use auto-bootstraps: Python venv, dependencies, and Jira credentials.

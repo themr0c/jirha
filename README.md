@@ -9,6 +9,11 @@ claude plugins marketplace add git@github.com:themr0c/jirha.git
 claude plugins install jirha
 ```
 
+To update to the latest version:
+```bash
+claude plugins marketplace update jirha
+```
+
 First use auto-bootstraps: Python venv, dependencies, and Jira credentials.
 
 **Prerequisites:**

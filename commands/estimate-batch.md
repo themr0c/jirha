@@ -2,33 +2,17 @@
 description: Batch estimate SP for all open issues missing SP or reasoning
 ---
 
-**Step 1:** Fetch the list of issues needing SP attention (do not display the raw JSON — process it internally):
+**Step 1:** Run the estimate command to get the status checklist and warm the context cache. Display the output to the user:
 
 ```bash
-jirha estimate --json --dry-run
+jirha estimate
 ```
 
-**Step 2:** If the list is empty, inform the user: "All open issues have SP and reasoning comments." and stop.
+**Step 2:** If there are no TODO items (all issues show `[x]`), inform the user: "All open issues have SP and reasoning comments." and stop.
 
-**Step 3:** Present a summary:
-```
-Found N issues needing SP attention:
-- X missing SP
-- Y missing reasoning comment
-```
+**Step 3:** For each TODO item in the output, Read the cache file referenced in the line. Do not display the file contents to the user. Extract the `.data` field for the context dict.
 
-Then, for each issue in the list:
-
-**Step 3a:** If the issue summary matches `[DOC] Peer Review` or `[DOC] Technical Review`, skip it silently.
-
-**Step 3b:** Fetch hierarchy context (do not display the raw JSON):
-```bash
-jirha context <KEY> --json
-```
-
-**Step 3c:** Analyze the JSON context and estimate story points.
-
-Use this SP reference table to reason across each dimension independently:
+Analyze the context and estimate story points using this SP reference table:
 
 | SP | Complexity | Risk | Uncertainty | Effort |
 |---|---|---|---|---|
@@ -51,7 +35,7 @@ Use this SP reference table to reason across each dimension independently:
 - When mentioning a Jira issue, always include the URL: `https://redhat.atlassian.net/browse/KEY`
 - When mentioning a GitHub PR, always include the full URL.
 
-**Step 3d:** Present the assessment:
+**Step 4:** Present the assessment:
 
 For issues **missing SP**:
 ```
@@ -97,7 +81,7 @@ If adjust SP: ask for new value, then run:
 jirha update <KEY> --sp <NEW> -c "<compose the reasoning comment>"
 ```
 
-**Step 4:** After all issues are processed, print summary:
+**Step 5:** After all issues are processed, print summary:
 ```
 Done. X estimated, Y reasoning added, Z skipped.
 ```

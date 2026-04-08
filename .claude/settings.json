@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Bash(jirha *)",
       "Bash(jirha:*)",
+      "Bash(~/bin/jirha *)",
       "Bash(~/bin/jirha:*)",
       "Bash(bash scripts/setup.sh:*)"
     ]

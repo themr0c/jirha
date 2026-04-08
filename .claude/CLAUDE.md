@@ -18,7 +18,7 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha context KEY [--json] [--refresh]` | Show hierarchy context for SP estimation (markdown or JSON) |
 | `jirha meta PROJECT [--type TYPE]` | Show valid issue types and fields for a project |
 | `jirha close-subtasks [--dry-run]` | Close open subtasks of closed parents |
-| `jirha estimate [--max N] [--dry-run] [--json]` | Find issues missing SP or reasoning comments |
+| `jirha estimate [--max N]` | Find issues missing SP or reasoning comments |
 
 For custom field IDs, JQL queries, description templates, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md). For SP reference and auto-suggest heuristics, see [docs/sp-heuristics.md](../docs/sp-heuristics.md).
 

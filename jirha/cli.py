@@ -135,8 +135,6 @@ def main():
 
     p = sub.add_parser("estimate", help="Find issues missing SP or reasoning comments")
     p.add_argument("--max", type=int, default=50)
-    p.add_argument("--dry-run", action="store_true", help="Report only, no interactive prompts")
-    p.add_argument("--json", action="store_true", help="Output as JSON (for slash command)")
     p.set_defaults(func=cmd_estimate)
 
     args = parser.parse_args()

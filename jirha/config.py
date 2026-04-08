@@ -73,7 +73,7 @@ for _k, _v in _load_env_file(_repo_root / ".env").items():
     os.environ.setdefault(_k, _v)
 
 # Disk cache for hierarchy context (permanent, no TTL)
-CACHE_DIR = _repo_root / ".jirha-cache"
+CACHE_DIR = Path.home() / ".cache" / "jirha"
 
 EMAIL = os.environ.get("JIRA_EMAIL")
 # Note: EMAIL may be None if JIRA_EMAIL is unset; get_jira() will exit with an error.

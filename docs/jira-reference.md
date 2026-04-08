@@ -193,23 +193,19 @@ Finds all user's closed parent issues and closes any open subtasks.
 Find open issues assigned to the current user that are missing SP or missing an SP reasoning comment. Queries issues not in Closed, Resolved, In Progress, or In Review. Excludes Epics, Features, and review subtasks.
 
 ```
-jirha estimate [--max N] [--dry-run] [--json]
+jirha estimate [--max N]
 ```
 
 | Flag | Default | Description |
 |---|---|---|
 | `--max` | 50 | Maximum results |
-| `--dry-run` | false | Report only, no interactive prompts |
-| `--json` | false | Output as JSON (for `/jirha:estimate-batch` slash command) |
 
 **Two checks per issue:**
 
 1. **Missing SP** — story_points field is None (0 SP is valid).
-2. **Missing reasoning** — SP is set but no comment contains all four keywords: Complexity, Risk, Uncertainty, Effort (matching the format from `/jirha:estimate`).
+2. **Missing reasoning** — SP is set but no comment contains all four keywords: Complexity, Risk, Uncertainty, Effort.
 
-**Interactive mode** (default): after listing issues, prompts per issue to set SP. Does not write reasoning comments — use `/jirha:estimate-batch` for LLM-generated reasoning.
-
-**JSON mode** (`--json`): outputs a JSON array with issue details, context summary, and suggested SP range. Used by the `/jirha:estimate-batch` slash command.
+**Output:** Phase 1 prints a checklist of all issues (`[x]` = OK, `[ ]` = needs attention). Phase 2 warms the context cache for unchecked issues and prints a TODO list with cache file paths. The `/jirha:estimate-batch` slash command reads these cached files directly for LLM-powered estimation.
 
 ## Conventions
 

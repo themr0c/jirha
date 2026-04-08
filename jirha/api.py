@@ -25,8 +25,8 @@ _ADOC_TIER_THRESHOLDS = [(5, 0), (30, 1), (60, 2), (120, 3), (300, 4), (550, 5),
 # Floor for non-adoc-heavy PRs (tooling, scripts, config)
 _TOTAL_TIER_THRESHOLDS = [(20, 0), (100, 1), (250, 2), (600, 3), (1500, 4), (5000, 5), (15000, 6)]
 
-_REVIEW_SUMMARIES = ("[DOC] Peer Review", "[DOC] Technical Review")
-REVIEW_FILTER = "".join(f' AND summary !~ "{s}"' for s in _REVIEW_SUMMARIES)
+_REVIEW_SUMMARIES = ("Peer Review", "Technical Review")
+REVIEW_FILTER = "".join(f' AND NOT summary ~ "{s}"' for s in _REVIEW_SUMMARIES)
 
 
 def get_jira():

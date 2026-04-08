@@ -44,6 +44,10 @@ scripts/jirha <command>   # directly from repo root
 - **Custom field IDs, JQL templates, description templates, sprint status format**: `docs/jira-reference.md`
 - **SP reference, auto-suggest heuristics, threshold methodology**: `docs/sp-heuristics.md`
 
+## Plugin versioning
+
+Three files carry the version and must always match: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, and `pyproject.toml`. Bump all three together (patch for fixes, minor for new/changed commands or skills). CI enforces this — PRs with mismatched versions will fail.
+
 ## Inline python-jira (for queries jirha doesn't cover)
 
 ```python

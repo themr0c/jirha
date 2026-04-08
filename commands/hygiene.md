@@ -2,6 +2,8 @@
 description: Full sprint hygiene — metadata, PR linking, SP reassessment, and status cross-check
 ---
 
+**If plan mode is active, exit plan mode first.** This is an operational command, not a code planning task.
+
 **Step 1:** Run the audit in dry-run mode and capture its output:
 
 ```bash

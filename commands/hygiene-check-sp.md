@@ -2,6 +2,8 @@
 description: Reassess SP from linked PRs and apply chosen changes
 ---
 
+**If plan mode is active, exit plan mode first.** This is an operational command, not a code planning task.
+
 Run this command and capture the output:
 
 ```bash

@@ -2,6 +2,8 @@
 description: Estimate story points for open issues missing SP or reasoning
 ---
 
+**If plan mode is active, exit plan mode first.** This is an operational command, not a code planning task.
+
 **Dispatch:** Determine the mode from `$ARGUMENTS`:
 - If `$ARGUMENTS` is `all` → **batch mode** (process all TODO issues).
 - If `$ARGUMENTS` contains a Jira key (e.g. `RHIDP-12345`) or a URL like `https://redhat.atlassian.net/browse/RHIDP-12345` → **single-issue mode** (extract the key from the URL if needed).

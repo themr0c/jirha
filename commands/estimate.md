@@ -1,18 +1,29 @@
 ---
-description: Estimate story points for a Jira doc task using hierarchy context
+description: Estimate story points for open issues missing SP or reasoning
 ---
 
-**Step 1:** Fetch the hierarchy context for the issue. Do not display the raw JSON output to the user — process it internally:
+**Dispatch:** Determine the mode from `$ARGUMENTS`:
+- If `$ARGUMENTS` is `all` → **batch mode** (process all TODO issues).
+- If `$ARGUMENTS` contains a Jira key (e.g. `RHIDP-12345`) or a URL like `https://redhat.atlassian.net/browse/RHIDP-12345` → **single-issue mode** (extract the key from the URL if needed).
+- If `$ARGUMENTS` is empty → ask the user: "Estimate all open issues, or enter a specific key?"
+
+---
+
+**Step 1:** Run the estimate command to get the status checklist and warm the context cache. Display the output to the user:
 
 ```bash
-jirha context $ARGUMENTS --json
+jirha estimate
 ```
 
-**Step 2:** If the issue summary matches `[DOC] Peer Review` or `[DOC] Technical Review`, inform the user that review subtasks are skipped for SP estimation and stop.
+**Step 2:** If there are no TODO items (all issues show `[x]`), inform the user: "All open issues have SP and reasoning comments." and stop.
 
-Otherwise, analyze the JSON context and estimate story points.
+In **single-issue mode**: if the target key does not appear in the TODO list, inform the user that the issue already has SP and reasoning, and stop.
 
-Use this SP reference table to reason across each dimension independently:
+**Step 3:** For each TODO item (all items in batch mode, or the single matching item):
+
+Read the cache file referenced in the line. Do not display the file contents to the user. Extract the `.data` field for the context dict.
+
+Analyze the context and estimate story points using this SP reference table:
 
 | SP | Complexity | Risk | Uncertainty | Effort |
 |---|---|---|---|---|
@@ -30,15 +41,18 @@ Use this SP reference table to reason across each dimension independently:
 - When `data_quality` is "weak" or "none", rely more on description analysis.
 - Weight PR body content and upstream doc links for scope assessment.
 - Consider feature size (T-shirt) as a scope multiplier for doc-only features: S~2, L~5, XL~9.
-- If `cache_age` is more than 7 days, note that context may be stale.
 
 **Presentation:**
 - When mentioning a Jira issue, always include the URL: `https://redhat.atlassian.net/browse/KEY`
 - When mentioning a GitHub PR, always include the full URL.
 
-**Output format:** Present your assessment as:
+**Step 4:** Present the assessment:
 
+For issues **missing SP**:
 ```
+RHIDP-12345 — Issue summary
+https://redhat.atlassian.net/browse/RHIDP-12345
+
 Complexity: <level> — <reasoning>
 Risk: <level> — <reasoning>
 Uncertainty: <level> — <reasoning>
@@ -46,13 +60,39 @@ Effort: <level> — <reasoning>
 
 Suggested: <N> SP
 ```
+Ask: `Accept <N> SP? [Y/n/adjust/skip]` (in batch mode, also offer `skip-all`)
 
-**Step 3:** Ask the user: `Accept <N> SP? [Y/n/adjust]`
-
-**Step 4:** If confirmed, run:
-
+If accepted:
 ```bash
-jirha update <KEY> --sp <N> -c "<compose a comment from your assessment: one line per dimension (Complexity, Risk, Uncertainty, Effort) with the level and key reasoning>"
+jirha update <KEY> --sp <N> -c "<compose a comment: one line per dimension with level and key reasoning>"
+```
+If adjust: ask for preferred value, use that instead.
+If skip-all: stop processing remaining issues.
+
+For issues **missing reasoning only** (SP already set):
+```
+RHIDP-12345 — Issue summary (currently <N> SP)
+https://redhat.atlassian.net/browse/RHIDP-12345
+
+Complexity: <level> — <reasoning>
+Risk: <level> — <reasoning>
+Uncertainty: <level> — <reasoning>
+Effort: <level> — <reasoning>
+
+Current SP (<N>) aligns with assessment.
+```
+Ask: `Add reasoning comment? [Y/n/adjust SP/skip]` (in batch mode, also offer `skip-all`)
+
+If yes:
+```bash
+jirha update <KEY> -c "<compose the reasoning comment>"
+```
+If adjust SP: ask for new value, then run:
+```bash
+jirha update <KEY> --sp <NEW> -c "<compose the reasoning comment>"
 ```
 
-If the user wants to adjust, ask for their preferred value and use that instead.
+**Step 5** (batch mode only): After all issues are processed, print summary:
+```
+Done. X estimated, Y reasoning added, Z skipped.
+```

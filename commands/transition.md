@@ -7,7 +7,7 @@ description: Transition Jira issue status (or list available transitions)
 Run the following command and show its complete output:
 
 ```bash
-jirha transition $ARGUMENTS
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha transition $ARGUMENTS
 ```
 
 If the command fails, show the error.

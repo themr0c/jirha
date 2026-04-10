@@ -18,6 +18,23 @@ if _env_file.is_file():
             k, v = line.split("=", 1)
             os.environ.setdefault(k.strip(), v.strip())
 
+# Auto-bootstrap venv if missing
+if not _venv_python.is_file():
+    import subprocess
+
+    _plugin_root = Path(__file__).resolve().parent.parent
+    print("jirha: creating venv...", file=sys.stderr)
+    subprocess.run([sys.executable, "-m", "venv", str(_venv_dir)], check=True)
+    subprocess.run(
+        [str(_venv_dir / "bin" / "pip"), "install", "-q",
+         "-r", str(_plugin_root / "requirements.txt")],
+        check=True,
+    )
+    subprocess.run(
+        [str(_venv_dir / "bin" / "pip"), "install", "-q", "-e", str(_plugin_root)],
+        check=True,
+    )
+
 if _venv_python.is_file() and Path(sys.prefix).resolve() != _venv_dir.resolve():
     os.execv(str(_venv_python), [str(_venv_python), str(_venv_jirha)] + sys.argv[1:])
 

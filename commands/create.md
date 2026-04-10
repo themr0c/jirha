@@ -7,7 +7,7 @@ description: Create a new Jira issue (--type, --component, --parent)
 Before creating, discover valid issue types and fields for the target project:
 
 ```bash
-jirha meta <PROJECT> --type <TYPE>
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha meta <PROJECT> --type <TYPE>
 ```
 
 where `<PROJECT>` is the project key from the arguments and `<TYPE>` is the intended issue type (default: Task).
@@ -15,7 +15,7 @@ where `<PROJECT>` is the project key from the arguments and `<TYPE>` is the inte
 Review the output to confirm the type is valid and required fields are covered. Then run:
 
 ```bash
-jirha create $ARGUMENTS
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha create $ARGUMENTS
 ```
 
 If the command fails, show the error.

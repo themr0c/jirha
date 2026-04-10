@@ -25,6 +25,16 @@ echo "jirha: setting up..."
 
 # --- Credentials ---
 if [[ ! -f "$ENV_FILE" ]]; then
+  if [[ ! -t 0 ]]; then
+    echo "ERROR: Jira credentials not configured."
+    echo "Create $ENV_FILE with:"
+    echo "  JIRA_EMAIL=you@redhat.com"
+    echo "  JIRA_API_TOKEN=your-token"
+    echo ""
+    echo "Or run setup interactively:"
+    echo "  bash $SCRIPT_DIR/setup.sh"
+    exit 1
+  fi
   mkdir -p "$CONFIG_DIR"
   echo ""
   read -rp "Enter your Jira email (e.g., user@redhat.com): " jira_email
@@ -57,8 +67,10 @@ ln -sf "$SCRIPT_DIR/jirha" ~/bin/jirha
 echo "✓ Symlinked ~/bin/jirha"
 
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-  echo "  Note: ~/bin is not in PATH. Add to your shell profile:"
-  echo "    export PATH=\"\$HOME/bin:\$PATH\""
+  echo "  Note: ~/bin is not in your shell PATH."
+  echo "  To use jirha from your terminal, run:"
+  echo "    echo 'export PATH=\"\$HOME/bin:\$PATH\"' >> ~/.bashrc && source ~/.bashrc"
+  echo "  (Inside Claude Code, jirha works automatically via the plugin.)"
 fi
 
 # --- gh CLI check (warn, don't block) ---

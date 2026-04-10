@@ -7,7 +7,7 @@ description: Reassess SP from linked PRs and apply chosen changes
 Run this command and capture the output:
 
 ```bash
-jirha hygiene --check-sp --dry-run $ARGUMENTS
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha hygiene --check-sp --dry-run $ARGUMENTS
 ```
 
 If there are **no mismatches**, report "No SP mismatches" and stop.
@@ -21,7 +21,7 @@ If there **are mismatches**, present them in a table and ask the user which to a
 For each accepted mismatch, run:
 
 ```bash
-jirha update KEY --sp SUGGESTED_SP -c "SP reassessed from PR: REASON"
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha update KEY --sp SUGGESTED_SP -c "SP reassessed from PR: REASON"
 ```
 
 If the user provided an override (e.g., `1=5`), use the override SP instead of the suggested one.

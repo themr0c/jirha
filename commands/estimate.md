@@ -14,7 +14,7 @@ description: Estimate story points for open issues missing SP or reasoning
 **Step 1:** Run the estimate command to get the status checklist and warm the context cache. Display the output to the user:
 
 ```bash
-jirha estimate
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha estimate
 ```
 
 **Step 2:** If there are no TODO items (all issues show `[x]`), inform the user: "All open issues have SP and reasoning comments." and stop.
@@ -66,7 +66,7 @@ Ask: `Accept <N> SP? [Y/n/adjust/skip]` (in batch mode, also offer `skip-all`)
 
 If accepted:
 ```bash
-jirha update <KEY> --sp <N> -c "<compose a comment: one line per dimension with level and key reasoning>"
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --sp <N> -c "<compose a comment: one line per dimension with level and key reasoning>"
 ```
 If adjust: ask for preferred value, use that instead.
 If skip-all: stop processing remaining issues.
@@ -87,11 +87,11 @@ Ask: `Add reasoning comment? [Y/n/adjust SP/skip]` (in batch mode, also offer `s
 
 If yes:
 ```bash
-jirha update <KEY> -c "<compose the reasoning comment>"
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> -c "<compose the reasoning comment>"
 ```
 If adjust SP: ask for new value, then run:
 ```bash
-jirha update <KEY> --sp <NEW> -c "<compose the reasoning comment>"
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --sp <NEW> -c "<compose the reasoning comment>"
 ```
 
 **Step 5** (batch mode only): After all issues are processed, print summary:

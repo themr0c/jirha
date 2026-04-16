@@ -15,6 +15,7 @@ from jirha.ops.issues import (
     cmd_update,
 )
 from jirha.ops.meta import cmd_meta
+from jirha.ops.quarterly import cmd_quarterly
 from jirha.ops.sprint import cmd_short_sprint_status, cmd_sprint_status
 
 
@@ -136,6 +137,18 @@ def main():
     p = sub.add_parser("estimate", help="Find issues missing SP or reasoning comments")
     p.add_argument("--max", type=int, default=50)
     p.set_defaults(func=cmd_estimate)
+
+    p = sub.add_parser("quarterly", help="Quarterly activity report for connections review")
+    p.add_argument(
+        "--quarter",
+        help="Target quarter (e.g., Q1-2026). Default: previous quarter.",
+    )
+    p.add_argument(
+        "--level",
+        type=int,
+        help="Job profile level (1-5). Default: from JOB_PROFILE env.",
+    )
+    p.set_defaults(func=cmd_quarterly)
 
     args = parser.parse_args()
     args.func(args)

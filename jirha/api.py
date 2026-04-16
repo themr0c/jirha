@@ -219,10 +219,18 @@ def _assess_multi_pr_sp(pr_field):
         try:
             result = subprocess.run(
                 [
-                    "gh", "pr", "view", number, "--repo", repo,
-                    "--json", "additions,deletions,changedFiles,commits,files,title",
+                    "gh",
+                    "pr",
+                    "view",
+                    number,
+                    "--repo",
+                    repo,
+                    "--json",
+                    "additions,deletions,changedFiles,commits,files,title",
                 ],
-                capture_output=True, text=True, timeout=15,
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             if result.returncode != 0:
                 continue
@@ -233,14 +241,16 @@ def _assess_multi_pr_sp(pr_field):
         commits = len(data.get("commits", []))
         title = data.get("title", "")
         total_lines = sum(f["additions"] + f["deletions"] for f in files)
-        pr_data.append({
-            "number": number,
-            "repo": repo,
-            "files": files,
-            "commits": commits,
-            "title": title,
-            "total_lines": total_lines,
-        })
+        pr_data.append(
+            {
+                "number": number,
+                "repo": repo,
+                "files": files,
+                "commits": commits,
+                "title": title,
+                "total_lines": total_lines,
+            }
+        )
 
     if not pr_data:
         return None

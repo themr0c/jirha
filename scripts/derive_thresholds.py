@@ -9,6 +9,7 @@ Output is for human review — does NOT auto-patch api.py.
 
 Usage: python scripts/derive_thresholds.py
 """
+
 import csv
 from collections import defaultdict
 from pathlib import Path
@@ -64,11 +65,13 @@ def aggregate_by_jira(rows):
         except ValueError:
             continue
         jiras[key]["sp"] = sp
-        jiras[key]["prs"].append({
-            "adoc_total": adoc_total,
-            "total_lines": total_lines,
-            "n_adoc_files": n_adoc_files,
-        })
+        jiras[key]["prs"].append(
+            {
+                "adoc_total": adoc_total,
+                "total_lines": total_lines,
+                "n_adoc_files": n_adoc_files,
+            }
+        )
 
     # Aggregate per Jira
     result = {}
@@ -208,14 +211,16 @@ def main():
         if seg_name in ("doc", "mixed"):
             new_adoc = derive_thresholds(data, "adoc_total")
             acc_old = accuracy(data, "adoc_total", CURRENT_ADOC)
-            acc_new = accuracy(data, "adoc_total", [t if t else c for t, c in zip(new_adoc, CURRENT_ADOC)])
+            merged = [t if t else c for t, c in zip(new_adoc, CURRENT_ADOC)]
+            acc_new = accuracy(data, "adoc_total", merged)
             print(f"  adoc_total thresholds: {CURRENT_ADOC}  (current)")
             print(f"                         {new_adoc}  (re-derived)")
             print(f"  Accuracy: {acc_new:.0f}% within 1 tier (was {acc_old:.0f}%)")
 
         new_total = derive_thresholds(data, "total_lines")
         acc_old_t = accuracy(data, "total_lines", CURRENT_TOTAL)
-        acc_new_t = accuracy(data, "total_lines", [t if t else c for t, c in zip(new_total, CURRENT_TOTAL)])
+        merged_t = [t if t else c for t, c in zip(new_total, CURRENT_TOTAL)]
+        acc_new_t = accuracy(data, "total_lines", merged_t)
         print(f"  total_lines thresholds: {CURRENT_TOTAL}  (current)")
         print(f"                          {new_total}  (re-derived)")
         print(f"  Accuracy: {acc_new_t:.0f}% within 1 tier (was {acc_old_t:.0f}%)")

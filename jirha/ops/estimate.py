@@ -2,7 +2,7 @@
 
 import sys
 
-from jirha.api import get_jira, REVIEW_FILTER
+from jirha.api import REVIEW_FILTER, get_jira
 from jirha.cache import read_cache
 from jirha.config import CACHE_DIR, CF_STORY_POINTS, SERVER
 from jirha.ops.context import assemble_context_json
@@ -69,8 +69,14 @@ def _print_checklist(ok, needs_attention):
         sp = entry["current_sp"]
         print(f"- [x] {SERVER}/browse/{entry['key']} - {sp} SP - reasoning explained")
     for entry in needs_attention:
-        sp_part = f"{entry['current_sp']} SP" if entry["current_sp"] is not None else "TODO: estimate SP"
-        reason_part = "TODO: add SP reasoning" if entry["missing"] in ("sp", "reasoning") else "reasoning explained"
+        sp_part = (
+            f"{entry['current_sp']} SP" if entry["current_sp"] is not None else "TODO: estimate SP"
+        )
+        reason_part = (
+            "TODO: add SP reasoning"
+            if entry["missing"] in ("sp", "reasoning")
+            else "reasoning explained"
+        )
         print(f"- [ ] {SERVER}/browse/{entry['key']} - {sp_part} - {reason_part}")
     total = len(ok) + len(needs_attention)
     print(f"\nFound {total} issues: {len(ok)} OK, {len(needs_attention)} need attention.")
@@ -80,7 +86,7 @@ def _warm_cache(needs_attention, jira):
     """Phase 2: warm context cache for issues needing attention."""
     if not needs_attention:
         return
-    print(f"\nTODO:")
+    print("\nTODO:")
     cache_path = CACHE_DIR / "contexts"
     for entry in needs_attention:
         key = entry["key"]
@@ -103,10 +109,10 @@ def cmd_estimate(args):
     jira = get_jira()
 
     jql = (
-        f'assignee = currentUser()'
+        f"assignee = currentUser()"
         f' AND status not in (Closed, Resolved, "In Progress", "In Review")'
-        f' AND type not in (Epic, Feature)'
-        f'{REVIEW_FILTER}'
+        f" AND type not in (Epic, Feature)"
+        f"{REVIEW_FILTER}"
     )
     issues = jira.search_issues(
         jql,

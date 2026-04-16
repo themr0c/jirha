@@ -18,15 +18,70 @@ If no issues are found, inform the user and stop.
 
 Extract the job profile level N from the `**Job profile level:** twN` line in the output.
 
-Read the current-level and next-level job profiles:
+The reference files directory is `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/`. Check if the required files exist:
+
+- `tw<N>-job-profile.md` (current level)
+- `tw<N+1>-job-profile.md` (next level, skip if N=5)
+- `quarterly-questions.md` (template)
+
+**If any job profile files are missing**, stop and show the user these instructions:
+
+> The job profile reference files are not set up yet. To create them:
+>
+> 1. Go to [Job Interests Catalog](https://wd5.myworkday.com/redhat/d/task/1422$502.htmld)
+> 2. In the **Job Profile Name** field, search for **"technical writer"**
+> 3. Check all the boxes: "Technical Writer 1" through "Technical Writer 5", then click **OK**
+> 4. When the table with all job descriptions appears, **select the entire web page** (Ctrl+A) and **paste it here**
+>
+> I will then create the job profile files locally.
+
+When the user pastes the Workday table content, parse it and create one file per TW level at `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/tw<N>-job-profile.md`. Each file should follow this structure:
+
+```markdown
+# Technical Writer N — Job Profile
+
+## Job Profile Summary
+
+[Job Profile Summary and Job Description text]
+
+## Key Competencies
+
+### [Competency Name]
+[Competency description]
+
+[repeat for each competency]
+
+## Skills
+
+- [skill list]
+
+## Enterprise Competencies
+
+- [competency] ([level])
+```
+
+After creating the files, continue from Step 2 (read the newly created files).
+
+**If the `quarterly-questions.md` file is missing**, create it with this content:
+
+```markdown
+# Quarterly Connections — Questions Template
+
+## Accomplishments
+
+**Question:** What accomplishments are you most proud of last quarter? Reflect not only on WHAT you've accomplished but also on HOW you've accomplished it.
+
+## Priorities
+
+**Question:** What are your top priorities for this quarter?
+```
+
+Now read the reference files:
 
 - Current level: `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/tw<N>-job-profile.md`
 - Next level: `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/tw<N+1>-job-profile.md` (skip if N=5)
-
-Read the template and example:
-
-- `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/quarterly-questions.md`
-- `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/q1-2026-connections.md`
+- Template: `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/quarterly-questions.md`
+- Example (if exists): `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/q1-2026-connections.md`
 
 **Step 3: Analyze and map data to competencies**
 

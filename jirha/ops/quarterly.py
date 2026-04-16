@@ -253,6 +253,62 @@ def _print_report(label, start, end, level, groups, global_stats):
         print()
 
 
+def _current_quarter_label():
+    """Return the label for the current quarter, e.g. 'Q2-2026'."""
+    today = date.today()
+    q = (today.month - 1) // 3 + 1
+    return f"Q{q}-{today.year}"
+
+
+def _fetch_open_issues(jira):
+    """Fetch all open issues assigned to the current user."""
+    jql = (
+        f"{_assignee_filter(team=False)} AND statusCategory != Done ORDER BY priority DESC, key ASC"
+    )
+    return jira.search_issues(jql, maxResults=100, fields=_FIELDS)
+
+
+def _print_current_quarter_context(current_label, open_issues, jira):
+    """Print current quarter open issues as context for priorities drafting."""
+    print(f"## Current Quarter ({current_label}) — Open Issues\n")
+    if not open_issues:
+        print("No open issues assigned.\n")
+        return
+
+    stats = _compute_stats(open_issues)
+    print(f"- **Open issues:** {stats['total_issues']}")
+    print(f"- **Total story points:** {stats['total_sp']}")
+    type_parts = ", ".join(
+        f"{v} {k}" for k, v in sorted(stats["by_type"].items(), key=lambda x: -x[1])
+    )
+    print(f"- **By type:** {type_parts}")
+    print()
+
+    groups = _group_issues(open_issues, jira=jira)
+    for epic_key, group in groups.items():
+        epic_issues = group["issues"]
+        grp_stats = _compute_stats(epic_issues)
+        epic_url = f"{SERVER}/browse/{epic_key}" if epic_key != "Ungrouped" else ""
+        header = f"### {group['summary']}"
+        if epic_url:
+            header += f" ({epic_url})"
+        header += f" — {grp_stats['total_issues']} issues, {grp_stats['total_sp']} SP"
+        print(header)
+        print()
+        for issue in epic_issues:
+            sp = _issue_sp(issue)
+            sp_str = f" [{int(sp)}SP]" if sp else ""
+            status = str(issue.fields.status)
+            labels = ", ".join(issue.fields.labels or [])
+            label_str = f" ({labels})" if labels else ""
+            print(
+                f"- {SERVER}/browse/{issue.key}{sp_str}"
+                f" [{status}]"
+                f" {issue.fields.summary}{label_str}"
+            )
+        print()
+
+
 def cmd_quarterly(args):
     """Generate quarterly activity report for connections review."""
     start, end, label = _quarter_range(args.quarter)
@@ -267,3 +323,9 @@ def cmd_quarterly(args):
     groups = _group_issues(issues, jira=jira)
     global_stats = _compute_stats(issues)
     _print_report(label, start, end, level, groups, global_stats)
+
+    # Append current quarter open issues for priorities context
+    current_label = _current_quarter_label()
+    if current_label != label:
+        open_issues = _fetch_open_issues(jira)
+        _print_current_quarter_context(current_label, open_issues, jira)

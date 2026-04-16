@@ -28,7 +28,7 @@ The reference files directory is `~/.config/jirha/quarterly-connections/`. This 
 
 > The job profile reference files are not set up yet. To create them:
 >
-> 1. Go to [Job Interests Catalog](https://wd5.myworkday.com/redhat/d/task/1422$502.htmld)
+> 1. Go to [Job Interests Catalog](https://wd5.myworkday.com/redhat/d/task/1422%24502.htmld)
 > 2. In the **Job Profile Name** field, search for **"technical writer"**
 > 3. Check all the boxes: "Technical Writer 1" through "Technical Writer 5", then click **OK**
 > 4. When the table with all job descriptions appears, **select the entire web page** (Ctrl+A) and **paste it here**
@@ -81,7 +81,7 @@ Now read the reference files:
 - Current level: `~/.config/jirha/quarterly-connections/tw<N>-job-profile.md`
 - Next level: `~/.config/jirha/quarterly-connections/tw<N+1>-job-profile.md` (skip if N=5)
 - Template: `~/.config/jirha/quarterly-connections/quarterly-questions.md`
-- Example (if exists): `~/.config/jirha/quarterly-connections/q1-2026-connections.md`
+- Previous draft (if exists): `~/.config/jirha/quarterly-connections/connections-draft.md`
 
 **Step 3: Analyze and map data to competencies**
 
@@ -129,16 +129,17 @@ Guidelines:
 
 ### Priorities section
 
-Draft 3 forward-looking priorities for the coming quarter:
+Use the "Current Quarter — Open Issues" section from the quarterly report output to identify the major workstreams ahead. Draft 3 forward-looking priorities:
 
 ```
 ### N. [Priority title]
 
-[1 short paragraph: what, why, and how you will approach it]
+[1 short paragraph: what, why, and how you will approach it. Reference specific Jira issues from the current backlog.]
 ```
 
 Guidelines:
-- Priorities should follow logically from accomplishments (continuing, expanding, or pivoting work)
+- Ground each priority in actual assigned issues from the current quarter backlog, with Jira links
+- Show continuity from accomplishments where applicable (continuing, expanding, or pivoting work)
 - Include at least one priority that targets a next-level competency gap visible in the data
 - Keep each priority to 50-100 words
 

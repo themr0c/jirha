@@ -112,10 +112,11 @@ def test_resolve_level_zero():
 # _extract_epic tests
 
 
-def test_extract_epic_with_parent():
+def test_extract_epic_with_epic_parent():
     issue = MagicMock()
     issue.fields.parent.key = "RHIDP-100"
     issue.fields.parent.fields.summary = "My Epic"
+    issue.fields.parent.fields.issuetype = MagicMock(__str__=lambda s: "Epic")
     key, summary = _extract_epic(issue)
     assert key == "RHIDP-100"
     assert summary == "My Epic"
@@ -129,6 +130,42 @@ def test_extract_epic_no_parent():
     assert key == "Ungrouped"
 
 
+def test_extract_epic_subtask_walks_up_to_epic():
+    """Sub-task parent is a Task — should walk up to find the epic."""
+    issue = MagicMock()
+    issue.fields.parent.key = "RHIDP-50"
+    issue.fields.parent.fields.summary = "Parent Task"
+    issue.fields.parent.fields.issuetype = MagicMock(__str__=lambda s: "Task")
+
+    # Mock the jira.issue() call that fetches the parent
+    parent_issue = MagicMock()
+    parent_issue.fields.parent.key = "RHIDP-100"
+    parent_issue.fields.parent.fields.summary = "The Epic"
+    jira = MagicMock()
+    jira.issue.return_value = parent_issue
+
+    key, summary = _extract_epic(issue, jira=jira, _cache={})
+    assert key == "RHIDP-100"
+    assert summary == "The Epic"
+    jira.issue.assert_called_once_with("RHIDP-50", fields="parent,summary,issuetype")
+
+
+def test_extract_epic_subtask_uses_cache():
+    """Second sub-task under same parent should use cache, not call Jira."""
+    issue = MagicMock()
+    issue.fields.parent.key = "RHIDP-50"
+    issue.fields.parent.fields.summary = "Parent Task"
+    issue.fields.parent.fields.issuetype = MagicMock(__str__=lambda s: "Task")
+
+    jira = MagicMock()
+    cache = {"RHIDP-50": ("RHIDP-100", "The Epic")}
+
+    key, summary = _extract_epic(issue, jira=jira, _cache=cache)
+    assert key == "RHIDP-100"
+    assert summary == "The Epic"
+    jira.issue.assert_not_called()
+
+
 # _group_issues tests
 
 
@@ -137,6 +174,7 @@ def _make_issue_with_parent(key, epic_key, epic_summary):
     issue.key = key
     issue.fields.parent.key = epic_key
     issue.fields.parent.fields.summary = epic_summary
+    issue.fields.parent.fields.issuetype = MagicMock(__str__=lambda s: "Epic")
     return issue
 
 

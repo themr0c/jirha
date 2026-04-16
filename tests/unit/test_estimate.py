@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from jirha.ops.estimate import _has_reasoning_comment, _classify_issues
+from jirha.ops.estimate import _classify_issues, _has_reasoning_comment
 
 
 class _mock_comment:
@@ -30,7 +30,9 @@ def _make_issue(key, summary, sp=None, comments=None):
 
 def test_has_reasoning_all_four_dimensions():
     comments = [
-        _mock_comment("Complexity: Low — simple task\nRisk: Low\nUncertainty: None\nEffort: Minimal")
+        _mock_comment(
+            "Complexity: Low — simple task\nRisk: Low\nUncertainty: None\nEffort: Minimal"
+        )
     ]
     assert _has_reasoning_comment(comments) is True
 

@@ -96,22 +96,58 @@ def _fetch_resolved_issues(jira, start, end):
     return jira.search_issues(jql, maxResults=False, fields=_FIELDS)
 
 
-def _extract_epic(issue):
-    """Extract epic key and summary from the issue's parent.
+_UNGROUPED = ("Ungrouped", "Issues without an epic")
+
+
+def _extract_epic(issue, jira=None, _cache=None):
+    """Extract epic key and summary from the issue's parent chain.
+
+    Walks up the parent hierarchy to find the epic. For sub-tasks whose
+    parent is a task (not an epic), fetches the parent to find the grandparent
+    epic. Uses _cache dict to avoid redundant API calls.
 
     Returns (epic_key, epic_summary) or ("Ungrouped", "Issues without an epic").
     """
     parent = getattr(issue.fields, "parent", None)
     if not parent:
-        return "Ungrouped", "Issues without an epic"
+        return _UNGROUPED
+
+    parent_type = str(getattr(parent.fields, "issuetype", ""))
+    if parent_type == "Epic":
+        return parent.key, str(getattr(parent.fields, "summary", parent.key))
+
+    # Parent is a task/story — walk up to find the epic
+    if jira and _cache is not None:
+        if parent.key in _cache:
+            return _cache[parent.key]
+        try:
+            parent_issue = jira.issue(parent.key, fields="parent,summary,issuetype")
+            grandparent = getattr(parent_issue.fields, "parent", None)
+            if grandparent:
+                gp_summary = str(getattr(grandparent.fields, "summary", grandparent.key))
+                result = (grandparent.key, gp_summary)
+            else:
+                # Parent has no epic — group under the parent itself
+                result = (parent.key, str(getattr(parent.fields, "summary", parent.key)))
+            _cache[parent.key] = result
+            return result
+        except Exception:
+            pass
+
+    # Fallback: use the direct parent
     return parent.key, str(getattr(parent.fields, "summary", parent.key))
 
 
-def _group_issues(issues):
-    """Group issues by epic parent. Returns ordered dict."""
+def _group_issues(issues, jira=None):
+    """Group issues by epic. Returns ordered dict.
+
+    When jira client is provided, walks up parent chains for sub-tasks
+    to find the correct epic grouping.
+    """
     groups = {}
+    epic_cache = {}
     for issue in issues:
-        epic_key, epic_summary = _extract_epic(issue)
+        epic_key, epic_summary = _extract_epic(issue, jira=jira, _cache=epic_cache)
         if epic_key not in groups:
             groups[epic_key] = {"summary": epic_summary, "issues": []}
         groups[epic_key]["issues"].append(issue)
@@ -229,6 +265,6 @@ def cmd_quarterly(args):
         print(f"No resolved issues found for {label} ({start} to {end}).")
         return
 
-    groups = _group_issues(issues)
+    groups = _group_issues(issues, jira=jira)
     global_stats = _compute_stats(issues)
     _print_report(label, start, end, level, groups, global_stats)

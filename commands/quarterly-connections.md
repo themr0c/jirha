@@ -18,7 +18,7 @@ If no issues are found, inform the user and stop.
 
 Extract the job profile level N from the `**Job profile level:** twN` line in the output.
 
-The reference files directory is `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/`. Check if the required files exist:
+The reference files directory is `~/.config/jirha/quarterly-connections/`. This directory is outside the plugin so files survive plugin updates. Check if the required files exist:
 
 - `tw<N>-job-profile.md` (current level)
 - `tw<N+1>-job-profile.md` (next level, skip if N=5)
@@ -35,7 +35,7 @@ The reference files directory is `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/q
 >
 > I will then create the job profile files locally.
 
-When the user pastes the Workday table content, parse it and create one file per TW level at `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/tw<N>-job-profile.md`. Each file should follow this structure:
+When the user pastes the Workday table content, parse it and create one file per TW level at `~/.config/jirha/quarterly-connections/tw<N>-job-profile.md`. Each file should follow this structure:
 
 ```markdown
 # Technical Writer N — Job Profile
@@ -78,10 +78,10 @@ After creating the files, continue from Step 2 (read the newly created files).
 
 Now read the reference files:
 
-- Current level: `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/tw<N>-job-profile.md`
-- Next level: `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/tw<N+1>-job-profile.md` (skip if N=5)
-- Template: `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/quarterly-questions.md`
-- Example (if exists): `${CLAUDE_PLUGIN_ROOT}/docs/superpowers/specs/quarterly-connections/q1-2026-connections.md`
+- Current level: `~/.config/jirha/quarterly-connections/tw<N>-job-profile.md`
+- Next level: `~/.config/jirha/quarterly-connections/tw<N+1>-job-profile.md` (skip if N=5)
+- Template: `~/.config/jirha/quarterly-connections/quarterly-questions.md`
+- Example (if exists): `~/.config/jirha/quarterly-connections/q1-2026-connections.md`
 
 **Step 3: Analyze and map data to competencies**
 

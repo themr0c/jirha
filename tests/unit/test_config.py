@@ -23,7 +23,7 @@ def test_load_env_file_skips_comments_and_blanks(tmp_path):
 def test_cache_dir_constant():
     from jirha.config import CACHE_DIR
 
-    assert CACHE_DIR.name == ".jirha-cache"
+    assert CACHE_DIR.name == "jirha"
 
 
 def test_cf_size_constant():

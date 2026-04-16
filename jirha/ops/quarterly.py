@@ -2,7 +2,7 @@
 
 import sys
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 
 from jirha.api import (
     _assignee_filter,
@@ -40,7 +40,7 @@ def _quarter_range(quarter_str=None):
     """
     if quarter_str:
         parts = quarter_str.upper().split("-")
-        if len(parts) != 2 or parts[0] not in _QUARTER_START:
+        if len(parts) != 2 or parts[0] not in _QUARTER_START or not parts[1].isdigit():
             sys.exit(
                 f"Error: invalid quarter format '{quarter_str}'. "
                 "Use Q1-2026, Q2-2026, Q3-2026, or Q4-2026."
@@ -72,9 +72,12 @@ def _resolve_level(args_level):
     if args_level is not None:
         level = args_level
     else:
-        raw = JOB_PROFILE
+        raw = JOB_PROFILE.strip() if isinstance(JOB_PROFILE, str) else JOB_PROFILE
         if isinstance(raw, str):
-            level = int(raw.lower().replace("tw", ""))
+            cleaned = raw.lower().replace("tw", "")
+            if not cleaned.isdigit():
+                sys.exit(f"Error: invalid JOB_PROFILE '{JOB_PROFILE}'. Use tw1-tw5 or 1-5.")
+            level = int(cleaned)
         else:
             level = raw
     if level not in range(1, 6):
@@ -90,7 +93,7 @@ def _fetch_resolved_issues(jira, start, end):
         f' AND resolved < "{end.strftime("%Y-%m-%d")}"'
         f" ORDER BY resolved ASC"
     )
-    return jira.search_issues(jql, maxResults=200, fields=_FIELDS)
+    return jira.search_issues(jql, maxResults=False, fields=_FIELDS)
 
 
 def _extract_epic(issue):
@@ -163,7 +166,7 @@ def _compute_stats(issues):
 def _print_report(label, start, end, level, groups, global_stats):
     """Print the quarterly report as structured markdown."""
     print(f"# Quarterly Activity Report \u2014 {label}")
-    print(f"**Period:** {start} to {end}")
+    print(f"**Period:** {start} to {end - timedelta(days=1)}")
     print("**Scope:** Current user resolved issues")
     print(f"**Job profile level:** tw{level}\n")
 

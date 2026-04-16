@@ -77,3 +77,5 @@ CACHE_DIR = Path.home() / ".cache" / "jirha"
 
 EMAIL = os.environ.get("JIRA_EMAIL")
 # Note: EMAIL may be None if JIRA_EMAIL is unset; get_jira() will exit with an error.
+
+JOB_PROFILE = os.environ.get("JOB_PROFILE", "tw3")

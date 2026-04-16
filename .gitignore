@@ -15,3 +15,6 @@ data/
 .direnv/
 *.egg-info/
 .jirha-cache/
+
+# Private reference material (job profiles, quarterly connections)
+docs/superpowers/specs/quarterly-connections/

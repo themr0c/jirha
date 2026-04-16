@@ -264,25 +264,26 @@ def test_mixed_uses_higher_of_adoc_and_total():
 def _mock_gh_pr_view(files, title="Add docs", commits=1):
     """Build a mock gh pr view JSON response."""
     import json
-    return json.dumps({
-        "files": files,
-        "commits": [{"oid": f"abc{i}"} for i in range(commits)],
-        "title": title,
-    })
+
+    return json.dumps(
+        {
+            "files": files,
+            "commits": [{"oid": f"abc{i}"} for i in range(commits)],
+            "title": title,
+        }
+    )
 
 
 def test_assess_multi_pr_aggregation():
     """Multiple PRs aggregate their file metrics."""
-    pr_field = (
-        "https://github.com/org/repo/pull/100\n"
-        "https://github.com/org/repo/pull/101\n"
-    )
+    pr_field = "https://github.com/org/repo/pull/100\nhttps://github.com/org/repo/pull/101\n"
     pr100_files = [{"path": "docs/a.adoc", "additions": 30, "deletions": 5}]
     pr101_files = [{"path": "docs/b.adoc", "additions": 40, "deletions": 10}]
 
     def mock_run(cmd, **kwargs):
         class Result:
             returncode = 0
+
         r = Result()
         if "100" in cmd:
             r.stdout = _mock_gh_pr_view(pr100_files)
@@ -310,6 +311,7 @@ def test_assess_multi_pr_single_url():
         class Result:
             returncode = 0
             stdout = _mock_gh_pr_view(files)
+
         return Result()
 
     with patch("jirha.api.subprocess.run", side_effect=mock_run):
@@ -325,15 +327,13 @@ def test_assess_multi_pr_single_url():
 
 def test_assess_multi_pr_cherry_pick_by_title():
     """PRs with [release-*] title prefix are treated as cherry-picks."""
-    pr_field = (
-        "https://github.com/org/repo/pull/100\n"
-        "https://github.com/org/repo/pull/101\n"
-    )
+    pr_field = "https://github.com/org/repo/pull/100\nhttps://github.com/org/repo/pull/101\n"
     files = [{"path": "docs/a.adoc", "additions": 50, "deletions": 10}]
 
     def mock_run(cmd, **kwargs):
         class Result:
             returncode = 0
+
         r = Result()
         if "100" in cmd:
             r.stdout = _mock_gh_pr_view(files, title="Add new feature docs")
@@ -354,10 +354,7 @@ def test_assess_multi_pr_cherry_pick_by_title():
 
 def test_assess_multi_pr_cherry_pick_by_total_lines():
     """PRs with identical total_lines and >80% file overlap are cherry-picks."""
-    pr_field = (
-        "https://github.com/org/repo/pull/100\n"
-        "https://github.com/org/repo/pull/101\n"
-    )
+    pr_field = "https://github.com/org/repo/pull/100\nhttps://github.com/org/repo/pull/101\n"
     files = [
         {"path": "docs/a.adoc", "additions": 30, "deletions": 5},
         {"path": "docs/b.adoc", "additions": 10, "deletions": 5},
@@ -368,6 +365,7 @@ def test_assess_multi_pr_cherry_pick_by_total_lines():
             returncode = 0
             # Same files, same totals → cherry-pick
             stdout = _mock_gh_pr_view(files, title="Add docs")
+
         return Result()
 
     with patch("jirha.api.subprocess.run", side_effect=mock_run):
@@ -380,10 +378,7 @@ def test_assess_multi_pr_cherry_pick_by_total_lines():
 
 def test_assess_multi_pr_no_false_cherry_pick():
     """PRs with same total_lines but different files are NOT cherry-picks."""
-    pr_field = (
-        "https://github.com/org/repo/pull/100\n"
-        "https://github.com/org/repo/pull/101\n"
-    )
+    pr_field = "https://github.com/org/repo/pull/100\nhttps://github.com/org/repo/pull/101\n"
     pr100_files = [{"path": "docs/a.adoc", "additions": 25, "deletions": 25}]
     pr101_files = [{"path": "docs/z.adoc", "additions": 25, "deletions": 25}]
     # Same total (50) but 0% file overlap → NOT a cherry-pick
@@ -391,6 +386,7 @@ def test_assess_multi_pr_no_false_cherry_pick():
     def mock_run(cmd, **kwargs):
         class Result:
             returncode = 0
+
         r = Result()
         if "100" in cmd:
             r.stdout = _mock_gh_pr_view(pr100_files)
@@ -416,16 +412,14 @@ def test_assess_multi_pr_returns_none_on_no_valid_urls():
 
 def test_assess_multi_pr_skips_invalid_urls():
     """Valid URLs are processed, invalid ones skipped."""
-    pr_field = (
-        "not-a-url\n"
-        "https://github.com/org/repo/pull/42\n"
-    )
+    pr_field = "not-a-url\nhttps://github.com/org/repo/pull/42\n"
     files = [{"path": "docs/a.adoc", "additions": 10, "deletions": 5}]
 
     def mock_run(cmd, **kwargs):
         class Result:
             returncode = 0
             stdout = _mock_gh_pr_view(files)
+
         return Result()
 
     with patch("jirha.api.subprocess.run", side_effect=mock_run):

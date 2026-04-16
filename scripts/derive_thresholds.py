@@ -9,6 +9,7 @@ Output is for human review — does NOT auto-patch api.py.
 
 Usage: python scripts/derive_thresholds.py
 """
+
 import csv
 from collections import defaultdict
 from pathlib import Path
@@ -64,11 +65,13 @@ def aggregate_by_jira(rows):
         except ValueError:
             continue
         jiras[key]["sp"] = sp
-        jiras[key]["prs"].append({
-            "adoc_total": adoc_total,
-            "total_lines": total_lines,
-            "n_adoc_files": n_adoc_files,
-        })
+        jiras[key]["prs"].append(
+            {
+                "adoc_total": adoc_total,
+                "total_lines": total_lines,
+                "n_adoc_files": n_adoc_files,
+            }
+        )
 
     # Aggregate per Jira
     result = {}

@@ -210,8 +210,7 @@ def _print_report(label, start, end, level, groups, global_stats):
     print(f"- **Total issues resolved:** {global_stats['total_issues']}")
     print(f"- **Total story points:** {global_stats['total_sp']}")
     type_parts = ", ".join(
-        f"{v} {k}"
-        for k, v in sorted(global_stats["by_type"].items(), key=lambda x: -x[1])
+        f"{v} {k}" for k, v in sorted(global_stats["by_type"].items(), key=lambda x: -x[1])
     )
     print(f"- **By type:** {type_parts}")
     if global_stats["components"]:

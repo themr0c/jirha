@@ -24,7 +24,7 @@ markers = ["integration: requires real Jira credentials (skipped by default)"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["docs/"]
+extend-exclude = ["docs/", ".claude/worktrees/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

@@ -35,6 +35,24 @@ if ! "$PYTEST" "$REPO_ROOT/tests/unit/" -q; then
   FAILED=1
 fi
 
+# Version consistency: plugin.json, marketplace.json, and pyproject.toml must match
+# CI uses jq + tomllib for robust parsing; here we use python for portability
+V_PYPROJECT=$(sed -n 's/^version = "\(.*\)"/\1/p' "$REPO_ROOT/pyproject.toml")
+V_PLUGIN=$(python3 -c "import json,sys; print(json.load(sys.stdin)['version'])" < "$REPO_ROOT/.claude-plugin/plugin.json")
+V_MARKETPLACE=$(python3 -c "import json,sys; print(json.load(sys.stdin)['plugins'][0]['version'])" < "$REPO_ROOT/.claude-plugin/marketplace.json")
+
+if [[ -z "$V_PYPROJECT" ]] || [[ -z "$V_PLUGIN" ]] || [[ -z "$V_MARKETPLACE" ]]; then
+  echo "pre-commit: could not extract version from one or more files"
+  FAILED=1
+elif [[ "$V_PYPROJECT" != "$V_PLUGIN" ]] || [[ "$V_PYPROJECT" != "$V_MARKETPLACE" ]]; then
+  echo ""
+  echo "pre-commit: version mismatch — all three must match:"
+  echo "  pyproject.toml:          $V_PYPROJECT"
+  echo "  plugin.json:             $V_PLUGIN"
+  echo "  marketplace.json:        $V_MARKETPLACE"
+  FAILED=1
+fi
+
 if [[ $FAILED -ne 0 ]]; then
   echo ""
   echo "pre-commit: commit blocked — fix the issues above"

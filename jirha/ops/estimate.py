@@ -109,10 +109,10 @@ def cmd_estimate(args):
     jira = get_jira()
 
     jql = (
-        f'assignee = currentUser()'
+        f"assignee = currentUser()"
         f' AND status not in (Closed, Resolved, "In Progress", "In Review")'
-        f' AND type not in (Epic, Feature)'
-        f'{REVIEW_FILTER}'
+        f" AND type not in (Epic, Feature)"
+        f"{REVIEW_FILTER}"
     )
     issues = jira.search_issues(
         jql,

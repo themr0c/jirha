@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Flags ---
+DEV_MODE=false
+for arg in "$@"; do
+  case "$arg" in
+    --dev) DEV_MODE=true ;;
+  esac
+done
+
 # --- Paths ---
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -79,6 +87,28 @@ if ! command -v gh &>/dev/null; then
   echo "  Install: https://cli.github.com/ then run 'gh auth login'"
 elif ! gh auth status &>/dev/null 2>&1; then
   echo "⚠ gh CLI not authenticated — run 'gh auth login'"
+fi
+
+# --- Dev mode: local venv + pre-commit hook ---
+if [[ "$DEV_MODE" == true ]]; then
+  DEV_VENV="$PLUGIN_DIR/venv"
+  if [[ ! -d "$DEV_VENV" ]]; then
+    echo "Creating dev venv at $DEV_VENV..."
+    python3 -m venv "$DEV_VENV"
+  fi
+  "$DEV_VENV/bin/pip" install -q -e "$PLUGIN_DIR[dev]"
+  echo "✓ Dev venv ready (ruff + pytest)"
+
+  # Install pre-commit hook
+  GIT_DIR="$(cd "$PLUGIN_DIR" && git rev-parse --git-common-dir 2>/dev/null || echo ".git")"
+  HOOK_TARGET="$GIT_DIR/hooks/pre-commit"
+  HOOK_SOURCE="$SCRIPT_DIR/hooks/pre-commit.sh"
+  if [[ -e "$HOOK_TARGET" ]] && [[ ! -L "$HOOK_TARGET" ]]; then
+    echo "⚠ $HOOK_TARGET already exists (not a symlink) — skipping hook install"
+  else
+    ln -sf "$HOOK_SOURCE" "$HOOK_TARGET"
+    echo "✓ Pre-commit hook installed"
+  fi
 fi
 
 echo "Setup OK."

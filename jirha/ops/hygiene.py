@@ -502,7 +502,7 @@ def _report_context_suggestions(jira, issue_gaps, dry_run=False):
 
 def cmd_hygiene(args):
     """Full sprint hygiene audit."""
-    from jirha.ops.sprint import _get_active_sprint
+    from jirha.api import _get_active_sprint
 
     jira = get_jira()
     scope = _assignee_filter(args.team)

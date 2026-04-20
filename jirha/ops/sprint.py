@@ -6,14 +6,25 @@ from jirha.api import (
     _REVIEW_SUMMARIES,
     _assignee_filter,
     _assignee_name,
-    _fetch_pr_statuses,
+    _checklist_items,
+    _fetch_pr_checklists,
+    _fetch_reviewer_prs,
+    _format_pr_checklist,
     _issue_sp,
     _parse_jira_date,
     _status_sort_key,
     _warn_in_progress_no_sprint,
     get_jira,
+    get_sprint_info,
 )
-from jirha.config import CF_GIT_PR, CF_SPRINT, CF_STORY_POINTS, DEFAULT_COMPONENT, SERVER, SWIMLANES
+from jirha.config import (
+    CF_GIT_PR,
+    CF_SPRINT,
+    CF_STORY_POINTS,
+    DEFAULT_COMPONENT,
+    SERVER,
+    SWIMLANES,
+)
 
 
 def _assign_swimlanes(issues):
@@ -48,29 +59,18 @@ def _blended_velocity(hist_velocities, current_velocity, elapsed_days, total_day
         return 0.4 * hist_avg + 0.6 * current_velocity
 
 
-def _get_active_sprint(jira):
-    """Return active sprint info dict or None."""
-    issues = jira.search_issues(
-        "assignee = currentUser() AND sprint in openSprints()", maxResults=1, fields=CF_SPRINT
-    )
-    if not issues:
+def _enrich_sprint(sprint_dict):
+    """Add remaining_days and total_days to a sprint dict with ISO date strings."""
+    if not sprint_dict:
         return None
-    sprint_data = getattr(issues[0].fields, CF_SPRINT, None) or []
-    for s in sprint_data:
-        if getattr(s, "state", "") == "active":
-            start = _parse_jira_date(s.startDate)
-            end = _parse_jira_date(s.endDate)
-            today = date.today()
-            return {
-                "id": s.id,
-                "name": s.name,
-                "start": start,
-                "end": end,
-                "board_id": getattr(s, "boardId", None),
-                "remaining_days": _business_days(today, end),
-                "total_days": _business_days(start, end),
-            }
-    return None
+    start = date.fromisoformat(sprint_dict["start"])
+    end = date.fromisoformat(sprint_dict["end"])
+    today = date.today()
+    return {
+        **sprint_dict,
+        "remaining_days": _business_days(today, end),
+        "total_days": _business_days(start, end),
+    }
 
 
 def _historical_velocities(jira, board_id):
@@ -98,8 +98,8 @@ def _historical_velocities(jira, board_id):
         return []
 
 
-def _format_issue_line(issue, team=False, pr_status=None):
-    """Format an issue as a pipe-separated line: Jira link, priority, SP, labels, summary."""
+def _format_issue_line(issue, team=False, pr_status=None, pr_checklist=None):
+    """Format an issue as a pipe-separated line with optional PR checklist."""
     sp = _issue_sp(issue)
     sp_str = f"{int(sp):>2} SP"
     labels = ", ".join(issue.fields.labels or [])
@@ -115,13 +115,25 @@ def _format_issue_line(issue, team=False, pr_status=None):
     ]
     if pr_status:
         parts.append(pr_status)
-    return " | ".join(parts)
+    line = " | ".join(parts)
+
+    if pr_checklist and str(issue.fields.status) != "Closed":
+        items = _checklist_items(pr_checklist)
+        for item in items:
+            line += f"\n        [ ] {item}"
+
+    return line
 
 
-def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None, open_only=False):
+def _print_swimlanes(
+    swimlane_issues, team=False, pr_statuses=None, pr_checklists=None,
+    open_only=False,
+):
     """Print swimlane sections and return (total_by_status, sp_by_status) dicts."""
     if pr_statuses is None:
         pr_statuses = {}
+    if pr_checklists is None:
+        pr_checklists = {}
     total_by_status = {}
     sp_by_status = {}
     for name, _ in SWIMLANES:
@@ -129,7 +141,10 @@ def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None, open_only=Fa
         if not lane_issues:
             continue
         lane_total_sp = sum(_issue_sp(i) for i in lane_issues)
-        lane_closed_sp = sum(_issue_sp(i) for i in lane_issues if str(i.fields.status) == "Closed")
+        lane_closed_sp = sum(
+            _issue_sp(i) for i in lane_issues
+            if str(i.fields.status) == "Closed"
+        )
         lane_pct = (lane_closed_sp / lane_total_sp * 100) if lane_total_sp else 0
         print(f"\n## {name} — {int(lane_closed_sp)}/{int(lane_total_sp)} SP ({lane_pct:.0f}%)\n")
 
@@ -149,7 +164,8 @@ def _print_swimlanes(swimlane_issues, team=False, pr_statuses=None, open_only=Fa
             print(f"### {status}")
             for issue in by_status[status]:
                 pr = pr_statuses.get(issue.key)
-                print(_format_issue_line(issue, team, pr_status=pr))
+                cl = pr_checklists.get(issue.key)
+                print(_format_issue_line(issue, team, pr_status=pr, pr_checklist=cl))
             print()
     return total_by_status, sp_by_status
 
@@ -219,9 +235,37 @@ def _print_risk_assessment(jira, sprint, closed_sp, remaining_sp, swimlane_issue
         cut_sp += sp
 
 
+def _print_reviewer_prs():
+    """Print section for PRs where the current user is requested as reviewer."""
+    prs = _fetch_reviewer_prs()
+    if not prs:
+        return
+    print("\n## Pending Reviews\n")
+    for pr in prs:
+        repo = pr.get("repository", {}).get("nameWithOwner", "")
+        number = pr.get("number", "")
+        title = pr.get("title", "")
+        url = pr.get("url", "")
+        created = pr.get("createdAt", "")
+        if created:
+            from datetime import datetime
+            try:
+                dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                days = (datetime.now(dt.tzinfo) - dt).days
+                age = f" (opened {days}d ago)" if days > 0 else ""
+            except (ValueError, TypeError):
+                age = ""
+        else:
+            age = ""
+        short = f"{repo}#{number}" if repo else url
+        print(f"- [ ] {short} — \"{title}\"{age}")
+        print(f"        {url}")
+
+
 def _run_sprint_status(args, open_only=False):
     """Show sprint status grouped by priority swimlanes."""
     jira = get_jira()
+    refresh = getattr(args, "refresh", False)
     issues = jira.search_issues(
         f"{_assignee_filter(args.team)} AND sprint in openSprints() ORDER BY status ASC",
         maxResults=200,
@@ -229,7 +273,8 @@ def _run_sprint_status(args, open_only=False):
         f"{CF_STORY_POINTS},{CF_SPRINT},{CF_GIT_PR}",
     )
 
-    sprint = _get_active_sprint(jira)
+    sprint_info = get_sprint_info(jira, refresh=refresh)
+    sprint = _enrich_sprint(sprint_info.get("current_sprint"))
     if sprint:
         print(f"# {sprint['name']}")
         print(
@@ -238,28 +283,40 @@ def _run_sprint_status(args, open_only=False):
         )
 
     swimlane_issues = _assign_swimlanes(issues)
-    pr_statuses = _fetch_pr_statuses(issues)
+    pr_checklists = _fetch_pr_checklists(issues)
+    pr_statuses = {
+        k: _format_pr_checklist(cl) for k, cl in pr_checklists.items()
+    }
     total_by_status, sp_by_status = _print_swimlanes(
-        swimlane_issues, args.team, pr_statuses, open_only=open_only
+        swimlane_issues, args.team, pr_statuses,
+        pr_checklists=pr_checklists, open_only=open_only,
     )
 
     total_sp = sum(sp_by_status.values())
     closed_sp = sp_by_status.get("Closed", 0)
     pct = (closed_sp / total_sp * 100) if total_sp else 0
     parts = ", ".join(
-        f"{c} {s}" for s, c in sorted(total_by_status.items(), key=lambda x: _status_sort_key(x[0]))
+        f"{c} {s}"
+        for s, c in sorted(
+            total_by_status.items(), key=lambda x: _status_sort_key(x[0])
+        )
     )
     sp_parts = ", ".join(
         f"{int(sp)} {s}"
-        for s, sp in sorted(sp_by_status.items(), key=lambda x: _status_sort_key(x[0]))
+        for s, sp in sorted(
+            sp_by_status.items(), key=lambda x: _status_sort_key(x[0])
+        )
         if sp
     )
     print(f"**Total:** {sum(total_by_status.values())} issues — {parts}")
     print(f"**SP:** {int(total_sp)} total — {sp_parts}")
     print(f"**Progress:** {int(closed_sp)}/{int(total_sp)} SP ({pct:.0f}%)")
 
-    _print_risk_assessment(jira, sprint, closed_sp, total_sp - closed_sp, swimlane_issues)
+    _print_risk_assessment(
+        jira, sprint, closed_sp, total_sp - closed_sp, swimlane_issues
+    )
     _warn_in_progress_no_sprint(jira, args.team)
+    _print_reviewer_prs()
 
 
 def cmd_sprint_status(args):

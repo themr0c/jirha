@@ -7,7 +7,7 @@
       "name": "jirha",
       "source": "./",
       "description": "List, show, update, create, transition, estimate SP, hygiene audit, sprint status, and quarterly connections",
-      "version": "1.4.0"
+      "version": "1.5.0"
     }
   ]
 }

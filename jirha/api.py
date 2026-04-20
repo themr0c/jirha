@@ -531,9 +531,11 @@ def _fetch_user_prs(start_date, end_date=None):
 
     Returns list of dicts with: number, title, url, state, baseRefName, headRefName, body.
     """
-    query = f"updated:>={start_date.isoformat()}"
+    start_str = start_date.isoformat() if hasattr(start_date, "isoformat") else str(start_date)
+    query = f"updated:>={start_str}"
     if end_date:
-        query = f"updated:{start_date.isoformat()}..{end_date.isoformat()}"
+        end_str = end_date.isoformat() if hasattr(end_date, "isoformat") else str(end_date)
+        query = f"updated:{start_str}..{end_str}"
     try:
         result = subprocess.run(
             [

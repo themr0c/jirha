@@ -236,15 +236,11 @@ class TestChecklistItems:
         assert not any("comments" in i for i in items)
 
     def test_failing_checks(self):
-        items = _checklist_items(
-            self._cl(failing_checks=["ci/prow/e2e", "tide"])
-        )
+        items = _checklist_items(self._cl(failing_checks=["ci/prow/e2e", "tide"]))
         assert any("ci/prow/e2e" in i and "tide" in i for i in items)
 
     def test_pending_reviewers(self):
-        items = _checklist_items(
-            self._cl(pending_reviewers=["alice", "bob"])
-        )
+        items = _checklist_items(self._cl(pending_reviewers=["alice", "bob"]))
         assert any("alice" in i and "bob" in i for i in items)
 
     def test_merge_conflict(self):

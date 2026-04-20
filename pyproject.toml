@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "jirha"
 version = "1.6.0"
 requires-python = ">=3.11"
-dependencies = ["jira>=3.5", "openpyxl>=3.1"]
+dependencies = ["jira>=3.5", "openpyxl>=3.1.5"]
 
 [project.scripts]
 jirha = "jirha.cli:main"

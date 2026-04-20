@@ -638,13 +638,20 @@ def _fetch_pr_checklist(pr_url):
     try:
         result = subprocess.run(
             [
-                "gh", "pr", "view", number, "--repo", repo,
+                "gh",
+                "pr",
+                "view",
+                number,
+                "--repo",
+                repo,
                 "--json",
                 "state,reviewDecision,statusCheckRollup,"
                 "reviewRequests,latestReviews,comments,"
                 "mergeable,url,author",
             ],
-            capture_output=True, text=True, timeout=15,
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
         if result.returncode != 0:
             return None
@@ -672,10 +679,7 @@ def _fetch_pr_checklist(pr_url):
     # minus comments from author)
     comments = data.get("comments", []) or []
     author_login = data.get("author", {}).get("login", "")
-    unresolved = sum(
-        1 for c in comments
-        if c.get("author", {}).get("login") != author_login
-    )
+    unresolved = sum(1 for c in comments if c.get("author", {}).get("login") != author_login)
 
     checklist = {
         "url": data.get("url", pr_url),
@@ -719,9 +723,7 @@ def _checklist_items(checklist):
     if checklist["failing_checks"]:
         items.append(f"Failing: {', '.join(checklist['failing_checks'])}")
     if checklist["pending_reviewers"]:
-        items.append(
-            f"Awaiting review: {', '.join(checklist['pending_reviewers'])}"
-        )
+        items.append(f"Awaiting review: {', '.join(checklist['pending_reviewers'])}")
     if checklist["has_conflicts"]:
         items.append("Merge conflict")
     return items
@@ -748,14 +750,18 @@ def _fetch_reviewer_prs():
     try:
         result = subprocess.run(
             [
-                "gh", "search", "prs",
+                "gh",
+                "search",
+                "prs",
                 "--review-requested=@me",
                 "--state=open",
                 "--limit=25",
                 "--json",
                 "number,title,url,repository,createdAt",
             ],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         if result.returncode != 0:
             return []
@@ -768,6 +774,4 @@ def _fetch_reviewer_prs():
 def _fetch_pr_statuses(issues):
     """Return dict of issue key -> formatted PR status string for non-closed issues."""
     checklists = _fetch_pr_checklists(issues)
-    return {
-        key: _format_pr_checklist(cl) for key, cl in checklists.items()
-    }
+    return {key: _format_pr_checklist(cl) for key, cl in checklists.items()}

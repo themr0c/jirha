@@ -2,5 +2,5 @@
   "name": "jirha",
   "description": "Jira workflow helper for RHDH documentation — list, show, update, create, transition, estimate SP, hygiene audit, sprint status, PR dashboard, and quarterly connections",
   "author": { "name": "themr0c" },
-  "version": "1.5.0"
+  "version": "1.6.0"
 }

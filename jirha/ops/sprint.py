@@ -126,7 +126,10 @@ def _format_issue_line(issue, team=False, pr_status=None, pr_checklist=None):
 
 
 def _print_swimlanes(
-    swimlane_issues, team=False, pr_statuses=None, pr_checklists=None,
+    swimlane_issues,
+    team=False,
+    pr_statuses=None,
+    pr_checklists=None,
     open_only=False,
 ):
     """Print swimlane sections and return (total_by_status, sp_by_status) dicts."""
@@ -141,10 +144,7 @@ def _print_swimlanes(
         if not lane_issues:
             continue
         lane_total_sp = sum(_issue_sp(i) for i in lane_issues)
-        lane_closed_sp = sum(
-            _issue_sp(i) for i in lane_issues
-            if str(i.fields.status) == "Closed"
-        )
+        lane_closed_sp = sum(_issue_sp(i) for i in lane_issues if str(i.fields.status) == "Closed")
         lane_pct = (lane_closed_sp / lane_total_sp * 100) if lane_total_sp else 0
         print(f"\n## {name} — {int(lane_closed_sp)}/{int(lane_total_sp)} SP ({lane_pct:.0f}%)\n")
 
@@ -249,6 +249,7 @@ def _print_reviewer_prs():
         created = pr.get("createdAt", "")
         if created:
             from datetime import datetime
+
             try:
                 dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
                 days = (datetime.now(dt.tzinfo) - dt).days
@@ -258,7 +259,7 @@ def _print_reviewer_prs():
         else:
             age = ""
         short = f"{repo}#{number}" if repo else url
-        print(f"- [ ] {short} — \"{title}\"{age}")
+        print(f'- [ ] {short} — "{title}"{age}')
         print(f"        {url}")
 
 
@@ -284,37 +285,31 @@ def _run_sprint_status(args, open_only=False):
 
     swimlane_issues = _assign_swimlanes(issues)
     pr_checklists = _fetch_pr_checklists(issues)
-    pr_statuses = {
-        k: _format_pr_checklist(cl) for k, cl in pr_checklists.items()
-    }
+    pr_statuses = {k: _format_pr_checklist(cl) for k, cl in pr_checklists.items()}
     total_by_status, sp_by_status = _print_swimlanes(
-        swimlane_issues, args.team, pr_statuses,
-        pr_checklists=pr_checklists, open_only=open_only,
+        swimlane_issues,
+        args.team,
+        pr_statuses,
+        pr_checklists=pr_checklists,
+        open_only=open_only,
     )
 
     total_sp = sum(sp_by_status.values())
     closed_sp = sp_by_status.get("Closed", 0)
     pct = (closed_sp / total_sp * 100) if total_sp else 0
     parts = ", ".join(
-        f"{c} {s}"
-        for s, c in sorted(
-            total_by_status.items(), key=lambda x: _status_sort_key(x[0])
-        )
+        f"{c} {s}" for s, c in sorted(total_by_status.items(), key=lambda x: _status_sort_key(x[0]))
     )
     sp_parts = ", ".join(
         f"{int(sp)} {s}"
-        for s, sp in sorted(
-            sp_by_status.items(), key=lambda x: _status_sort_key(x[0])
-        )
+        for s, sp in sorted(sp_by_status.items(), key=lambda x: _status_sort_key(x[0]))
         if sp
     )
     print(f"**Total:** {sum(total_by_status.values())} issues — {parts}")
     print(f"**SP:** {int(total_sp)} total — {sp_parts}")
     print(f"**Progress:** {int(closed_sp)}/{int(total_sp)} SP ({pct:.0f}%)")
 
-    _print_risk_assessment(
-        jira, sprint, closed_sp, total_sp - closed_sp, swimlane_issues
-    )
+    _print_risk_assessment(jira, sprint, closed_sp, total_sp - closed_sp, swimlane_issues)
     _warn_in_progress_no_sprint(jira, args.team)
     _print_reviewer_prs()
 

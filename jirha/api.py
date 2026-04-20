@@ -7,10 +7,13 @@ import subprocess
 import sys
 from datetime import datetime
 
+from jirha.cache import read_sprint_cache, write_sprint_cache
 from jirha.config import (
+    CACHE_DIR,
     CF_GIT_PR,
     CF_SPRINT,
     CF_STORY_POINTS,
+    DEFAULT_TEAM,
     EMAIL,
     SERVER,
     SP_VALUES,
@@ -65,6 +68,76 @@ def _assignee_filter(team=False):
 
 def _status_sort_key(s):
     return STATUS_ORDER.get(s, len(STATUS_ORDER))
+
+
+def _get_active_sprint(jira):
+    """Return active sprint info dict or None.
+
+    Finds one issue in an open sprint and extracts sprint metadata from it.
+    """
+    issues = jira.search_issues(
+        "assignee = currentUser() AND sprint in openSprints()", maxResults=1, fields=CF_SPRINT
+    )
+    if not issues:
+        return None
+    sprint_data = getattr(issues[0].fields, CF_SPRINT, None) or []
+    for s in sprint_data:
+        if getattr(s, "state", "") == "active":
+            start = _parse_jira_date(s.startDate)
+            end = _parse_jira_date(s.endDate)
+            return {
+                "id": s.id,
+                "name": s.name,
+                "start": start.isoformat(),
+                "end": end.isoformat(),
+                "board_id": getattr(s, "boardId", None),
+            }
+    return None
+
+
+def _get_next_sprint(jira, board_id):
+    """Return the earliest future sprint on the board, or None."""
+    if not board_id:
+        return None
+    try:
+        future_sprints = jira.sprints(board_id, state="future")
+        if not future_sprints:
+            return None
+        s = future_sprints[0]
+        start = _parse_jira_date(s.startDate) if getattr(s, "startDate", None) else None
+        end = _parse_jira_date(s.endDate) if getattr(s, "endDate", None) else None
+        return {
+            "id": s.id,
+            "name": s.name,
+            "start": start.isoformat() if start else None,
+            "end": end.isoformat() if end else None,
+            "board_id": board_id,
+        }
+    except Exception:
+        return None
+
+
+def get_sprint_info(jira, refresh=False):
+    """Return sprint metadata dict with current_sprint, next_sprint, team_name.
+
+    Uses disk cache when valid (sprint hasn't ended). Pass refresh=True to force re-fetch.
+    """
+    if not refresh:
+        cached = read_sprint_cache(CACHE_DIR)
+        if cached:
+            return cached
+
+    current = _get_active_sprint(jira)
+    next_sprint = _get_next_sprint(jira, current["board_id"]) if current else None
+
+    data = {
+        "current_sprint": current,
+        "next_sprint": next_sprint,
+        "team_name": DEFAULT_TEAM,
+    }
+    if current:
+        write_sprint_cache(CACHE_DIR, data)
+    return data
 
 
 def _warn_in_progress_no_sprint(jira, team=False):
@@ -545,16 +618,154 @@ def parse_fields(issue_type_dict):
     return result
 
 
-def _fetch_pr_statuses(issues):
-    """Return dict of issue key -> formatted PR status string for non-closed issues."""
-    statuses = {}
+_pr_checklist_cache = {}
+
+
+def _fetch_pr_checklist(pr_url):
+    """Fetch structured PR checklist data. Returns dict or None.
+
+    Session-cached: repeated calls for the same URL return cached result.
+    """
+    if pr_url in _pr_checklist_cache:
+        return _pr_checklist_cache[pr_url]
+
+    parsed = _parse_pr_url(pr_url)
+    if not parsed:
+        return None
+    repo, number = parsed
+    try:
+        result = subprocess.run(
+            [
+                "gh", "pr", "view", number, "--repo", repo,
+                "--json",
+                "state,reviewDecision,statusCheckRollup,"
+                "reviewRequests,latestReviews,comments,"
+                "mergeable,url,author",
+            ],
+            capture_output=True, text=True, timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        data = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+
+    state = data.get("state", "UNKNOWN").lower()
+    review = data.get("reviewDecision", "")
+    checks = data.get("statusCheckRollup", []) or []
+    mergeable = data.get("mergeable", "UNKNOWN")
+
+    failing = [
+        c.get("name", c.get("context", "unknown"))
+        for c in checks
+        if c.get("conclusion") == "FAILURE"
+    ]
+    pending_reviewers = [
+        r.get("login", r.get("name", ""))
+        for r in (data.get("reviewRequests", []) or [])
+        if r.get("login") or r.get("name")
+    ]
+
+    # Count unresolved comments (approximation: total comments
+    # minus comments from author)
+    comments = data.get("comments", []) or []
+    author_login = data.get("author", {}).get("login", "")
+    unresolved = sum(
+        1 for c in comments
+        if c.get("author", {}).get("login") != author_login
+    )
+
+    checklist = {
+        "url": data.get("url", pr_url),
+        "state": state,
+        "review_decision": review,
+        "failing_checks": failing,
+        "pending_reviewers": pending_reviewers,
+        "unresolved_comments": unresolved,
+        "has_conflicts": mergeable == "CONFLICTING",
+        "is_author": True,
+    }
+    _pr_checklist_cache[pr_url] = checklist
+    return checklist
+
+
+def _format_pr_checklist(checklist):
+    """Format a PR checklist dict as a status summary string."""
+    parts = [checklist["state"]]
+    review_map = {
+        "APPROVED": "approved",
+        "CHANGES_REQUESTED": "changes requested",
+        "REVIEW_REQUIRED": "review required",
+    }
+    if checklist["review_decision"] in review_map:
+        parts.append(review_map[checklist["review_decision"]])
+
+    if checklist["failing_checks"]:
+        parts.append("CI fail")
+    elif checklist["state"] in ("open", "draft"):
+        parts.append("CI pass")
+
+    return f"PR: {', '.join(parts)} — {checklist['url']}"
+
+
+def _checklist_items(checklist):
+    """Return list of actionable checklist item strings for a PR."""
+    items = []
+    if checklist["unresolved_comments"]:
+        n = checklist["unresolved_comments"]
+        items.append(f"{n} unresolved review comment{'s' if n != 1 else ''}")
+    if checklist["failing_checks"]:
+        items.append(f"Failing: {', '.join(checklist['failing_checks'])}")
+    if checklist["pending_reviewers"]:
+        items.append(
+            f"Awaiting review: {', '.join(checklist['pending_reviewers'])}"
+        )
+    if checklist["has_conflicts"]:
+        items.append("Merge conflict")
+    return items
+
+
+def _fetch_pr_checklists(issues):
+    """Return dict of issue key -> checklist dict for non-closed issues with PRs."""
+    checklists = {}
     for issue in issues:
         if str(issue.fields.status) == "Closed":
             continue
-        pr_url = getattr(issue.fields, CF_GIT_PR, None)
-        if not pr_url:
+        pr_field = getattr(issue.fields, CF_GIT_PR, None)
+        if not pr_field:
             continue
-        status = _pr_status(pr_url)
-        if status:
-            statuses[issue.key] = status
-    return statuses
+        first_url = pr_field.strip().splitlines()[0].strip()
+        checklist = _fetch_pr_checklist(first_url)
+        if checklist:
+            checklists[issue.key] = checklist
+    return checklists
+
+
+def _fetch_reviewer_prs():
+    """Fetch open PRs where the current user is requested as reviewer."""
+    try:
+        result = subprocess.run(
+            [
+                "gh", "search", "prs",
+                "--review-requested=@me",
+                "--state=open",
+                "--limit=25",
+                "--json",
+                "number,title,url,repository,createdAt",
+            ],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode != 0:
+            return []
+        prs = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return []
+    return prs
+
+
+def _fetch_pr_statuses(issues):
+    """Return dict of issue key -> formatted PR status string for non-closed issues."""
+    checklists = _fetch_pr_checklists(issues)
+    return {
+        key: _format_pr_checklist(cl) for key, cl in checklists.items()
+    }

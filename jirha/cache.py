@@ -1,7 +1,8 @@
-"""Disk cache for Jira hierarchy context."""
+"""Disk cache for Jira hierarchy context and sprint metadata."""
 
 import json
 import time
+from datetime import date
 from pathlib import Path
 
 
@@ -33,3 +34,22 @@ def cache_age_str(seconds):
     if seconds < 86400:
         return f"{int(seconds / 3600)}h"
     return f"{int(seconds / 86400)}d"
+
+
+def read_sprint_cache(cache_dir):
+    """Read sprint cache. Returns data dict or None if missing/expired."""
+    entry = read_cache(cache_dir, "sprint", "current")
+    if not entry:
+        return None
+    data = entry["data"]
+    end_str = data.get("current_sprint", {}).get("end")
+    if not end_str:
+        return None
+    if date.fromisoformat(end_str) < date.today():
+        return None
+    return data
+
+
+def write_sprint_cache(cache_dir, data):
+    """Write sprint metadata to cache."""
+    write_cache(cache_dir, "sprint", "current", data)

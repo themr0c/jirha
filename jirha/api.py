@@ -623,6 +623,37 @@ def parse_fields(issue_type_dict):
 _pr_checklist_cache = {}
 
 
+def _fetch_unresolved_threads(repo, number):
+    """Count unresolved review threads via GraphQL. Returns int."""
+    owner, name = repo.split("/", 1)
+    query = (
+        '{ repository(owner: "%s", name: "%s") {'
+        " pullRequest(number: %s) {"
+        " reviewThreads(first: 100) {"
+        " nodes { isResolved } } } } }" % (owner, name, number)
+    )
+    try:
+        result = subprocess.run(
+            ["gh", "api", "graphql", "-f", f"query={query}"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        if result.returncode != 0:
+            return 0
+        data = json.loads(result.stdout)
+        threads = (
+            data.get("data", {})
+            .get("repository", {})
+            .get("pullRequest", {})
+            .get("reviewThreads", {})
+            .get("nodes", [])
+        )
+        return sum(1 for t in threads if not t.get("isResolved", True))
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return 0
+
+
 def _fetch_pr_checklist(pr_url):
     """Fetch structured PR checklist data. Returns dict or None.
 
@@ -646,7 +677,7 @@ def _fetch_pr_checklist(pr_url):
                 repo,
                 "--json",
                 "state,reviewDecision,statusCheckRollup,"
-                "reviewRequests,latestReviews,comments,"
+                "reviewRequests,latestReviews,"
                 "mergeable,url,author",
             ],
             capture_output=True,
@@ -675,11 +706,7 @@ def _fetch_pr_checklist(pr_url):
         if r.get("login") or r.get("name")
     ]
 
-    # Count unresolved comments (approximation: total comments
-    # minus comments from author)
-    comments = data.get("comments", []) or []
-    author_login = data.get("author", {}).get("login", "")
-    unresolved = sum(1 for c in comments if c.get("author", {}).get("login") != author_login)
+    unresolved = _fetch_unresolved_threads(repo, number)
 
     checklist = {
         "url": data.get("url", pr_url),

@@ -1,4 +1,11 @@
-from jirha.ops.release_notes import _classify_rn_bucket, _map_to_section
+from jirha.ops.release_notes import (
+    _check_deduplication,
+    _check_violations,
+    _check_warnings,
+    _classify_rn_bucket,
+    _map_to_section,
+    _todo_text,
+)
 
 
 class TestClassifyRnBucket:
@@ -57,3 +64,73 @@ class TestMapToSection:
 
     def test_unknown_type_returns_none(self):
         assert _map_to_section("SomethingElse") is None
+
+
+class TestTodoText:
+    def test_done(self):
+        assert _todo_text("done", classified=True) == ""
+
+    def test_proposed(self):
+        assert _todo_text("proposed", classified=True) == "TODO: Review draft proposed by SME"
+
+    def test_in_progress(self):
+        assert (
+            _todo_text("in_progress", classified=True)
+            == "TODO: Review RN text submitted by Docs team"
+        )
+
+    def test_empty_classified(self):
+        assert _todo_text("empty", classified=True) == "TODO: Author release notes"
+
+    def test_empty_unclassified(self):
+        assert _todo_text("empty", classified=False) == "TODO: Set RN Type and RN Text"
+
+    def test_not_required(self):
+        assert _todo_text("not_required", classified=True) == ""
+
+
+class TestCheckViolations:
+    def test_known_issue_with_fix_version_in_range(self):
+        items = [{"key": "RHDHBUGS-100", "rn_type": "Known Issue", "from_query": 1}]
+        violations = _check_violations(items, "1.10")
+        assert len(violations) == 1
+        assert "RHDHBUGS-100" in violations[0]["key"]
+
+    def test_known_issue_from_query2_is_ok(self):
+        items = [{"key": "RHDHBUGS-200", "rn_type": "Known Issue", "from_query": 2}]
+        violations = _check_violations(items, "1.10")
+        assert len(violations) == 0
+
+    def test_bug_fix_from_query1_is_ok(self):
+        items = [{"key": "RHDHBUGS-300", "rn_type": "Bug Fix", "from_query": 1}]
+        violations = _check_violations(items, "1.10")
+        assert len(violations) == 0
+
+
+class TestCheckDeduplication:
+    def test_rhidp_with_rn_text(self):
+        rhidp_issues = [
+            {"key": "RHIDP-890", "rn_text": "Some text", "parent_key": "RHDHPLAN-400"},
+        ]
+        dupes = _check_deduplication(rhidp_issues)
+        assert len(dupes) == 1
+        assert dupes[0]["parent_key"] == "RHDHPLAN-400"
+
+    def test_rhidp_without_rn_text_is_ok(self):
+        rhidp_issues = [
+            {"key": "RHIDP-891", "rn_text": None, "parent_key": "RHDHPLAN-400"},
+        ]
+        dupes = _check_deduplication(rhidp_issues)
+        assert len(dupes) == 0
+
+
+class TestCheckWarnings:
+    def test_security_level_set(self):
+        items = [{"key": "RHDHPLAN-500", "security": "Red Hat Employee"}]
+        warnings = _check_warnings(items)
+        assert len(warnings) == 1
+
+    def test_no_security_level(self):
+        items = [{"key": "RHDHPLAN-600", "security": None}]
+        warnings = _check_warnings(items)
+        assert len(warnings) == 0

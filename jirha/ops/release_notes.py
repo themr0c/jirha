@@ -144,8 +144,10 @@ def _format_section_header(number, title, status_counts, total, not_closed):
             label = status.replace("_", " ")
             count_parts.append(f"{count} {label}")
 
-    counts_str = ", ".join(count_parts)
-    header = f"\n{number}. {title} ({total}, {counts_str})"
+    if count_parts:
+        header = f"\n{number}. {title} ({total}, {', '.join(count_parts)})"
+    else:
+        header = f"\n{number}. {title} ({total})"
     if not_closed > 0:
         header += f" [{not_closed} not closed]"
     return header

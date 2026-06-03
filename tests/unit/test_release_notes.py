@@ -197,6 +197,12 @@ class TestFormatSectionHeader:
         header = _format_section_header(3, "Developer Preview features", {"done": 3}, 3, 0)
         assert "[" not in header
 
+    def test_all_empty_bucket(self):
+        header = _format_section_header(2, "Technology Preview features", {"empty": 1}, 1, 1)
+        assert "(1)" in header
+        assert "(1, )" not in header
+        assert "[1 not closed]" in header
+
 
 class TestBuildJql:
     def test_fix_version_jql_mine(self):

@@ -1,6 +1,9 @@
 """Release notes checklist: publication-section view with validation."""
 
-from jirha.config import SERVER
+import sys
+
+from jirha.api import get_jira
+from jirha.config import CF_RN_STATUS, CF_RN_TEXT, CF_RN_TYPE, SERVER
 
 _SECTION_MAP = {
     "Feature": (1, "New features and enhancements"),
@@ -180,3 +183,235 @@ def _build_known_issues_jql(versions, mine_only):
     if mine_only:
         jql += " AND assignee = currentUser()"
     return jql
+
+
+_RN_FIELDS = (
+    f"summary,status,issuetype,parent,fixVersions,project,"
+    f"{CF_RN_TEXT},{CF_RN_STATUS},{CF_RN_TYPE},security"
+)
+
+
+def _extract_rn_fields(issue):
+    """Extract RN fields from a Jira issue into a plain dict."""
+    f = issue.fields
+    rn_status_field = getattr(f, CF_RN_STATUS, None)
+    rn_type_field = getattr(f, CF_RN_TYPE, None)
+    return {
+        "key": issue.key,
+        "summary": f.summary,
+        "status": str(f.status),
+        "project": f.project.key,
+        "issuetype": str(f.issuetype),
+        "rn_text": getattr(f, CF_RN_TEXT, None),
+        "rn_status": str(rn_status_field) if rn_status_field else None,
+        "rn_type": str(rn_type_field) if rn_type_field else None,
+        "security": str(getattr(f, "security", None)) if getattr(f, "security", None) else None,
+        "fix_versions": [v.name for v in (f.fixVersions or [])],
+        "parent_key": getattr(f.parent, "key", None) if getattr(f, "parent", None) else None,
+    }
+
+
+def _resolve_and_group(jira, raw_items, minor_version):
+    """Resolve RHIDP parents, deduplicate, classify, validate, and group by section.
+
+    Returns (sections, unclassified, violations, deduplication, warnings) where
+    sections is {section_num: {title, items, status_counts, total, not_closed}}.
+    """
+    rhidp_issues = []
+    rn_targets = {}  # key -> {item, source_keys}
+
+    for item in raw_items:
+        if item["project"] == "RHIDP":
+            parent_key = item["parent_key"]
+            resolved_key = None
+            if parent_key:
+                parent = jira.issue(parent_key, fields=_RN_FIELDS)
+                parent_item = _extract_rn_fields(parent)
+                parent_item["from_query"] = item["from_query"]
+                if parent_item["project"] == "RHIDP" and parent_item["parent_key"]:
+                    grandparent = jira.issue(parent_item["parent_key"], fields=_RN_FIELDS)
+                    grandparent_item = _extract_rn_fields(grandparent)
+                    grandparent_item["from_query"] = item["from_query"]
+                    resolved_key = grandparent_item["key"]
+                    rn_targets.setdefault(
+                        resolved_key, {"item": grandparent_item, "source_keys": []}
+                    )
+                else:
+                    resolved_key = parent_item["key"]
+                    rn_targets.setdefault(resolved_key, {"item": parent_item, "source_keys": []})
+                rn_targets[resolved_key]["source_keys"].append(item["key"])
+
+            rhidp_issues.append(
+                {
+                    "key": item["key"],
+                    "rn_text": item["rn_text"],
+                    "parent_key": resolved_key or parent_key,
+                }
+            )
+        else:
+            if item["key"] not in rn_targets:
+                rn_targets[item["key"]] = {"item": item, "source_keys": []}
+
+    all_items_for_validation = [entry["item"] for entry in rn_targets.values()]
+    violations = _check_violations(all_items_for_validation, minor_version)
+    deduplication = _check_deduplication(rhidp_issues)
+    warnings = _check_warnings(all_items_for_validation)
+
+    sections = {}
+    unclassified = []
+
+    for key, entry in rn_targets.items():
+        item = entry["item"]
+        rn_status = item.get("rn_status")
+        rn_type = item.get("rn_type")
+
+        bucket = _classify_rn_bucket(rn_status, rn_type)
+        if bucket == "not_required":
+            continue
+
+        section_info = _map_to_section(rn_type)
+        classified = section_info is not None
+
+        todo = _todo_text(bucket, classified)
+        is_closed = item.get("status") == "Closed"
+
+        formatted = {
+            "key": key,
+            "bucket": bucket,
+            "todo": todo,
+            "source_keys": entry["source_keys"],
+            "is_closed": is_closed,
+            "fix_versions": item.get("fix_versions", []),
+        }
+
+        if not classified:
+            unclassified.append(formatted)
+        else:
+            sec_num, sec_title = section_info
+            if sec_num not in sections:
+                sections[sec_num] = {
+                    "title": sec_title,
+                    "items": [],
+                    "status_counts": {},
+                    "total": 0,
+                    "not_closed": 0,
+                }
+            sec = sections[sec_num]
+            sec["items"].append(formatted)
+            sec["total"] += 1
+            sec["status_counts"][bucket] = sec["status_counts"].get(bucket, 0) + 1
+            if not is_closed:
+                sec["not_closed"] += 1
+
+    return sections, unclassified, violations, deduplication, warnings
+
+
+def cmd_release_notes(args):
+    """Entry point for the release-notes CLI command."""
+    jira = get_jira()
+    minor = args.version
+    mine_only = not args.all
+
+    all_versions = jira.project_versions("RHDHBUGS")
+    versions = _filter_versions(all_versions, minor)
+    if not versions:
+        sys.exit(f"No versions found matching RHDH {minor}.* in RHDHBUGS project.")
+
+    short_versions = [v.replace("RHDH ", "") for v in versions]
+    print(f"Release Notes: RHDH {minor} (versions: {', '.join(short_versions)})", end="")
+
+    jql1 = _build_fix_version_jql(versions, mine_only)
+    jql2 = _build_known_issues_jql(versions, mine_only)
+
+    issues1 = jira.search_issues(jql1, maxResults=args.max, fields=_RN_FIELDS)
+    issues2 = jira.search_issues(jql2, maxResults=args.max, fields=_RN_FIELDS)
+
+    seen_keys = set()
+    raw_items = []
+    for issue in issues1:
+        item = _extract_rn_fields(issue)
+        item["from_query"] = 1
+        raw_items.append(item)
+        seen_keys.add(issue.key)
+    for issue in issues2:
+        if issue.key not in seen_keys:
+            item = _extract_rn_fields(issue)
+            item["from_query"] = 2
+            raw_items.append(item)
+
+    sections, unclassified, violations, deduplication, warnings = _resolve_and_group(
+        jira, raw_items, minor
+    )
+
+    action_count = len(unclassified) + len(violations) + len(deduplication)
+    for sec in sections.values():
+        action_count += sum(
+            1 for it in sec["items"] if it["bucket"] not in ("done", "not_required")
+        )
+    print(f" — {action_count} need action\n")
+
+    if unclassified:
+        print(
+            "── Unclassified ({}) — RN Type not set ───────────────────────────".format(
+                len(unclassified)
+            )
+        )
+        for item in unclassified:
+            print(_format_item_line(item["key"], item["bucket"], item["todo"], item["source_keys"]))
+        print()
+
+    if violations:
+        print("── VIOLATIONS ────────────────────────────────────────────────────")
+        for v in violations:
+            print(f"[!] {SERVER}/browse/{v['key']}  {v['message']}")
+        print()
+
+    if deduplication:
+        print("── DEDUPLICATION ─────────────────────────────────────────────────")
+        for d in deduplication:
+            print(f"[!] {SERVER}/browse/{d['key']}  {d['message']}")
+        print()
+
+    if warnings:
+        print("── WARNINGS ──────────────────────────────────────────────────────")
+        for w in warnings:
+            print(f"[!] {SERVER}/browse/{w['key']}  {w['message']}")
+        print()
+
+    for sec_num in range(1, 8):
+        if sec_num in sections:
+            sec = sections[sec_num]
+            print(
+                _format_section_header(
+                    sec_num,
+                    sec["title"],
+                    sec["status_counts"],
+                    sec["total"],
+                    sec["not_closed"],
+                )
+            )
+            if sec_num == 7:
+                by_version = {}
+                for item in sec["items"]:
+                    for fv in item.get("fix_versions", []):
+                        by_version.setdefault(fv, []).append(item)
+                sub_idx = 1
+                for fv in sorted(by_version.keys()):
+                    sub_items = by_version[fv]
+                    print(f"  7.{sub_idx}. Fixed issues in {fv} ({len(sub_items)})")
+                    for item in sub_items:
+                        line = _format_item_line(
+                            item["key"], item["bucket"], item["todo"], item["source_keys"]
+                        )
+                        print(f"  {line}")
+                    sub_idx += 1
+            else:
+                for item in sec["items"]:
+                    print(
+                        _format_item_line(
+                            item["key"], item["bucket"], item["todo"], item["source_keys"]
+                        )
+                    )
+        else:
+            title = _SECTION_TITLES.get(sec_num, f"Section {sec_num}")
+            print(f"\n{sec_num}. {title} (0)")

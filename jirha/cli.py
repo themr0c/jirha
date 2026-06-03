@@ -16,6 +16,7 @@ from jirha.ops.issues import (
 )
 from jirha.ops.meta import cmd_meta
 from jirha.ops.quarterly import cmd_quarterly
+from jirha.ops.release_notes import cmd_release_notes
 from jirha.ops.sprint import cmd_short_sprint_status, cmd_sprint_status
 
 
@@ -151,6 +152,12 @@ def main():
         help="Job profile level (1-5). Default: from JOB_PROFILE env.",
     )
     p.set_defaults(func=cmd_quarterly)
+
+    p = sub.add_parser("release-notes", help="Release notes checklist for a version")
+    p.add_argument("version", help="Minor version (e.g., 1.10)")
+    p.add_argument("--all", action="store_true", help="Show all issues, not just mine")
+    p.add_argument("--max", type=int, default=100)
+    p.set_defaults(func=cmd_release_notes)
 
     args = parser.parse_args()
     args.func(args)

@@ -200,27 +200,27 @@ class TestFormatSectionHeader:
 
 class TestBuildJql:
     def test_fix_version_jql_mine(self):
-        versions = ["RHDH 1.10.0", "RHDH 1.10.1"]
+        versions = ["1.10.0", "1.10.1"]
         jql = _build_fix_version_jql(versions, mine_only=True)
         assert "project in (RHDHBUGS, RHDHPLAN, RHIDP)" in jql
-        assert 'fixVersion in ("RHDH 1.10.0", "RHDH 1.10.1")' in jql
+        assert 'fixVersion in ("1.10.0", "1.10.1")' in jql
         assert "assignee = currentUser()" in jql
 
     def test_fix_version_jql_all(self):
-        versions = ["RHDH 1.10.0"]
+        versions = ["1.10.0"]
         jql = _build_fix_version_jql(versions, mine_only=False)
         assert "assignee" not in jql
 
     def test_known_issues_jql_mine(self):
-        versions = ["RHDH 1.10.0", "RHDH 1.10.1"]
+        versions = ["1.10.0", "1.10.1"]
         jql = _build_known_issues_jql(versions, mine_only=True)
         assert '"Release Note Type" in ("Known Issue")' in jql
-        assert 'affectedVersion in ("RHDH 1.10.0", "RHDH 1.10.1")' in jql
-        assert 'fixVersion NOT IN ("RHDH 1.10.0", "RHDH 1.10.1")' in jql
+        assert 'affectedVersion in ("1.10.0", "1.10.1")' in jql
+        assert 'fixVersion NOT IN ("1.10.0", "1.10.1")' in jql
         assert "assignee = currentUser()" in jql
 
     def test_known_issues_jql_all(self):
-        versions = ["RHDH 1.10.0"]
+        versions = ["1.10.0"]
         jql = _build_known_issues_jql(versions, mine_only=False)
         assert "assignee" not in jql
 
@@ -232,20 +232,20 @@ class TestFilterVersions:
                 self.name = name
 
         versions = [
-            V("RHDH 1.9.0"),
-            V("RHDH 1.10.0"),
-            V("RHDH 1.10.1"),
-            V("RHDH 1.10.2"),
-            V("RHDH 2.0.0"),
+            V("1.9.0"),
+            V("1.10.0"),
+            V("1.10.1"),
+            V("1.10.2"),
+            V("2.0.0"),
         ]
         result = _filter_versions(versions, "1.10")
-        assert result == ["RHDH 1.10.0", "RHDH 1.10.1", "RHDH 1.10.2"]
+        assert result == ["1.10.0", "1.10.1", "1.10.2"]
 
     def test_no_match_returns_empty(self):
         class V:
             def __init__(self, name):
                 self.name = name
 
-        versions = [V("RHDH 1.9.0")]
+        versions = [V("1.9.0")]
         result = _filter_versions(versions, "1.10")
         assert result == []

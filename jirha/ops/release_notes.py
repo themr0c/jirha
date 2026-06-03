@@ -152,8 +152,8 @@ def _format_section_header(number, title, status_counts, total, not_closed):
 
 
 def _filter_versions(all_versions, minor_version):
-    """Filter version objects matching 'RHDH {minor}.x'. Returns sorted names."""
-    prefix = f"RHDH {minor_version}."
+    """Filter version objects matching '{minor}.x'. Returns sorted names."""
+    prefix = f"{minor_version}."
     matching = [v.name for v in all_versions if v.name.startswith(prefix)]
     matching.sort()
     return matching
@@ -315,10 +315,9 @@ def cmd_release_notes(args):
     all_versions = jira.project_versions("RHDHBUGS")
     versions = _filter_versions(all_versions, minor)
     if not versions:
-        sys.exit(f"No versions found matching RHDH {minor}.* in RHDHBUGS project.")
+        sys.exit(f"No versions found matching {minor}.* in RHDHBUGS project.")
 
-    short_versions = [v.replace("RHDH ", "") for v in versions]
-    print(f"Release Notes: RHDH {minor} (versions: {', '.join(short_versions)})", end="")
+    print(f"Release Notes: RHDH {minor} (versions: {', '.join(versions)})", end="")
 
     jql1 = _build_fix_version_jql(versions, mine_only)
     jql2 = _build_known_issues_jql(versions, mine_only)

@@ -19,6 +19,7 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha meta PROJECT [--type TYPE]` | Show valid issue types and fields for a project |
 | `jirha close-subtasks [--dry-run]` | Close open subtasks of closed parents |
 | `jirha estimate [--max N]` | Find issues missing SP or reasoning comments |
+| `jirha release-notes <version> [--all] [--max N]` | Release notes checklist for a version |
 
 For custom field IDs, JQL queries, description templates, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md). For SP reference and auto-suggest heuristics, see [docs/sp-heuristics.md](../docs/sp-heuristics.md).
 
@@ -27,7 +28,7 @@ For custom field IDs, JQL queries, description templates, and sprint status form
 Each `jirha` subcommand is also available as a plugin slash command in Claude:
 `/jirha:list`, `/jirha:show KEY`, `/jirha:sprint-status`, `/jirha:sprint-status-short`, `/jirha:hygiene`,
 `/jirha:update KEY ...`, `/jirha:transition KEY`, `/jirha:create PROJECT SUMMARY`, `/jirha:meta PROJECT`,
-`/jirha:estimate [all | KEY]`
+`/jirha:estimate [all | KEY]`, `/jirha:release-notes <version>`
 
 ## pantheon-cli (moved)
 

@@ -30,6 +30,7 @@ scripts/jirha <command>   # directly from repo root
 - `ops/meta.py` — metadata discovery (issue types, fields per project)
 - `ops/sprint.py` — sprint_status, swimlane assignment, velocity/risk assessment
 - `ops/hygiene.py` — hygiene checks, SP reassessment
+- `ops/release_notes.py` — release notes checklist, validation, formatting
 - `cli.py` — argparse entry point (`jirha = jirha.cli:main`)
 
 **scripts/jirha** is a thin shim: bootstraps the repo venv, then delegates to `venv/bin/jirha`.

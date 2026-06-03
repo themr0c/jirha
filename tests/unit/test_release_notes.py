@@ -18,7 +18,7 @@ class TestClassifyRnBucket:
         assert _classify_rn_bucket("Done", "Feature") == "done"
 
     def test_not_required_by_type(self):
-        assert _classify_rn_bucket(None, "Release Notes Not Required") == "not_required"
+        assert _classify_rn_bucket(None, "Release Note Not Required") == "not_required"
 
     def test_not_required_by_status_rejected(self):
         assert _classify_rn_bucket("Rejected", "Bug Fix") == "not_required"

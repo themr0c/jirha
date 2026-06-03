@@ -5,6 +5,8 @@ import sys
 from jirha.api import get_jira
 from jirha.config import CF_RN_STATUS, CF_RN_TEXT, CF_RN_TYPE, SERVER
 
+_RN_PROJECTS = {"RHDHBUGS", "RHDHPLAN", "RHIDP"}
+
 _SECTION_MAP = {
     "Feature": (1, "New features and enhancements"),
     "Enhancement": (1, "New features and enhancements"),
@@ -29,7 +31,7 @@ _SECTION_TITLES = {
 
 def _classify_rn_bucket(rn_status, rn_type):
     """Classify an issue into one of: done, not_required, in_progress, proposed, empty."""
-    if rn_type == "Release Notes Not Required":
+    if rn_type == "Release Note Not Required":
         return "not_required"
     if rn_status == "Rejected":
         return "not_required"
@@ -216,8 +218,7 @@ def _extract_rn_fields(issue):
 def _resolve_and_group(jira, raw_items, minor_version):
     """Resolve RHIDP parents, deduplicate, classify, validate, and group by section.
 
-    Returns (sections, unclassified, violations, deduplication, warnings) where
-    sections is {section_num: {title, items, status_counts, total, not_closed}}.
+    Returns (sections, unclassified, not_required, violations, deduplication, warnings).
     """
     rhidp_issues = []
     rn_targets = {}  # key -> {item, source_keys}
@@ -234,11 +235,15 @@ def _resolve_and_group(jira, raw_items, minor_version):
                     grandparent = jira.issue(parent_item["parent_key"], fields=_RN_FIELDS)
                     grandparent_item = _extract_rn_fields(grandparent)
                     grandparent_item["from_query"] = item["from_query"]
+                    if grandparent_item["project"] not in _RN_PROJECTS:
+                        continue
                     resolved_key = grandparent_item["key"]
                     rn_targets.setdefault(
                         resolved_key, {"item": grandparent_item, "source_keys": []}
                     )
                 else:
+                    if parent_item["project"] not in _RN_PROJECTS:
+                        continue
                     resolved_key = parent_item["key"]
                     rn_targets.setdefault(resolved_key, {"item": parent_item, "source_keys": []})
                 rn_targets[resolved_key]["source_keys"].append(item["key"])
@@ -254,13 +259,24 @@ def _resolve_and_group(jira, raw_items, minor_version):
             if item["key"] not in rn_targets:
                 rn_targets[item["key"]] = {"item": item, "source_keys": []}
 
-    all_items_for_validation = [entry["item"] for entry in rn_targets.values()]
-    violations = _check_violations(all_items_for_validation, minor_version)
+    # Classify first, then validate only actionable items
+    not_required_keys = set()
+    for key, entry in rn_targets.items():
+        item = entry["item"]
+        bucket = _classify_rn_bucket(item.get("rn_status"), item.get("rn_type"))
+        if bucket == "not_required":
+            not_required_keys.add(key)
+
+    actionable_items = [
+        entry["item"] for k, entry in rn_targets.items() if k not in not_required_keys
+    ]
+    violations = _check_violations(actionable_items, minor_version)
     deduplication = _check_deduplication(rhidp_issues)
-    warnings = _check_warnings(all_items_for_validation)
+    warnings = _check_warnings(actionable_items)
 
     sections = {}
     unclassified = []
+    not_required = []
 
     for key, entry in rn_targets.items():
         item = entry["item"]
@@ -269,6 +285,7 @@ def _resolve_and_group(jira, raw_items, minor_version):
 
         bucket = _classify_rn_bucket(rn_status, rn_type)
         if bucket == "not_required":
+            not_required.append({"key": key, "source_keys": entry["source_keys"]})
             continue
 
         section_info = _map_to_section(rn_type)
@@ -305,7 +322,7 @@ def _resolve_and_group(jira, raw_items, minor_version):
             if not is_closed:
                 sec["not_closed"] += 1
 
-    return sections, unclassified, violations, deduplication, warnings
+    return sections, unclassified, not_required, violations, deduplication, warnings
 
 
 def cmd_release_notes(args):
@@ -340,7 +357,7 @@ def cmd_release_notes(args):
             item["from_query"] = 2
             raw_items.append(item)
 
-    sections, unclassified, violations, deduplication, warnings = _resolve_and_group(
+    sections, unclassified, not_required, violations, deduplication, warnings = _resolve_and_group(
         jira, raw_items, minor
     )
 
@@ -416,3 +433,12 @@ def cmd_release_notes(args):
         else:
             title = _SECTION_TITLES.get(sec_num, f"Section {sec_num}")
             print(f"\n{sec_num}. {title} (0)")
+
+    if not_required:
+        print(f"\n── Not required ({len(not_required)}) ─────────────────────────────────────")
+        for item in not_required:
+            url = f"{SERVER}/browse/{item['key']}"
+            parts = [f"[-] {url}"]
+            if item["source_keys"]:
+                parts.append(f"  ← {', '.join(item['source_keys'])}")
+            print("".join(parts))

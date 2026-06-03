@@ -1,8 +1,11 @@
 from jirha.ops.release_notes import (
+    _build_fix_version_jql,
+    _build_known_issues_jql,
     _check_deduplication,
     _check_violations,
     _check_warnings,
     _classify_rn_bucket,
+    _filter_versions,
     _format_item_line,
     _format_section_header,
     _map_to_section,
@@ -193,3 +196,56 @@ class TestFormatSectionHeader:
     def test_no_not_closed(self):
         header = _format_section_header(3, "Developer Preview features", {"done": 3}, 3, 0)
         assert "[" not in header
+
+
+class TestBuildJql:
+    def test_fix_version_jql_mine(self):
+        versions = ["RHDH 1.10.0", "RHDH 1.10.1"]
+        jql = _build_fix_version_jql(versions, mine_only=True)
+        assert "project in (RHDHBUGS, RHDHPLAN, RHIDP)" in jql
+        assert 'fixVersion in ("RHDH 1.10.0", "RHDH 1.10.1")' in jql
+        assert "assignee = currentUser()" in jql
+
+    def test_fix_version_jql_all(self):
+        versions = ["RHDH 1.10.0"]
+        jql = _build_fix_version_jql(versions, mine_only=False)
+        assert "assignee" not in jql
+
+    def test_known_issues_jql_mine(self):
+        versions = ["RHDH 1.10.0", "RHDH 1.10.1"]
+        jql = _build_known_issues_jql(versions, mine_only=True)
+        assert '"Release Note Type" in ("Known Issue")' in jql
+        assert 'affectedVersion in ("RHDH 1.10.0", "RHDH 1.10.1")' in jql
+        assert 'fixVersion NOT IN ("RHDH 1.10.0", "RHDH 1.10.1")' in jql
+        assert "assignee = currentUser()" in jql
+
+    def test_known_issues_jql_all(self):
+        versions = ["RHDH 1.10.0"]
+        jql = _build_known_issues_jql(versions, mine_only=False)
+        assert "assignee" not in jql
+
+
+class TestFilterVersions:
+    def test_filters_by_prefix(self):
+        class V:
+            def __init__(self, name):
+                self.name = name
+
+        versions = [
+            V("RHDH 1.9.0"),
+            V("RHDH 1.10.0"),
+            V("RHDH 1.10.1"),
+            V("RHDH 1.10.2"),
+            V("RHDH 2.0.0"),
+        ]
+        result = _filter_versions(versions, "1.10")
+        assert result == ["RHDH 1.10.0", "RHDH 1.10.1", "RHDH 1.10.2"]
+
+    def test_no_match_returns_empty(self):
+        class V:
+            def __init__(self, name):
+                self.name = name
+
+        versions = [V("RHDH 1.9.0")]
+        result = _filter_versions(versions, "1.10")
+        assert result == []

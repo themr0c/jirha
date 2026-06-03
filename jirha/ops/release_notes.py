@@ -146,3 +146,37 @@ def _format_section_header(number, title, status_counts, total, not_closed):
     if not_closed > 0:
         header += f" [{not_closed} not closed]"
     return header
+
+
+def _filter_versions(all_versions, minor_version):
+    """Filter version objects matching 'RHDH {minor}.x'. Returns sorted names."""
+    prefix = f"RHDH {minor_version}."
+    matching = [v.name for v in all_versions if v.name.startswith(prefix)]
+    matching.sort()
+    return matching
+
+
+def _quoted_list(versions):
+    """Build a quoted, comma-separated list for JQL IN clauses."""
+    return ", ".join(f'"{v}"' for v in versions)
+
+
+def _build_fix_version_jql(versions, mine_only):
+    """Build JQL for Query 1: items fixed in this release."""
+    jql = f"project in (RHDHBUGS, RHDHPLAN, RHIDP) AND fixVersion in ({_quoted_list(versions)})"
+    if mine_only:
+        jql += " AND assignee = currentUser()"
+    return jql
+
+
+def _build_known_issues_jql(versions, mine_only):
+    """Build JQL for Query 2: known issues affecting this version, not fixed in it."""
+    jql = (
+        f"project in (RHDHBUGS, RHDHPLAN, RHIDP)"
+        f' AND "Release Note Type" in ("Known Issue")'
+        f" AND affectedVersion in ({_quoted_list(versions)})"
+        f" AND (fixVersion NOT IN ({_quoted_list(versions)}) OR fixVersion is EMPTY)"
+    )
+    if mine_only:
+        jql += " AND assignee = currentUser()"
+    return jql

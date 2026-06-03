@@ -3,6 +3,8 @@ from jirha.ops.release_notes import (
     _check_violations,
     _check_warnings,
     _classify_rn_bucket,
+    _format_item_line,
+    _format_section_header,
     _map_to_section,
     _todo_text,
 )
@@ -134,3 +136,60 @@ class TestCheckWarnings:
         items = [{"key": "RHDHPLAN-600", "security": None}]
         warnings = _check_warnings(items)
         assert len(warnings) == 0
+
+
+class TestFormatItemLine:
+    def test_done_item(self):
+        line = _format_item_line("RHDHPLAN-200", "done", "", [])
+        assert line == "[x] https://redhat.atlassian.net/browse/RHDHPLAN-200"
+
+    def test_actionable_with_todo(self):
+        line = _format_item_line(
+            "RHDHPLAN-300",
+            "proposed",
+            "TODO: Review draft proposed by SME",
+            ["RHIDP-5679"],
+        )
+        assert "[x]" not in line
+        assert "[ ]" in line
+        assert "TODO: Review draft proposed by SME" in line
+        assert "← RHIDP-5679" in line
+
+    def test_no_sources(self):
+        line = _format_item_line("RHDHBUGS-1234", "empty", "TODO: Author release notes", [])
+        assert "←" not in line
+        assert "TODO: Author release notes" in line
+
+    def test_multiple_sources(self):
+        line = _format_item_line(
+            "RHDHPLAN-400",
+            "in_progress",
+            "TODO: Review RN text submitted by Docs team",
+            ["RHIDP-1", "RHIDP-2"],
+        )
+        assert "← RHIDP-1, RHIDP-2" in line
+
+
+class TestFormatSectionHeader:
+    def test_with_counts(self):
+        header = _format_section_header(
+            1,
+            "New features and enhancements",
+            {"done": 5, "proposed": 19, "in_progress": 3},
+            27,
+            5,
+        )
+        assert "1. New features and enhancements" in header
+        assert "27" in header
+        assert "5 done" in header
+        assert "19 proposed" in header
+        assert "3 in progress" in header
+        assert "[5 not closed]" in header
+
+    def test_empty_section(self):
+        header = _format_section_header(4, "Deprecated features", {}, 0, 0)
+        assert "4. Deprecated features (0)" in header
+
+    def test_no_not_closed(self):
+        header = _format_section_header(3, "Developer Preview features", {"done": 3}, 3, 0)
+        assert "[" not in header

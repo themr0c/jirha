@@ -1,5 +1,7 @@
 """Release notes checklist: publication-section view with validation."""
 
+from jirha.config import SERVER
+
 _SECTION_MAP = {
     "Feature": (1, "New features and enhancements"),
     "Enhancement": (1, "New features and enhancements"),
@@ -81,11 +83,12 @@ def _check_deduplication(rhidp_issues):
     dupes = []
     for item in rhidp_issues:
         if item.get("rn_text"):
+            parent = item["parent_key"]
             dupes.append(
                 {
                     "key": item["key"],
-                    "parent_key": item["parent_key"],
-                    "message": f"TODO: Move Release Note Text to parent feature {item['parent_key']}",
+                    "parent_key": parent,
+                    "message": f"TODO: Move Release Note Text to parent feature {parent}",
                 }
             )
     return dupes
@@ -106,3 +109,40 @@ def _check_warnings(items):
                 }
             )
     return warnings
+
+
+def _format_item_line(key, bucket, todo, source_keys):
+    """Format a single checklist line."""
+    url = f"{SERVER}/browse/{key}"
+    if bucket == "done":
+        marker = "[x]"
+    elif bucket == "not_required":
+        marker = "[-]"
+    else:
+        marker = "[ ]"
+
+    parts = [f"{marker} {url}"]
+    if todo:
+        parts.append(f"   {todo}")
+    if source_keys:
+        parts.append(f"  ← {', '.join(source_keys)}")
+    return "".join(parts)
+
+
+def _format_section_header(number, title, status_counts, total, not_closed):
+    """Format a publication section header with counts."""
+    if total == 0:
+        return f"\n{number}. {title} (0)"
+
+    count_parts = []
+    for status in ("done", "proposed", "in_progress"):
+        count = status_counts.get(status, 0)
+        if count:
+            label = status.replace("_", " ")
+            count_parts.append(f"{count} {label}")
+
+    counts_str = ", ".join(count_parts)
+    header = f"\n{number}. {title} ({total}, {counts_str})"
+    if not_closed > 0:
+        header += f" [{not_closed} not closed]"
+    return header

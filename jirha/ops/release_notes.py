@@ -155,6 +155,63 @@ def _format_section_header(number, title, status_counts, total, not_closed):
     return header
 
 
+def _count_actions(items):
+    """Count items by action type: classify, author, review, done."""
+    counts = {"classify": 0, "author": 0, "review": 0, "done": 0}
+    for item in items:
+        if item["bucket"] == "done":
+            counts["done"] += 1
+        elif item["todo"].startswith("TODO: Set RN Type"):
+            counts["classify"] += 1
+        elif item["todo"].startswith("TODO: Author"):
+            counts["author"] += 1
+        elif item["todo"].startswith("TODO: Review"):
+            counts["review"] += 1
+    return counts
+
+
+def _format_summary_table(sections, unclassified, warnings):
+    """Format an action summary table with per-section breakdowns."""
+    rows = []
+    uc_counts = _count_actions(unclassified)
+    uc_total = sum(uc_counts.values())
+    rows.append(("Unclassified", uc_counts, uc_total))
+
+    for sec_num in range(1, 8):
+        title = _SECTION_TITLES[sec_num]
+        label = f"{sec_num}. {title}"
+        if sec_num in sections:
+            counts = _count_actions(sections[sec_num]["items"])
+        else:
+            counts = {"classify": 0, "author": 0, "review": 0, "done": 0}
+        total = sum(counts.values())
+        rows.append((label, counts, total))
+
+    totals = {"classify": 0, "author": 0, "review": 0, "done": 0}
+    grand = 0
+    for _, counts, total in rows:
+        for k in totals:
+            totals[k] += counts[k]
+        grand += total
+
+    lines = [
+        "\n── Action summary ────────────────────────────────────────────────",
+        f"{'':34s} {'Classify':>8s} {'Author':>8s} {'Review':>8s} {'Done':>8s} {'Total':>8s}",
+    ]
+    for label, counts, total in rows:
+        lines.append(
+            f"{label:34s} {counts['classify']:>8d} {counts['author']:>8d}"
+            f" {counts['review']:>8d} {counts['done']:>8d} {total:>8d}"
+        )
+    lines.append(
+        f"{'TOTAL':34s} {totals['classify']:>8d} {totals['author']:>8d}"
+        f" {totals['review']:>8d} {totals['done']:>8d} {grand:>8d}"
+    )
+    if warnings:
+        lines.append(f"\n  + {len(warnings)} security-level warnings (overlap with rows above)")
+    return "\n".join(lines)
+
+
 def _filter_versions(all_versions, minor_version):
     """Filter version objects matching '{minor}.x'. Returns sorted names."""
     prefix = f"{minor_version}."
@@ -450,3 +507,5 @@ def cmd_release_notes(args):
             if item["source_keys"]:
                 parts.append(f"  ← {', '.join(item['source_keys'])}")
             print("".join(parts))
+
+    print(_format_summary_table(sections, unclassified, warnings))

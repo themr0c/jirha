@@ -8,10 +8,11 @@ Draft a release note for Jira issue `$ARGUMENTS`.
 
 If `$ARGUMENTS` is empty, ask the user: "Which issue? (e.g., `RHDHBUGS-1234`)"
 
-**Step 1:** Fetch issue context.
+**Step 1:** Fetch issue context and hierarchy.
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha show <KEY>
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha context <KEY> --json --refresh
 ```
+This provides the full hierarchy (Feature → child Epics → grandchild Tasks) with PR URLs, descriptions, and RN fields (Type, Text, Status) at each level. Use the child/grandchild details to understand what was actually implemented.
 
 **Step 2:** Read the style guide, the type-specific reference for the RN Type, and the AsciiDoc templates.
 ```bash

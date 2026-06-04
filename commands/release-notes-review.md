@@ -8,11 +8,11 @@ Review the release note draft for Jira issue `$ARGUMENTS`.
 
 If `$ARGUMENTS` is empty, ask the user: "Which issue? (e.g., `RHDHBUGS-1234`)"
 
-**Step 1:** Fetch issue context.
+**Step 1:** Fetch issue context and hierarchy.
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha show <KEY>
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha context <KEY> --json --refresh
 ```
-Extract the existing Release Note Type and Release Note Text from the output.
+Extract the existing Release Note Type and Release Note Text from the `rn_type`, `rn_text`, and `rn_status` fields. Use the full hierarchy (Feature → child Epics → grandchild Tasks with PRs) to verify the RN text accurately describes what was implemented.
 
 **Step 2:** Read the style guide, the type-specific reference, and the AsciiDoc templates.
 ```bash

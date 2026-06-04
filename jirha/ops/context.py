@@ -14,6 +14,9 @@ from jirha.cache import cache_age_str, read_cache, write_cache
 from jirha.config import (
     CACHE_DIR,
     CF_GIT_PR,
+    CF_RN_STATUS,
+    CF_RN_TEXT,
+    CF_RN_TYPE,
     CF_SIZE,
     CF_STORY_POINTS,
     CF_TEAM,
@@ -24,7 +27,8 @@ from jirha.config import (
 
 _HIERARCHY_FIELDS = (
     f"summary,description,status,issuetype,parent,components,"
-    f"{CF_STORY_POINTS},{CF_GIT_PR},{CF_TEAM},{CF_SIZE}"
+    f"{CF_STORY_POINTS},{CF_GIT_PR},{CF_TEAM},{CF_SIZE},"
+    f"{CF_RN_TYPE},{CF_RN_TEXT},{CF_RN_STATUS}"
 )
 
 # Session-scoped cache for hierarchy walks (shared across hygiene calls)
@@ -86,6 +90,15 @@ def _issue_to_dict(issue, include_links=False, include_pr=False):
     if include_pr:
         pr_field = getattr(issue.fields, CF_GIT_PR, None) or ""
         result["pr_urls"] = _extract_pr_urls(pr_field)
+    rn_type = getattr(issue.fields, CF_RN_TYPE, None)
+    if rn_type:
+        result["rn_type"] = str(rn_type)
+    rn_status = getattr(issue.fields, CF_RN_STATUS, None)
+    if rn_status:
+        result["rn_status"] = str(rn_status)
+    rn_text = getattr(issue.fields, CF_RN_TEXT, None)
+    if rn_text:
+        result["rn_text"] = rn_text
     return result
 
 

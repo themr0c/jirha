@@ -16,7 +16,7 @@ If `$ARGUMENTS` is empty, ask the user: "Which version? (e.g., `1.10`)"
 
 ## Phase 2: Build work queue
 
-Parse the checklist output. Extract all `[ ]` actionable items (skip `[x]` done and `[-]` not required items).
+Read the **Action summary** table at the end of the checklist output to understand the work queue breakdown (Classify, Author, Review, Done counts per section). Then extract all `[ ]` actionable items from the checklist (skip `[x]` done and `[-]` not required items).
 
 For each `[ ]` item, extract:
 - **KEY**: from the URL (e.g., `https://redhat.atlassian.net/browse/RHDHPLAN-385` → `RHDHPLAN-385`)

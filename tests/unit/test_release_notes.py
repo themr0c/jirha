@@ -5,9 +5,11 @@ from jirha.ops.release_notes import (
     _check_violations,
     _check_warnings,
     _classify_rn_bucket,
+    _count_actions,
     _filter_versions,
     _format_item_line,
     _format_section_header,
+    _format_summary_table,
     _map_to_section,
     _todo_text,
 )
@@ -255,3 +257,127 @@ class TestFilterVersions:
         versions = [V("1.9.0")]
         result = _filter_versions(versions, "1.10")
         assert result == []
+
+
+def _item(bucket, todo):
+    return {"bucket": bucket, "todo": todo, "key": "X-1", "source_keys": []}
+
+
+class TestCountActions:
+    def test_classify(self):
+        items = [_item("empty", "TODO: Set RN Type and RN Text")]
+        assert _count_actions(items) == {"classify": 1, "author": 0, "review": 0, "done": 0}
+
+    def test_author(self):
+        items = [_item("empty", "TODO: Author release notes")]
+        assert _count_actions(items) == {"classify": 0, "author": 1, "review": 0, "done": 0}
+
+    def test_review_proposed(self):
+        items = [_item("proposed", "TODO: Review draft proposed by SME")]
+        assert _count_actions(items) == {"classify": 0, "author": 0, "review": 1, "done": 0}
+
+    def test_review_in_progress(self):
+        items = [_item("in_progress", "TODO: Review RN text submitted by Docs team")]
+        assert _count_actions(items) == {"classify": 0, "author": 0, "review": 1, "done": 0}
+
+    def test_done(self):
+        items = [_item("done", "")]
+        assert _count_actions(items) == {"classify": 0, "author": 0, "review": 0, "done": 1}
+
+    def test_mixed(self):
+        items = [
+            _item("done", ""),
+            _item("done", ""),
+            _item("empty", "TODO: Author release notes"),
+            _item("proposed", "TODO: Review draft proposed by SME"),
+            _item("empty", "TODO: Set RN Type and RN Text"),
+        ]
+        assert _count_actions(items) == {"classify": 1, "author": 1, "review": 1, "done": 2}
+
+
+class TestFormatSummaryTable:
+    def test_all_sections_present(self):
+        table = _format_summary_table({}, [], [])
+        for sec_num in range(1, 8):
+            assert f"{sec_num}." in table
+
+    def test_unclassified_row(self):
+        unclassified = [
+            _item("empty", "TODO: Set RN Type and RN Text"),
+            _item("empty", "TODO: Set RN Type and RN Text"),
+            _item("proposed", "TODO: Review draft proposed by SME"),
+        ]
+        table = _format_summary_table({}, unclassified, [])
+        lines = table.split("\n")
+        uc_line = [ln for ln in lines if ln.startswith("Unclassified")][0]
+        nums = [int(x) for x in uc_line.split() if x.isdigit()]
+        assert nums == [2, 0, 1, 0, 3]
+
+    def test_section_counts(self):
+        sections = {
+            1: {
+                "title": "New features and enhancements",
+                "items": [
+                    _item("done", ""),
+                    _item("done", ""),
+                    _item("empty", "TODO: Author release notes"),
+                ],
+                "status_counts": {"done": 2},
+                "total": 3,
+                "not_closed": 0,
+            }
+        }
+        table = _format_summary_table(sections, [], [])
+        lines = table.split("\n")
+        sec1_line = [ln for ln in lines if "1. New features" in ln][0]
+        nums = [int(x) for x in sec1_line.split() if x.isdigit()]
+        assert nums[0] == 0  # classify
+        assert nums[1] == 1  # author
+        assert nums[2] == 0  # review
+        assert nums[3] == 2  # done
+        assert nums[4] == 3  # total
+
+    def test_total_row_sums(self):
+        sections = {
+            7: {
+                "title": "Fixed issues",
+                "items": [
+                    _item("done", ""),
+                    _item("empty", "TODO: Author release notes"),
+                ],
+                "status_counts": {"done": 1},
+                "total": 2,
+                "not_closed": 0,
+            }
+        }
+        unclassified = [_item("empty", "TODO: Set RN Type and RN Text")]
+        table = _format_summary_table(sections, unclassified, [])
+        lines = table.split("\n")
+        total_line = [ln for ln in lines if ln.startswith("TOTAL")][0]
+        nums = [int(x) for x in total_line.split() if x.isdigit()]
+        assert nums == [1, 1, 0, 1, 3]
+
+    def test_warnings_note(self):
+        warnings = [{"key": "X-1", "message": "test"}]
+        table = _format_summary_table({}, [], warnings)
+        assert "1 security-level warnings" in table
+
+    def test_no_warnings_no_note(self):
+        table = _format_summary_table({}, [], [])
+        assert "security-level" not in table
+
+    def test_all_done(self):
+        sections = {
+            1: {
+                "title": "New features and enhancements",
+                "items": [_item("done", ""), _item("done", "")],
+                "status_counts": {"done": 2},
+                "total": 2,
+                "not_closed": 0,
+            }
+        }
+        table = _format_summary_table(sections, [], [])
+        lines = table.split("\n")
+        total_line = [ln for ln in lines if ln.startswith("TOTAL")][0]
+        nums = [int(x) for x in total_line.split() if x.isdigit()]
+        assert nums == [0, 0, 0, 2, 2]

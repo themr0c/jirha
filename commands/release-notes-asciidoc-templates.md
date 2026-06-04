@@ -2,6 +2,16 @@
 
 Templates and examples for each release note type in the description list format used by Renoa and the RHDH release notes.
 
+## RHDH link format
+
+For "For more information" links in RHDH release notes, use AsciiDoc attributes from `artifacts/attributes.adoc` — never hardcoded URLs. Format:
+
+```
+For more information, see {book-link}#anchor[Section title].
+```
+
+Never append `in _{book-title}_` after the link. If no matching `*-book-link` attribute exists, omit the link. Use `{product}`, `{product-short}`, `{product-very-short}` for the product name — never `{ProductShortName}`.
+
 ## New feature or enhancement
 
 ```

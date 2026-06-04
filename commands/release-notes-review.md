@@ -29,6 +29,8 @@ Check:
 - Tenses: present default, past for "before this update", no future tense, no "should"/"might"/"now"
 - Apply the type-specific template and guidelines from the type file
 - AsciiDoc format: description list heading (`Heading::`) + open block (`--`)
+- Links: must use `{book-link}` attributes from the RHDH docs `artifacts/attributes.adoc`, never hardcoded URLs. Format: `For more information, see {book-link}#anchor[Section title].` — never append `in _{book-title}_` after the link. If no matching attribute exists, omit the link.
+- Product attributes: must use `{product}`, `{product-short}`, `{product-very-short}` — never `{ProductShortName}` or other non-standard attributes
 
 **Step 4:** Present findings to the user.
 If the text needs changes, produce a revised version in the Renoa AsciiDoc format. If acceptable, say so.

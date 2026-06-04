@@ -230,8 +230,8 @@ def _build_fields(args, jira):
         ("pr", CF_GIT_PR, lambda v: (v, f"PR: {v}")),
         ("priority", "priority", lambda v: ({"name": v}, f"Priority: {v}")),
         ("assignee", "assignee", lambda v: ({"name": v}, f"Assignee: {v}")),
-        ("rn_status", CF_RN_STATUS, lambda v: (v, f"RN Status: {v}")),
-        ("rn_type", CF_RN_TYPE, lambda v: (v, f"RN Type: {v}")),
+        ("rn_status", CF_RN_STATUS, lambda v: ({"value": v}, f"RN Status: {v}")),
+        ("rn_type", CF_RN_TYPE, lambda v: ({"value": v}, f"RN Type: {v}")),
         ("rn_text", CF_RN_TEXT, lambda v: (v, f"RN Text: {v}")),
     ]
     for attr, field_key, transform in simple:

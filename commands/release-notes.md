@@ -170,18 +170,20 @@ CONFIDENCE: high|medium|low
 NOTES: <any concerns or ambiguities, or "none">
 ```
 
-### Agent prompt for Tier 3 items (classify + author)
+### Agent prompt for Tier 3 items (classify only)
+
+Tier 3 agents **only classify** — they do NOT draft text. Once the user approves the classification, the item is promoted to Tier 2 for authoring.
 
 For each Tier 3 item, use this prompt (substitute KEY):
 
 ```
-You are drafting a release note for Jira issue <KEY>.
-This item has no Release Note Type set yet — you must classify it first.
+You are classifying Jira issue <KEY> for release notes.
+This item has no Release Note Type set yet.
 
 Step 1: Fetch issue context.
 Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
 
-Step 2: Classify — propose an RN Type from this list:
+Step 2: Propose an RN Type from this list:
 Feature, Enhancement, Technology Preview, Developer Preview,
 Deprecated Functionality, Removed Functionality, Known Issue, Bug Fix,
 Release Note Not Required.
@@ -197,31 +199,13 @@ Classification heuristics:
 - If the issue is purely internal tooling, testing, or infrastructure with no user-facing impact → Release Note Not Required
 - Default for RHDHPLAN → Enhancement
 
-Step 3: If you classified as "Release Note Not Required", skip Steps 4-5 and go directly to Step 6.
-
-Step 4: Read the style guide and AsciiDoc templates.
-Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
-Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
-
-Step 5: Draft the release note text using the correct template for the classified type.
-Use the Renoa AsciiDoc format (description list heading + open block body) from the templates reference.
-Self-review against the style guide rules.
-
-Step 6: Return EXACTLY this format (no extra text before or after):
+Step 3: Return EXACTLY this format (no extra text before or after):
 KEY: <KEY>
-ACTION: classify_and_author
+ACTION: classify
 PROPOSED_RN_TYPE: <classified type>
-PROPOSED_RN_TEXT: |
-  <heading>::
-  +
-  --
-  <body text>
-  --
 CONFIDENCE: high|medium|low
-NOTES: <classification reasoning + any concerns>
+NOTES: <classification reasoning>
 ```
-
-If you classified as "Release Note Not Required", use `N/A` for PROPOSED_RN_TEXT.
 
 ### Replacing PLUGIN_ROOT in prompts
 
@@ -237,9 +221,11 @@ Do NOT present results in FIFO order. Wait until you have enough results to pres
 
 For each completed result:
 
+### Tier 1 (review) and Tier 2 (author) items
+
 **1. Present the draft:**
 
-For **author** and **classify_and_author** items:
+For **author** items:
 ```
 ### <KEY> — <summary from checklist>
 **Type:** <PROPOSED_RN_TYPE>  |  **Confidence:** <CONFIDENCE>
@@ -260,16 +246,9 @@ For **review** items, also show what changed:
 <If NOTES is not "none": display notes>
 ```
 
-For **Release Note Not Required** items:
-```
-### <KEY> — <summary from checklist>
-**Proposed:** Release Note Not Required
-**Reason:** <NOTES>
-```
-
 **2. Ask the user** what to do using AskUserQuestion:
 
-For regular items, offer: **Accept**, **Edit**, **Skip**, **Stop**
+Offer: **Accept**, **Edit**, **Skip**, **Stop**
 
 - **Accept**: Run the update command:
   ```bash
@@ -283,17 +262,51 @@ For regular items, offer: **Accept**, **Edit**, **Skip**, **Stop**
 
 - **Stop**: End the review loop immediately. Report the final summary.
 
-For "Release Note Not Required" items, offer: **Accept** (sets RN Type to "Release Note Not Required"), **Skip**, **Stop**.
-When accepting "Not Required":
+### Tier 3 (classify) items
+
+**1. Present the classification:**
+
+```
+### <KEY> — <summary from checklist>
+**Proposed type:** <PROPOSED_RN_TYPE>  |  **Confidence:** <CONFIDENCE>
+**Reasoning:** <NOTES>
+```
+
+For **Release Note Not Required** proposals:
+```
+### <KEY> — <summary from checklist>
+**Proposed:** Release Note Not Required
+**Reasoning:** <NOTES>
+```
+
+**2. Ask the user** what to do using AskUserQuestion:
+
+Offer: **Accept type**, **Change type**, **Skip**, **Stop**
+
+- **Accept type**: Set the RN Type in Jira, then **promote the item to Tier 2** — immediately launch a new Agent subagent to author the text (using the Tier 2 agent prompt with the accepted type). Present the authored draft when the agent completes.
+  ```bash
+  ${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-type "<PROPOSED_RN_TYPE>"
+  ```
+
+- **Change type**: Let the user specify the correct type. Then set it in Jira and promote to Tier 2 for authoring (same as Accept).
+
+- **Skip**: Do not update Jira. Move to the next item.
+
+- **Stop**: End the review loop immediately. Report the final summary.
+
+For "Release Note Not Required" acceptances:
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-type "Release Note Not Required" --rn-status "Done"
 ```
+(No promotion to Tier 2 — item is done.)
+
+### After each item
 
 **3. Move to next item** after each action.
 
 **4. Summary** after all items are processed or user says Stop:
 ```
-Done. X accepted, Y skipped, Z remaining.
+Done. X accepted, Y skipped, Z remaining (N promoted to authoring).
 ```
 
 ---

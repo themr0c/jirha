@@ -1,6 +1,13 @@
 """Daily actionable checklist: sprint issues, estimate candidates, backlog."""
 
-from jirha.config import SWIMLANES
+from jirha.api import (
+    _assignee_name,
+    _checklist_items,
+    _fetch_reviewer_prs,
+    _format_pr_checklist,
+    _issue_sp,
+)
+from jirha.config import SERVER, SWIMLANES
 
 
 def _determine_action(status, pr_checklist):
@@ -98,3 +105,87 @@ def _has_actionable_work(swimlane_issues):
             if status not in ("Closed", "Review"):
                 return True
     return False
+
+
+def _format_daily_item(issue, team=False, pr_checklist=None):
+    """Format one issue as a daily checklist entry with numbered action menu."""
+    sp = _issue_sp(issue)
+    sp_str = f"{int(sp)} SP"
+    assignee_str = f" @{_assignee_name(issue)}" if team else ""
+    status = str(issue.fields.status)
+
+    lines = [f"- [ ] {SERVER}/browse/{issue.key} | {sp_str} | {issue.fields.summary}{assignee_str}"]
+
+    if pr_checklist:
+        pr_summary = _format_pr_checklist(pr_checklist)
+        lines.append(f"      {pr_summary}")
+        items = _checklist_items(pr_checklist)
+        for item in items:
+            lines.append(f"        [ ] {item}")
+
+    menu = _build_action_menu(status, pr_checklist, sp)
+    lines.append("      Actions:")
+    for i, (text, is_rec) in enumerate(menu, 1):
+        suffix = " (Recommended)" if is_rec else ""
+        lines.append(f"        {i}. {text}{suffix}")
+
+    return "\n".join(lines)
+
+
+def _print_header(sprint, closed_count, total_count):
+    """Print checklist header with sprint info."""
+    print("# Daily Checklist")
+    if sprint:
+        print(
+            f"{sprint['name']} | {sprint['remaining_days']} remaining / "
+            f"{sprint['total_days']} total days | "
+            f"{closed_count}/{total_count} issues done"
+        )
+    else:
+        print(f"{closed_count}/{total_count} issues done")
+
+
+def _print_sprint_issues(swimlane_issues, pr_checklists, team):
+    """Print Layer 1: sprint issues grouped by swimlane, sorted by actionability."""
+    for name, _ in SWIMLANES:
+        lane_issues = swimlane_issues[name]
+        if not lane_issues:
+            continue
+        sorted_issues = sorted(
+            lane_issues,
+            key=lambda i: _actionability_key(i.key, str(i.fields.status), pr_checklists),
+        )
+        print(f"\n## {name}\n")
+        for issue in sorted_issues:
+            cl = pr_checklists.get(issue.key)
+            print(_format_daily_item(issue, team, pr_checklist=cl))
+            print()
+
+
+def _print_pending_reviews():
+    """Print pending review PRs section."""
+    from datetime import datetime
+
+    prs = _fetch_reviewer_prs()
+    if not prs:
+        return
+    print("\n## Pending Reviews\n")
+    for pr in prs:
+        repo = pr.get("repository", {}).get("nameWithOwner", "")
+        number = pr.get("number", "")
+        title = pr.get("title", "")
+        url = pr.get("url", "")
+        created = pr.get("createdAt", "")
+        age = ""
+        if created:
+            try:
+                dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                days = (datetime.now(dt.tzinfo) - dt).days
+                age = f" (opened {days}d ago)" if days > 0 else ""
+            except (ValueError, TypeError):
+                pass
+        short = f"{repo}#{number}" if repo else url
+        print(f'- [ ] {short} — "{title}"{age}')
+        print(f"      {url}")
+        print("      Actions:")
+        print("        1. Review this PR (Recommended)")

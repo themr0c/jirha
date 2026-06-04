@@ -1,10 +1,11 @@
 from unittest.mock import MagicMock
 
-from jirha.config import SWIMLANES
+from jirha.config import CF_GIT_PR, CF_STORY_POINTS, SWIMLANES
 from jirha.ops.daily import (
     _actionability_key,
     _build_action_menu,
     _determine_action,
+    _format_daily_item,
     _has_actionable_work,
 )
 
@@ -205,3 +206,64 @@ class TestHasActionableWork:
         lanes["Customer"] = [_mock_issue("Review")]
         lanes["Other"] = [_mock_issue("New")]
         assert _has_actionable_work(lanes) is True
+
+
+def _make_daily_issue(
+    key,
+    status,
+    sp=0,
+    summary="Test",
+    labels=None,
+    assignee=None,
+    priority="Major",
+):
+    issue = MagicMock()
+    issue.key = key
+    issue.fields.status = MagicMock(__str__=lambda self, s=status: s)
+    issue.fields.summary = summary
+    issue.fields.labels = labels or []
+    issue.fields.priority = priority
+    setattr(issue.fields, CF_STORY_POINTS, sp)
+    setattr(issue.fields, CF_GIT_PR, None)
+    if assignee:
+        issue.fields.assignee = MagicMock()
+        issue.fields.assignee.displayName = assignee
+    else:
+        issue.fields.assignee = None
+    return issue
+
+
+S = "https://redhat.atlassian.net"
+
+
+class TestFormatDailyItem:
+    def test_basic_issue_no_pr(self):
+        issue = _make_daily_issue("RHIDP-100", "New", sp=3, summary="Fix docs")
+        result = _format_daily_item(issue, team=False, pr_checklist=None)
+        assert f"- [ ] {S}/browse/RHIDP-100 | 3 SP | Fix docs" in result
+        assert "Actions:" in result
+        assert "(Recommended)" in result
+        assert "Start working on this issue (Recommended)" in result
+        assert "Update Jira" in result
+
+    def test_issue_with_pr_checklist(self):
+        issue = _make_daily_issue("RHIDP-101", "Review", sp=5, summary="Auth update")
+        cl = _cl(unresolved_comments=2, failing_checks=["tide"])
+        result = _format_daily_item(issue, team=False, pr_checklist=cl)
+        assert "Actions:" in result
+        assert "PR:" in result
+        assert "[ ] 2 unresolved review comments" in result
+        assert "[ ] Failing: tide" in result
+        assert "(Recommended)" in result
+
+    def test_team_mode_shows_assignee(self):
+        issue = _make_daily_issue("RHIDP-102", "New", sp=1, assignee="Jane Doe")
+        result = _format_daily_item(issue, team=True, pr_checklist=None)
+        assert "@Jane Doe" in result
+
+    def test_actions_are_numbered(self):
+        issue = _make_daily_issue("RHIDP-103", "In Progress", sp=5, summary="Test")
+        cl = _cl(failing_checks=["tide"])
+        result = _format_daily_item(issue, team=False, pr_checklist=cl)
+        assert "1." in result
+        assert "2." in result

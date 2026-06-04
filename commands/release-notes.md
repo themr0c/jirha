@@ -20,4 +20,4 @@ For AI-assisted authoring:
 - **Single item:** `/jirha:release-notes-draft KEY`, `/jirha:release-notes-review KEY`, or `/jirha:release-notes-classify KEY`
 - **Batch authoring:** say **draft all** to launch parallel agents for all actionable items"
 
-**If the user says "draft all"** (or similar like "author all", "batch draft"), invoke `/jirha:release-notes-batch` with the same version argument.
+**If the user says "draft all"** (or similar like "author all", "batch draft"), invoke `/jirha:release-notes-batch` with the same arguments (version and any flags like `--all`).

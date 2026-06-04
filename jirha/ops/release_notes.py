@@ -215,6 +215,13 @@ def _extract_rn_fields(issue):
     }
 
 
+def _fetch_parent(jira, key, cache):
+    """Fetch and cache a parent issue's RN fields."""
+    if key not in cache:
+        cache[key] = _extract_rn_fields(jira.issue(key, fields=_RN_FIELDS))
+    return cache[key]
+
+
 def _resolve_and_group(jira, raw_items, minor_version):
     """Resolve RHIDP parents, deduplicate, classify, validate, and group by section.
 
@@ -222,19 +229,18 @@ def _resolve_and_group(jira, raw_items, minor_version):
     """
     rhidp_issues = []
     rn_targets = {}  # key -> {item, source_keys}
+    parent_cache = {}
 
     for item in raw_items:
         if item["project"] == "RHIDP":
             parent_key = item["parent_key"]
             resolved_key = None
             if parent_key:
-                parent = jira.issue(parent_key, fields=_RN_FIELDS)
-                parent_item = _extract_rn_fields(parent)
-                parent_item["from_query"] = item["from_query"]
+                parent_item = _fetch_parent(jira, parent_key, parent_cache)
+                parent_item.setdefault("from_query", item["from_query"])
                 if parent_item["project"] == "RHIDP" and parent_item["parent_key"]:
-                    grandparent = jira.issue(parent_item["parent_key"], fields=_RN_FIELDS)
-                    grandparent_item = _extract_rn_fields(grandparent)
-                    grandparent_item["from_query"] = item["from_query"]
+                    grandparent_item = _fetch_parent(jira, parent_item["parent_key"], parent_cache)
+                    grandparent_item.setdefault("from_query", item["from_query"])
                     if grandparent_item["project"] not in _RN_PROJECTS:
                         continue
                     resolved_key = grandparent_item["key"]
@@ -341,8 +347,9 @@ def cmd_release_notes(args):
     jql1 = _build_fix_version_jql(versions, mine_only)
     jql2 = _build_known_issues_jql(versions, mine_only)
 
-    issues1 = jira.search_issues(jql1, maxResults=args.max, fields=_RN_FIELDS)
-    issues2 = jira.search_issues(jql2, maxResults=args.max, fields=_RN_FIELDS)
+    max_results = args.max if args.max else False
+    issues1 = jira.search_issues(jql1, maxResults=max_results, fields=_RN_FIELDS)
+    issues2 = jira.search_issues(jql2, maxResults=max_results, fields=_RN_FIELDS)
 
     seen_keys = set()
     raw_items = []
@@ -412,7 +419,8 @@ def cmd_release_notes(args):
                 by_version = {}
                 for item in sec["items"]:
                     for fv in item.get("fix_versions", []):
-                        by_version.setdefault(fv, []).append(item)
+                        if fv in versions:
+                            by_version.setdefault(fv, []).append(item)
                 sub_idx = 1
                 for fv in sorted(by_version.keys()):
                     sub_items = by_version[fv]

@@ -156,7 +156,7 @@ def main():
     p = sub.add_parser("release-notes", help="Release notes checklist for a version")
     p.add_argument("version", help="Minor version (e.g., 1.10)")
     p.add_argument("--all", action="store_true", help="Show all issues, not just mine")
-    p.add_argument("--max", type=int, default=100)
+    p.add_argument("--max", type=int, default=0, help="Limit results (0 = all, default: all)")
     p.set_defaults(func=cmd_release_notes)
 
     args = parser.parse_args()

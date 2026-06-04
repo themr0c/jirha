@@ -35,5 +35,5 @@ If the text needs changes, produce a revised version in the Renoa AsciiDoc forma
 
 **Step 5:** If the user approves the revised text, push it:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-text "<approved text>" --rn-type "<type>" --rn-status "Proposed"
+${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-text "<approved text>" --rn-type "<type>" --rn-status "Done"
 ```

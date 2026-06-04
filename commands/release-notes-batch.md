@@ -63,35 +63,14 @@ Replace `<PLUGIN_ROOT>` in all prompts with the actual value of `${CLAUDE_PLUGIN
 ### Agent prompt for Tier 1 items (review)
 
 ```
-You are reviewing an existing release note draft for Jira issue <KEY>.
-This item is in the "<SECTION_TITLE>" section.
+Read and follow the skill at <PLUGIN_ROOT>/commands/release-notes-review.md for issue <KEY>.
 
-Step 1: Fetch issue context (includes RN fields).
-Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
-
-Step 2: Read the style guide, the type-specific reference, and the AsciiDoc templates.
-Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
-Run: cat <PLUGIN_ROOT>/commands/release-notes-type-mapping.md
-Run: cat <PLUGIN_ROOT>/commands/<TYPE_FILE>
-Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
-
-Step 3: Review the existing RN text against the style guide and type-specific reference.
-Check: heading format (sentence case, <120 chars, no gerund start, mentions component),
-tenses (present default, past for "before this update"), no future tense or "should"/"might"/"now".
-Apply the type-specific template and guidelines from the type file.
-
-Step 4: If the text needs changes, produce a revised version. If acceptable, keep as-is.
-
-Step 5: Return EXACTLY this format (no extra text before or after):
+Do NOT present to the user or push to Jira. Instead, return EXACTLY this format:
 KEY: <KEY>
 ACTION: review
 PROPOSED_RN_TYPE: <the RN Type>
 PROPOSED_RN_TEXT: |
-  <heading>::
-  +
-  --
-  <body text>
-  --
+  <revised or original text in Renoa AsciiDoc format>
 ORIGINAL_RN_TEXT: |
   <original text as found>
 CHANGES: <bulleted list of changes made, or "none">
@@ -102,36 +81,15 @@ NOTES: <any concerns or ambiguities, or "none">
 ### Agent prompt for Tier 2 items (author)
 
 ```
-You are drafting a release note for Jira issue <KEY>.
+Read and follow the skill at <PLUGIN_ROOT>/commands/release-notes-draft.md for issue <KEY>.
 The Release Note Type is: <RN_TYPE>
 
-Step 1: Fetch issue context.
-Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
-
-Step 2: Read the style guide, the type-specific reference, and the AsciiDoc templates.
-Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
-Run: cat <PLUGIN_ROOT>/commands/release-notes-type-mapping.md
-Run: cat <PLUGIN_ROOT>/commands/<TYPE_FILE>
-Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
-
-Step 3: Draft the release note text using the template and examples from the type file.
-Use the Renoa AsciiDoc format (description list heading + open block body).
-
-Step 4: Self-review against:
-- Heading: sentence case, <120 chars, no gerund, mentions component
-- Tense: present default, no future, no "should"/"might"/"now"
-- Type-specific rules from the style guide
-
-Step 5: Return EXACTLY this format (no extra text before or after):
+Do NOT present to the user or push to Jira. Instead, return EXACTLY this format:
 KEY: <KEY>
 ACTION: author
 PROPOSED_RN_TYPE: <RN_TYPE>
 PROPOSED_RN_TEXT: |
-  <heading>::
-  +
-  --
-  <body text>
-  --
+  <text in Renoa AsciiDoc format>
 CONFIDENCE: high|medium|low
 NOTES: <any concerns or ambiguities, or "none">
 ```
@@ -141,29 +99,9 @@ NOTES: <any concerns or ambiguities, or "none">
 Tier 3 agents **only classify** — they do NOT draft text. Once the user approves the classification, the item is promoted to Tier 2 for authoring.
 
 ```
-You are classifying Jira issue <KEY> for release notes.
-This item has no Release Note Type set yet.
+Read and follow Steps 1-2 of the skill at <PLUGIN_ROOT>/commands/release-notes-classify.md for issue <KEY>.
 
-Step 1: Fetch issue context.
-Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
-
-Step 2: Propose an RN Type from this list:
-Feature, Enhancement, Technology Preview, Developer Preview,
-Deprecated Functionality, Removed Functionality, Known Issue, Bug Fix,
-Release Note Not Required.
-
-Classification heuristics:
-- RHDHBUGS project + Bug issue type → Bug Fix
-- Summary or description contains "deprecat" → Deprecated Functionality
-- Summary or description contains "remove" or "drop" (in context of feature removal) → Removed Functionality
-- Summary contains "tech preview" or "technology preview" → Technology Preview
-- Summary contains "dev preview" or "developer preview" → Developer Preview
-- RHDHPLAN project + Feature issue type → Feature
-- RHDHPLAN project + Enhancement issue type → Enhancement
-- If the issue is purely internal tooling, testing, or infrastructure with no user-facing impact → Release Note Not Required
-- Default for RHDHPLAN → Enhancement
-
-Step 3: Return EXACTLY this format (no extra text before or after):
+Do NOT present to the user or update Jira. Instead, return EXACTLY this format:
 KEY: <KEY>
 ACTION: classify
 PROPOSED_RN_TYPE: <classified type>

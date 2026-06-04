@@ -97,17 +97,24 @@ This item is in the "<SECTION_TITLE>" section.
 Step 1: Fetch issue context (includes RN fields: Release Note Type, Release Note Text, Release Note Status).
 Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
 
-Step 2: Read the style guide and AsciiDoc templates.
+Step 2: Read the style guide, the type-specific reference for "<SECTION_TITLE>", and the AsciiDoc templates.
 Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
+Run: cat <PLUGIN_ROOT>/commands/<TYPE_FILE>
 Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
 
-Step 3: Review the existing RN text against the style guide for this type.
+Type file mapping:
+- New features / Enhancement / Feature → release-notes-type-features.md
+- Rebase → release-notes-type-rebases.md
+- Technology Preview → release-notes-type-tech-preview.md
+- Deprecated Functionality → release-notes-type-deprecated.md
+- Removed Functionality → release-notes-type-removed.md
+- Known Issue → release-notes-type-known-issues.md
+- Bug Fix → release-notes-type-fixed-issues.md
+
+Step 3: Review the existing RN text against the style guide and type-specific reference.
 Check: heading format (sentence case, <120 chars, no gerund start, mentions component),
 tenses (present default, past for "before this update"), no future tense or "should"/"might"/"now".
-For Bug Fix: verify CCFR pattern (Before this update / As a consequence / With this release / As a result).
-For Known Issue: verify Cause-Consequence-Workaround-Result structure.
-For Deprecated/Removed: verify feature + purpose + alternative.
-For Technology Preview: heading ends "(Technology Preview)", body mentions it.
+Apply the type-specific template and guidelines from the type file.
 
 Step 4: If the text needs changes, produce a revised version. If acceptable, keep as-is.
 
@@ -139,18 +146,23 @@ The Release Note Type is: <RN_TYPE>
 Step 1: Fetch issue context.
 Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
 
-Step 2: Read the style guide and AsciiDoc templates.
+Step 2: Read the style guide, the type-specific reference for "<RN_TYPE>", and the AsciiDoc templates.
 Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
+Run: cat <PLUGIN_ROOT>/commands/<TYPE_FILE>
 Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
 
-Step 3: Draft the release note text using the template for "<RN_TYPE>".
-Use the Renoa AsciiDoc format (description list heading + open block body):
-- Feature/Enhancement: "<Heading>::" + "<Feature>. <Reason>. As a result, <result>."
-- Technology Preview: "<Feature> (Technology Preview)::" + text mentioning Technology Preview
-- Deprecated Functionality: "<feature> is deprecated::" + purpose + alternative
-- Removed Functionality: "<feature> is removed::" + purpose + alternative
-- Known Issue: "<Heading>::" + "<Cause>. As a consequence, <consequence>." + workaround
-- Bug Fix: "<Heading>::" + "Before this update, <cause>. As a consequence, <consequence>. With this release, <fix>. As a result, <result>."
+Type file mapping:
+- Enhancement / Feature → release-notes-type-features.md
+- Rebase → release-notes-type-rebases.md
+- Technology Preview → release-notes-type-tech-preview.md
+- Deprecated Functionality → release-notes-type-deprecated.md
+- Removed Functionality → release-notes-type-removed.md
+- Known Issue → release-notes-type-known-issues.md
+- Bug Fix → release-notes-type-fixed-issues.md
+
+Step 3: Draft the release note text using the template and examples from the type file.
+Use the Renoa AsciiDoc format (description list heading + open block body) from the AsciiDoc templates reference.
+
 Step 4: Self-review against:
 - Heading: sentence case, <120 chars, no gerund, mentions component
 - Tense: present default, no future, no "should"/"might"/"now"
@@ -320,13 +332,23 @@ If the user asks for help drafting release note text for a **specific item** (no
 ${CLAUDE_PLUGIN_ROOT}/scripts/jirha show <KEY>
 ```
 
-2. Read the bundled style guide and AsciiDoc templates:
+2. Read the bundled style guide, the type-specific reference for the RN Type, and the AsciiDoc templates:
 ```bash
 cat ${CLAUDE_PLUGIN_ROOT}/commands/release-notes-style-guide.md
+cat ${CLAUDE_PLUGIN_ROOT}/commands/<TYPE_FILE>
 cat ${CLAUDE_PLUGIN_ROOT}/commands/release-notes-asciidoc-templates.md
 ```
 
-3. Draft release note text following the style guide. Use the **Renoa AsciiDoc format** (description list + open block) from the AsciiDoc templates reference. Match the template to the RN Type.
+Type file mapping:
+- Enhancement / Feature → `release-notes-type-features.md`
+- Rebase → `release-notes-type-rebases.md`
+- Technology Preview → `release-notes-type-tech-preview.md`
+- Deprecated Functionality → `release-notes-type-deprecated.md`
+- Removed Functionality → `release-notes-type-removed.md`
+- Known Issue → `release-notes-type-known-issues.md`
+- Bug Fix → `release-notes-type-fixed-issues.md`
+
+3. Draft release note text following the style guide and type-specific reference. Use the **Renoa AsciiDoc format** (description list + open block) from the AsciiDoc templates reference.
 
 4. Present the draft to the user for approval. Do not push without explicit approval.
 

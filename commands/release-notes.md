@@ -94,17 +94,14 @@ For each Tier 1 item, use this prompt (substitute KEY and SECTION_TITLE):
 You are reviewing an existing release note draft for Jira issue <KEY>.
 This item is in the "<SECTION_TITLE>" section.
 
-Step 1: Fetch issue context.
+Step 1: Fetch issue context (includes RN fields: Release Note Type, Release Note Text, Release Note Status).
 Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
 
-Step 2: Fetch current RN fields.
-Run: <PLUGIN_ROOT>/scripts/jirha show <KEY>
-Extract the existing Release Note Type and Release Note Text from the output.
-
-Step 3: Read the style guide.
+Step 2: Read the style guide and AsciiDoc templates.
 Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
+Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
 
-Step 4: Review the existing RN text against the style guide for this type.
+Step 3: Review the existing RN text against the style guide for this type.
 Check: heading format (sentence case, <120 chars, no gerund start, mentions component),
 tenses (present default, past for "before this update"), no future tense or "should"/"might"/"now".
 For Bug Fix: verify CCFR pattern (Before this update / As a consequence / With this release / As a result).
@@ -112,9 +109,9 @@ For Known Issue: verify Cause-Consequence-Workaround-Result structure + Jira ref
 For Deprecated/Removed: verify feature + purpose + alternative.
 For Technology Preview: heading ends "(Technology Preview)", body mentions it.
 
-Step 5: If the text needs changes, produce a revised version. If acceptable, keep as-is.
+Step 4: If the text needs changes, produce a revised version. If acceptable, keep as-is.
 
-Step 6: Return EXACTLY this format (no extra text before or after):
+Step 5: Return EXACTLY this format (no extra text before or after):
 KEY: <KEY>
 ACTION: review
 PROPOSED_RN_TYPE: <the RN Type>
@@ -139,8 +136,9 @@ The Release Note Type is: <RN_TYPE>
 Step 1: Fetch issue context.
 Run: <PLUGIN_ROOT>/scripts/jirha context <KEY>
 
-Step 2: Read the style guide.
+Step 2: Read the style guide and AsciiDoc templates.
 Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
+Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
 
 Step 3: Draft the release note text using the template for "<RN_TYPE>".
 Use the Renoa AsciiDoc format (description list heading + open block body):
@@ -196,11 +194,12 @@ Classification heuristics:
 
 Step 3: If you classified as "Release Note Not Required", skip Steps 4-5 and go directly to Step 6.
 
-Step 4: Read the style guide.
+Step 4: Read the style guide and AsciiDoc templates.
 Run: cat <PLUGIN_ROOT>/commands/release-notes-style-guide.md
+Run: cat <PLUGIN_ROOT>/commands/release-notes-asciidoc-templates.md
 
 Step 5: Draft the release note text using the correct template for the classified type.
-Use the Renoa AsciiDoc format (description list heading + open block body).
+Use the Renoa AsciiDoc format (description list heading + open block body) from the templates reference.
 Self-review against the style guide rules.
 
 Step 6: Return EXACTLY this format (no extra text before or after):
@@ -300,18 +299,13 @@ If the user asks for help drafting release note text for a **specific item** (no
 ${CLAUDE_PLUGIN_ROOT}/scripts/jirha show <KEY>
 ```
 
-2. Read the bundled style guide reference:
+2. Read the bundled style guide and AsciiDoc templates:
 ```bash
 cat ${CLAUDE_PLUGIN_ROOT}/commands/release-notes-style-guide.md
+cat ${CLAUDE_PLUGIN_ROOT}/commands/release-notes-asciidoc-templates.md
 ```
 
-3. Draft release note text following the style guide. Use the **Renoa AsciiDoc format** (description list + open block) from the "AsciiDoc formatting" section. Determine the correct template based on the RN Type:
-   - **Feature/Enhancement:** `<Heading>::` + `<Feature>. <Reason>. As a result, <result>.`
-   - **Technology Preview:** `<Feature> (Technology Preview)::` + text, mention TP again in body
-   - **Deprecated:** `<feature> is deprecated::` + purpose, alternative
-   - **Removed:** `<feature> is removed::` + purpose, alternative
-   - **Known Issue:** `<Heading>::` + `<Cause>. As a consequence, <consequence>.` + workaround
-   - **Bug Fix:** `<Heading>::` + `Before this update, <cause>. As a consequence, <consequence>. With this release, <fix>. As a result, <result>.`
+3. Draft release note text following the style guide. Use the **Renoa AsciiDoc format** (description list + open block) from the AsciiDoc templates reference. Match the template to the RN Type.
 
 4. Present the draft to the user for approval. Do not push without explicit approval.
 

@@ -116,8 +116,13 @@ KEY: <KEY>
 ACTION: review
 PROPOSED_RN_TYPE: <the RN Type>
 PROPOSED_RN_TEXT: |
-  <revised or original heading>::
-  <revised or original body text>
+  <heading>::
+  +
+  --
+  <body text>
+
+  link:https://issues.redhat.com/browse/<KEY>[<KEY>]
+  --
 ORIGINAL_RN_TEXT: |
   <original text as found>
 CHANGES: <bulleted list of changes made, or "none">
@@ -160,7 +165,12 @@ ACTION: author
 PROPOSED_RN_TYPE: <RN_TYPE>
 PROPOSED_RN_TEXT: |
   <heading>::
+  +
+  --
   <body text>
+
+  link:https://issues.redhat.com/browse/<KEY>[<KEY>]
+  --
 CONFIDENCE: high|medium|low
 NOTES: <any concerns or ambiguities, or "none">
 ```
@@ -208,7 +218,12 @@ ACTION: classify_and_author
 PROPOSED_RN_TYPE: <classified type>
 PROPOSED_RN_TEXT: |
   <heading>::
+  +
+  --
   <body text>
+
+  link:https://issues.redhat.com/browse/<KEY>[<KEY>]
+  --
 CONFIDENCE: high|medium|low
 NOTES: <classification reasoning + any concerns>
 ```

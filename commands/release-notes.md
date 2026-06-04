@@ -105,7 +105,7 @@ Step 3: Review the existing RN text against the style guide for this type.
 Check: heading format (sentence case, <120 chars, no gerund start, mentions component),
 tenses (present default, past for "before this update"), no future tense or "should"/"might"/"now".
 For Bug Fix: verify CCFR pattern (Before this update / As a consequence / With this release / As a result).
-For Known Issue: verify Cause-Consequence-Workaround-Result structure + Jira reference.
+For Known Issue: verify Cause-Consequence-Workaround-Result structure.
 For Deprecated/Removed: verify feature + purpose + alternative.
 For Technology Preview: heading ends "(Technology Preview)", body mentions it.
 
@@ -120,8 +120,6 @@ PROPOSED_RN_TEXT: |
   +
   --
   <body text>
-
-  link:https://issues.redhat.com/browse/<KEY>[<KEY>]
   --
 ORIGINAL_RN_TEXT: |
   <original text as found>
@@ -151,9 +149,8 @@ Use the Renoa AsciiDoc format (description list heading + open block body):
 - Technology Preview: "<Feature> (Technology Preview)::" + text mentioning Technology Preview
 - Deprecated Functionality: "<feature> is deprecated::" + purpose + alternative
 - Removed Functionality: "<feature> is removed::" + purpose + alternative
-- Known Issue: "<Heading>::" + "<Cause>. As a consequence, <consequence>." + workaround + Jira reference
-- Bug Fix: "<Heading>::" + "Before this update, <cause>. As a consequence, <consequence>. With this release, <fix>. As a result, <result>." + Jira reference
-
+- Known Issue: "<Heading>::" + "<Cause>. As a consequence, <consequence>." + workaround
+- Bug Fix: "<Heading>::" + "Before this update, <cause>. As a consequence, <consequence>. With this release, <fix>. As a result, <result>."
 Step 4: Self-review against:
 - Heading: sentence case, <120 chars, no gerund, mentions component
 - Tense: present default, no future, no "should"/"might"/"now"
@@ -168,8 +165,6 @@ PROPOSED_RN_TEXT: |
   +
   --
   <body text>
-
-  link:https://issues.redhat.com/browse/<KEY>[<KEY>]
   --
 CONFIDENCE: high|medium|low
 NOTES: <any concerns or ambiguities, or "none">
@@ -221,8 +216,6 @@ PROPOSED_RN_TEXT: |
   +
   --
   <body text>
-
-  link:https://issues.redhat.com/browse/<KEY>[<KEY>]
   --
 CONFIDENCE: high|medium|low
 NOTES: <classification reasoning + any concerns>

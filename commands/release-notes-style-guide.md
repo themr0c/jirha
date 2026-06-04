@@ -1,146 +1,500 @@
-# Red Hat SSG — Release Notes Style Guide
+### Release notes
 
-Bundled reference from the [Red Hat Supplementary Style Guide](https://redhat-documentation.github.io/supplementary-style-guide/#release-notes). Use this when drafting or reviewing release note text.
+A release note explains specific product behavior, capability, or problem relevant to a product version. Release notes for a particular product version are collected in a document that is published when the new version is released.
 
-## Core principles
+#### Style advice for release note texts
 
-- Focus on the impact on the user; omit overly technical details.
-- Write easily readable text. Avoid infinitive statements common in changelogs.
-- Define unfamiliar terms on first mention. Omit definitions in later occurrences.
-- Do not start a sentence with a lowercase word.
-- Keep admonitions to a minimum. Do not begin a release note with an admonition.
+The normal stylistic guidelines for documentation from the _IBM Style_ guide and the _Red Hat supplementary style guide for product documentation_ apply also to release note texts, particularly the following:
 
-## Tenses
+Be clear and concise:
 
-Write from the perspective of just after the release (present tense for current state, past tense for previous behavior).
+* Focus on the impact on the user, and omit any overly technical details.
+* Avoid complicated syntax, such as passive voice and modal verbs, and ambiguous language. For example, replace "Should XY happen" with "If XY happens".
+* Write easily readable text. Avoid using infinitive statements that are common in merge requests and changelogs, for example, "Remove deprecated support macros".
 
-- Use **simple present tense** as much as possible.
-- Use **simple past tense** for the previous situation before the update.
-- Do **not** use future tenses, "should", "might", or "now".
-- Follow the **CCFR** (Cause-Consequence-Fix-Result) tense logic for bug fixes.
+Define unfamiliar terms:
 
-## Headings
+* When you first mention a utility, package, command, or similar item outside of a heading, define it. Do not assume that the customer is familiar with it.
+* Omit the definition in later occurrences. If the context is ambiguous, for example, when the release note text mentions both an `example` package and an `example` service, you can repeat the definition to add clarity.
+* Avoid definitions in headings, but you can use them to disambiguate different meanings of the same name.
+* Expand abbreviations in descriptions. Do not expand abbreviations in headings. For more information, see "Abbreviations" in the _IBM Style_ guide.
 
-- Summarize the release note in an informative, specific heading.
-- Sentence-style capitalization, not title case. No period at the end.
-- Keep under 120 characters.
-- Do not start with a gerund. Do not expand abbreviations in headings.
-- Mention the component whenever it might not be obvious.
+Use correct capitalization:
 
-## Release note types and templates
+* Do not start a sentence with a word in lowercase. You can repeat a definition to avoid starting a sentence with a lowercase name. For more information, see "Capitalization" in the _IBM Style_ guide.
 
-### 1. New features and enhancements
+Keep admonitions to a minimum:
 
-Template: `<Heading>::` `<Feature/enhancement>. <Reason>. As a result, <result>.`
+* Avoid placing multiple admonitions in a single note.
+* Do not begin a release note with an admonition.
+* For more information, see [Admonitions](#admonitions).
 
-- Describe why the feature benefits the customer.
-- Add a link to product documentation if it exists.
-- When a Technology Preview moves to full support, state this clearly.
+#### Tenses in release notes
 
-### 2. Technology Preview features
+Write the release notes from the perspective of just after the release, which is when most of the customers read release notes. The state before the update is in the past and the state after the update is in the present.
 
-Template: `<Feature> (Technology Preview)::` `<Release note text>.`
+* Use the _simple present tense_ as much as possible.
+* Do not use _future tenses_ (or "should" or "might") to describe the state after the update.
+* Use the _simple past tense_ to describe the previous situation before the current update.
+* Follow the CCFR (Cause-Consequence-Fix-Result) tense logic in bug fixes.
+* Do not use "now" to refer to the state after the update. For more information, see the [now](#now-adverb) glossary entry.
 
-- Always capitalize "Technology Preview" (never "Tech" or "Technical Preview").
-- Never use "supported as a Technology Preview". Use: available, provide, capability, functionality.
-- End headings with "(Technology Preview)".
-- Repeat the TP release note in all subsequent releases until it moves to full support or is removed.
+#### Headings for release notes
 
-### 3. Deprecated features
+Introduce each release note with a heading that summarizes the release note. This practice helps customers to quickly determine if the release note is relevant to them.
 
-Template: `<feature> is deprecated::` `The <feature>, which <purpose>, is deprecated and might be removed in a future major release. You can <purpose> by using <alternative> instead.`
+* The heading can, but does not need to be, a full sentence. Do not use a period at the end of the heading.
+* Use _sentence-style capitalization_, not _title case_. If necessary, headings can start with a lowercase letter in the case of a lowercase component name. For example: "```nvme-cli``` and `cryptsetup` are available for Opal automation on NVMe SEDs".
+* Write headings that are informative and specific without being overly long or too short. Adhere to the following guidelines:
+  * Keep the heading under 120 characters.
+  * Follow the specifics for the release notes type.
+  * Mention the component in a heading whenever it might not be obvious.
+  * Be specific; do not over-generalize headings. For example, "Program no longer crashes" is too generic.
+* Do not expand abbreviations in headings. If you use an abbreviation in a heading, expand it on the first mention in the text below.
+* Avoid definitions in headings unless necessary for clarity. For example, use definitions to disambiguate different meanings of the same name: "The `journald` system role can tune the performance of the `journald` service".
+* Do not start the heading with a gerund. Use gerunds only for procedural content.
 
-- Describe the feature and write the proposed alternative.
-- Do not use "Recommended". Do not predict future statuses.
+#### References to Jira in release notes
 
-### 4. Removed features
+For customer information, include references to Jira tickets on all _Known issues_  and _Fixed issues_. Some products provide ticket references for all release note types. Place the reference on the line directly after the entry, not inside parenthesis or brackets. See examples later in this guidance.
 
-Template: `<feature> is removed::` `The <feature>, which <purpose>, is removed and is no longer supported. You can <purpose> by using <alternative> instead.`
+Inform the user that some Jira tickets might require login credentials. For example, write the following in the introduction of your _Known issues_ or _Fixed issues_:
 
-- Must have been documented as deprecated in a preceding release.
-- If a small part of a feature is removed, treat it as a feature change.
+"Some linked Jira tickets are accessible only with Red Hat credentials."
 
-### 5. Known issues
+If you refer to those tickets without including a link, inform the user. See the following example:
 
-Template: `<Heading>::` `<Cause>. As a consequence, <consequence>.` + `To work around this problem, <workaround>. As a result, <result>.`
+"Some referenced tickets are not linked. This means that the ticket is not accessible without Red Hat credentials."
 
-- Always provide workaround information (or state "No known workaround exists.").
-- Use present tense. Never promise future fixes.
-- Include Jira ticket link for customer reference.
+#### Release note formatting in AsciiDoc
+To avoid nesting headings excessively, treat each release note as a description list item. This format is also compatible with the AEM DITA migration.
 
-### 6. Fixed issues (Bug fixes)
-
-Template: `<Heading>::` `Before this update, <cause>. As a consequence, <consequence>. With this release, <fix>. As a result, <result>.`
-
-- Follow CCFR tense logic:
-  - **Cause:** past tense (what triggered the bug)
-  - **Consequence:** past tense (user experience)
-  - **Fix:** present perfect or present simple (what changed)
-  - **Result:** present tense (what happens now)
-- Use "before this update" instead of "previously".
-
-## Jira references
-
-- Include Jira ticket links on all Known Issues and Fixed Issues.
-- Place the reference on the line directly after the entry.
-- Note: "Some linked Jira tickets are accessible only with Red Hat credentials."
-
-## AsciiDoc formatting (Renoa format)
-
-Each release note is a description list item. Use open block delimiters (`--`) to attach multi-paragraph content. This format is compatible with the AEM DITA migration.
-
-**Basic template** — single paragraph + Jira link:
+**Release note AsciiDoc basic formatting template**
 
 ```
 Release note heading::
-Release note text.
+This is the main release note text.
 +
-link:https://issues.redhat.com/browse/TICKET[TICKET]
+Add another paragraph if necessary.
++
+link:https://issues.redhat.com/browse/TICKET-REFERENCE[TICKET-REFERENCE]
 ```
 
-**Standard template** — multi-paragraph content (use this for most release notes):
+For the DITA conversion to work correctly, the list must remain uninterrupted. Follow these guidelines:
+
+* If the release note needs another paragraph or additional elements, you must attach all lines after the first line to the description with a plus sign on a separate line.
+* If you need to have a list inside a release note text, attach it with a plus sign on a separate line, and add an empty line followed by a plus sign after the list to attach the next paragraph, such as the ticket reference.
+* If you use an open block (`--`) to separate elements within the description, attach it with plus signs before and after.
+
+**Release note AsciiDoc complex formatting template**
 
 ```
 Release note heading::
+This is the main release note text.
 +
---
-Release note text paragraph one.
-
-Additional paragraph if necessary.
-
-link:https://issues.redhat.com/browse/TICKET[TICKET]
---
-```
-
-**Complex template** — content with embedded lists:
-
-```
-Release note heading::
-+
---
-Release note text.
+Add another list:
 
 * List item 1
 * List item 2
 
-link:https://issues.redhat.com/browse/TICKET[TICKET]
---
-```
-
-Guidelines:
-
-- Attach all lines after the first to the description with `+` on a separate line.
-- For multi-paragraph or complex content, wrap in open block delimiters (`--`).
-- The Jira link goes inside the open block, as the last element before `--`.
-
-**Example: fixed issue in Renoa format**
-
-```
-IPsec `ondemand` connections no longer fail to establish::
 +
---
+link:https://issues.redhat.com/browse/TICKET-REFERENCE[TICKET-REFERENCE]
+```
+
+#### Release note types and sections
+
+Each release note is defined by a specific type based on the information it provides to customers. In Jira tickets, the type is defined in the **Release Note Type** field.
+
+In a release note document, each release note type is presented in a specific section. Do not use other section names for these release note types.
+
+**Release note types and sections**
+
+| Release note type | Release note section |
+| --- | --- |
+| Feature, Enhancement, Rebase | New features and enhancements |
+| Technology Preview | Technology Preview features |
+| Deprecated functionality | Deprecated features |
+| Removed functionality | Removed features |
+| Known issue | Known issues |
+| Bug fix | Fixed issues |
+
+Every release note type has a template, which is pre-filled in many Jira projects, and that engineers fill in to provide the required information. The writer then rewrites that information into a customer-readable **release note text** (RN text). You can use standard connecting phrases, for example, "As a result," for results. Sometimes, the information is better presented by changing the order of the pieces of information, for example, a consequence before the cause, or combining them into a single sentence.
+
+##### New features and enhancements
+
+New features are new functions, and enhancements are improvements to existing functions. The release notes for both types are similar, and you can group them together in a single section, or they can be separate.
+
+**New feature and enhancement engineering template**
+
+```
+Feature, enhancement – describe the feature or enhancement from the user's point of view
+Reason – why has the feature or enhancement been implemented
+Result – what is the current user experience
+```
+
+**New feature and enhancement release note text template**
+
+* **_<Heading that summarizes the enhancement or feature>_**\
+_<Feature, enhancement>_. _<Reason>_. As a result, _<result>_.
+
+  For more information, see _<link_to_product_docs>_.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* Describe why the feature or enhancement benefits the customer or why it is required.
+* Add a link to the product documentation for the feature, if it exists.
+* When a previous Technology Preview changes to full support, make this information clear. Use text similar to these examples:
+  * _<Feature>_, available as a Technology Preview before this update, is fully supported from RHEL X.Y.
+  * _<Feature>_, introduced in RHEL X.Y as a Technology Preview, is fully supported with this release.
+
+**Examples of new features and enhancements release notes**
+
+* **Cluster API replaces Terraform for VMware vSphere installations**\
+In OpenShift Container Platform 4.16, the installation program uses Cluster API instead of Terraform to provision cluster infrastructure during installations on VMware vSphere.
+
+  TICKET-REFERENCE
+
+* **New packages: keylime**\
+RHEL 9.1 introduces Keylime, a tool for attestation of remote systems, which uses the trusted platform module (TPM) technology. With Keylime, you can verify and continuously monitor the integrity of remote systems. You can also specify encrypted payloads that Keylime delivers to the monitored machines, and define automated actions that trigger whenever a system fails the integrity test.
+For more information, see [Ensuring system integrity with Keylime](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/security_hardening/index#assembly_ensuring-system-integrity-with-keylime_security-hardening) in the RHEL 9 _Security hardening_ document.
+
+  RHELPLAN-92522
+
+* **The Template Sync plugin supports using an HTTP proxy to connect to a repository**\
+You can use an HTTP proxy to synchronize templates between your Satellite server and a git repository. Configuring an HTTP proxy for template synchronization ensures that Satellite routes the Template Sync request to the repository through the specified proxy server.
+For more information, see [Synchronizing template repositories](https://docs.redhat.com/en/documentation/red_hat_satellite/6.17/html-single/administering_red_hat_satellite/index#Synchronizing_Templates_Repositories_admin) in _Administering Red Hat Satellite_.
+
+  [SAT-27349](https://issues.redhat.com/browse/SAT-27349)
+
+##### Rebases
+A rebase is an enhancement in which the version of a component increases. Versions are typically presented in the following format:
+
+X.Y.Z-A.elN, where X.Y.Z is version, A is build, and elN stands for Enterprise Linux version
+
+Example: 1.3.6-3.el8
+
+Rebuilds (change in A) are not rebases. Some products include rebases in the New features and enhancements section; some products do not have rebases at all.
+
+**Rebase engineering template**
+
+```
+Version
+List of highlights - notable new features and bug fixes since the last available version within the same RHEL major version
+```
+
+**Rebase release note text template**
+
+* **`_<package>_` rebased to <X.Y.Z>**\
+The `_<package>_` package, which <purpose>, has been rebased to upstream version X.Y.Z. This version provides important fixes and enhancements, most notably the following:
+
+  * _<Enhancement_or_fix>_.
+  * _<Enhancement_or_fix>_.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* Write the version of the component only in the X.Y.Z format. Do not include the +1-A.elN part. Do not use monospace or other markup for the version number.
+* Include a grammatically parallel list of highlights, usually an unordered (bulleted) list.
+* Avoid blank rebase descriptions (just a version and no details). If the component is important, include it even if the rebase description is blank.
+* Avoid using ungrammatical language common in merge requests and changelogs, such as infinitive statements and incomplete sentences that do not use articles. For example, a phrase such as "remove deprecated support macros" needs to be rewritten into "Deprecated support macros are removed."
+* Do not include CVEs in the list of highlights for a rebase if your product does not document CVEs in release notes.
+* In the zeroth minor version (for example, 10.0), rebases are documented as "Package is provided in version X.Y.Z" instead of "Package is rebased to version X.Y.Z".
+
+**Examples of rebase release notes**
+
+* **OpenSSL rebased to 3.2.2**\
+The OpenSSL packages are rebased to upstream version 3.2.2. This update includes the following enhancements and bug fixes:
+
+  * The `openssl req` command with the `-extensions` option no longer mishandles extensions when creating certificate signing requests (CSR). Before this update, the command fetched, parsed, and checked the name of the configuration file section for consistency but the name was not used for adding extensions to the created CSR file. With this fix, the extension is added to the generated CSR. As a side effect of this change, if the section specifies an extension incompatible with its use in the CSR, the command might fail with an error similar to this: `error:11000080:X509 V3 routines:X509V3_EXT_nconf_int:error in extension:crypto/x509/v3_conf.c:48:section=server_cert, name=authorityKeyIdentifier, value=keyid, issuer:always`.
+  * The default X.500 distinguished name (DN) formatting uses the UTF-8 formatter. This change also removes space characters around the equal sign (`=`) that separates DN element types from their values.
+  * The certificate compression extension (RFC 8879) is supported.
+  * You can use the QUIC protocol on the client side as a Technology Preview.
+  * The Argon2d, Argon2i, and Argon2id key derivation functions (KDF) are supported.
+  * Brainpool curves are added to the TLS 1.3 protocol (RFC 8734), but Brainpool curves remain disabled in all supported system-wide cryptographic policies.
+
+  TICKET-REFERENCE
+
+* **`nbdkit` rebased to version 1.38**\
+The `nbdkit` package is rebased to upstream version 1.38, which includes the following notable bug fixes and enhancements:
+
+  * Block size advertising is enhanced, and a new read-only filter is added.
+  * The Python and OCaml bindings support more features of the server API.
+  * Internal struct integrity checks are added to make the server more robust.
+
+  TICKET-REFERENCE
+
+##### Technology Preview features
+Technology Preview features offer early access to new product innovations. This enables customers to test them and provide feedback. These features are not fully supported, might be incomplete, and are not for production use.
+For more information, see [Technology Preview Features Support Scope](https://access.redhat.com/support/offerings/techpreview/).
+
+**Technology Preview engineering template**
+
+```
+Package - list the package that includes the Technology Preview feature
+Description - describe what the feature does
+```
+
+**Technology Preview release note text template**
+
+* **_<Feature>_ (Technology Preview)**\
+_<Release note text>_.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* Always capitalize both words in "Technology Preview". Never shorten to "Tech" in customer-facing documents. Do not use the term "Technical Preview".
+* Never use "supported as a Technology Preview". Avoid _support_ in Technology Preview descriptions. Instead, use neutral words, for example: _available_, _provide_, _capability_, _functionality_, _implement_, and _enable_. For hardware devices, _recognize_ is usually the correct term. For example, components can recognize devices, but Red Hat does not support the devices themselves.
+* Write headings for Technology Preview features similar to headings for new features. End the heading with "(Technology Preview)".
+* After you briefly describe the feature, mention again that it is a Technology Preview.
+* Do not use the Technology Preview admonition in the release notes because it would be repetitive.
+* Repeat a Technology Preview release note in all subsequent releases until the feature moves to full support or is removed. If necessary, you can adjust the RN text for a minor release.
+* Mention deprecated Technology Previews in both Technology Preview features and Deprecated features sections, and repeat until the last minor release within the major release.
+* When required by stakeholders, you can include the following information in the description:
+  * Request for feedback
+  * Link to upstream docs
+  * Link to a verified Knowledgebase article
+
+**Examples of Technology Preview release notes**
+
+* **Azure File CSI supports snapshots (Technology Preview)**\
+OpenShift Container Platform 4.17 introduces volume snapshot support for the Microsoft Azure File Container Storage Interface (CSI) Driver Operator. This capability is a Technology Preview feature.
+
+  For more information, see [CSI drivers supported by OpenShift Container Platform](https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html-single/storage/#csi-drivers-supported_persistent-storage-csi) and [CSI volume snapshots](https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html-single/storage/#csi-volume-snapshots).
+
+  TICKET-REFERENCE
+
+* **System-wide post-quantum cryptography is available through `crypto-policies-pq-preview` (Technology Preview)**\
+The `TEST-PQ` subpolicy contained in the new `crypto-policies-pq-preview` package provides system-wide post-quantum cryptography (PQC) as a Technology Preview. You can enable PQC by switching to the TEST-PQ subpolicy and restarting the system, for example:
+
+  ```
+  # update-crypto-policies --set DEFAULT:TEST-PQ
+  # reboot
+  ```
+
+  Note that all PQC algorithms in RHEL 10 are provided as a Technology Preview feature. The package and system-wide cryptographic policy name are subject to change when post-quantum cryptography exits Technology Preview.
+
+  [RHEL-58241](https://issues.redhat.com/browse/RHEL-58241)
+
+##### Deprecated features
+
+Deprecated features are supported but will be removed in a future version. Deprecating a feature is a signal to customers that they should not use the feature for new deployments.
+
+**Deprecated feature engineering template**
+
+```
+Description - describe the discontinued feature
+Consequence - describe the recommended replacement, if applicable
+```
+
+**Deprecated feature release note text template**
+
+* **_<feature>_ is deprecated**\
+The _<feature>_, which <purpose>, is deprecated and might be removed in a future major release. You can _<purpose>_ by using _<alternative>_ instead.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* Describe the feature or component that is deprecated.
+* Write the proposed alternative for the user. Do not use the term "Recommended". See the [recommend](#recommend-verb) glossary entry.
+* Do not repeat the definition of "deprecated" from the section intro.
+* Avoid predicting future feature statuses in release notes, such as "will be deprecated next release".
+* If cloning a previous version of the release notes file for the latest version, ensure the table feature statuses are current for that version.
+
+**Examples of deprecation release notes**
+
+* **The `preserveBootstrapIgnition` parameter for AWS is deprecated**\
+The `preserveBootstrapIgnition` parameter for AWS in the `install-config.yaml` file is deprecated. You can use the `bestEffortDeleteIgnition` parameter instead.
+
+  [OCPBUGS-33661](https://issues.redhat.com/browse/OCPBUGS-33661)
+
+* **`katello-agent` is deprecated**\
+`katello-agent` is deprecated and might be removed in a future version. Migrate immediately to Remote Execution or Remote Execution pull mode. If you upgrade to Satellite 6.15 without migrating, you will not be able to perform critical host package actions, including patching and security updates. For more information about migrating to Remote Execution, see [Migrating From Katello Agent to Remote Execution](https://access.redhat.com/documentation/en-us/red_hat_satellite/6.14/html-single/managing_hosts/index#Migrating_From_Katello_Agent_to_Remote_Execution_managing-hosts) in _Managing Hosts_.
+
+  SAT-18124
+
+* **Bootstrap.py host registration script**\
+The `bootstrap.py` script for registering a host to Satellite or Capsule is deprecated in 6.9. It has been replaced by the `curl` command created by using the global registration template.
+
+  [SAT-21137](https://issues.redhat.com/browse/SAT-21137)
+
+If your product presents deprecations and removals in a table, define the following columns:
+
+* **Category**\
+Shows what is impacted by the deprecation, for example, Installation. This can be a header for the table, or a column in your table.
+* **Feature or component**\
+Provides the specific feature or component.
+* **Version**\
+Shows when the feature is first deprecated. Keep that version in the table until the feature moves to your list or table of removed features.
+* **Alternative action**\
+Directs the user to another solution.
+* **More information**\
+If you do not describe alternative actions, link to documentation, and so on in a separate release note, this column guides the user to the alternative feature or component.
+
+Follow these guidelines for the deprecation and removal tables:
+
+* For scannability, reduce the number of columns and rows to only what is needed.
+* Avoid overly long descriptions in tables. Aim for between 3 and 11 words. Link to documentation if more information is needed.
+* Avoid blank cells in a table. Define a status, such as "Not available", to represent that a feature did not exist in a release.
+* Make sure that markup is displayed correctly in table cells, for example, `arm64`.
+* See the following example table that you can use for deprecations:
+
+  **Example table of deprecations**
+
+  | Category | Feature or component | Version | Alternative action | More information |
+  | --- | --- | --- | --- | --- |
+  | Installation | Hive settings in the `mch` API | 2.2 | Edit hive configuration directly with the `oc edit` command. | For more information, see  _<insert_link>_ . |
+
+##### Removed features
+Removed features were deprecated in earlier releases and are no longer supported in the current release.
+
+**Removed feature engineering template**
+
+```
+Description - describe the removed feature
+Consequence - describe the recommended replacement, if applicable
+```
+
+**Removed feature release note text template**
+
+* **<feature> is removed**\
+The _<feature>_, which _<purpose>_, is removed and is no longer supported. You can _<purpose>_ by using _<alternative>_ instead.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* If a functionality is removed in a release (for example, in RHEL 9), it must be documented as deprecated in a preceding release (RHEL 8).
+* Describe the feature or component that is removed.
+* Write the proposed alternative for the user. Do not use the term "Recommended". See the [recommend](#recommend-verb) glossary entry.
+* If a small part of a feature is removed, treat that as a feature change, not a removed feature. Focus on why the change was made and what replaces the removed item.
+
+**Examples of removed feature release notes**
+
+* **`scap-workbench` is removed**\
+The `scap-workbench` package is removed in RHEL 10. The `scap-workbench` graphical utility performed configuration and vulnerability scans on a single local or remote system. As an alternative, you can scan local systems for configuration compliance by using the `oscap` command and remote systems by using the `oscap-ssh` command. For more information, see [Configuration compliance scanning](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/security_hardening/scanning-the-system-for-configuration-compliance#configuration-compliance-scanning).
+
+  RHELDOCS-19009
+
+* **Service Binding Operator documentation removed**\
+With this release, the documentation for the Service Binding Operator (SBO) has been removed because this Operator is no longer supported.
+
+  TICKET-REFERENCE
+
+If your product presents deprecations and removals in a table, follow the guidance for deprecation tables.
+
+* Remove the entry from the table when the version for that removal is no longer fully supported. Removals are included in removal tables for a product-specific number of releases after the removal; typically for two or three releases.
+
+**Example table of removed features**
+
+| Category | Feature or component | Version | Alternative action | More information |
+| --- | --- | --- | --- | --- |
+| Application management | Subscriptions | 2.5 | Use GitOps for application management | See _<insert_link_to_GitOps>_ for more details. |
+
+##### Known issues
+Known issues describe existing problems that customers should be aware of, so that they can mitigate them and avoid unnecessary reporting.
+
+**Known issue engineering template**
+
+```
+Cause - the user action or circumstances that trigger the bug
+Consequence - what the user experience is when the bug occurs
+Workaround - if available
+Result – mandatory if the workaround does not solve the problem completely
+```
+
+**Known issue release note text template**
+
+* **Heading that summarizes the known issue**\
+_<Cause>_. As a consequence, _<consequence>_.
+
+  To work around this problem, _<workaround in imperative>_. As a result, _<result>_.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* Always provide information about a workaround in a separate paragraph:
+  * If a workaround exists, describe it in the following format:
+
+    To work around this problem, <workaround in imperative>.
+  * If no workaround is mentioned, investigate and try to describe how to avoid or partially mitigate the problem. If there is no workaround or mitigation, explicitly say: "No known workaround exists."
+* Use the present tense.
+* If the known issue applies only to specific batch updates (z-streams), clarify that. For example, the known issue might exist from 4.14.0 to 4.14.4 but not 4.14.5 onwards.
+* Never promise future fixes. Avoid making claims that are related to a future release; do not announce a new component will replace a deprecated one until it is released.
+* For customer reference, include a Jira ticket link to each Known issue on the line directly after the entry. Do not place that link inside parenthesis or brackets. Notify the user if the references are not public in one of the following ways:
+  * If you link to tickets that are not public, tell the user that some Jira tickets might require login credentials, for example: "Some linked Jira tickets are accessible only with Red Hat credentials."
+  * If you refer to non-public tickets without a link, inform the user, for example: "Some referenced tickets are not linked. This means that the ticket is accessible only with Red Hat credentials."
+* Before a release, always check the status of all known issues. If a previously identified known issue is fixed, the customer must be informed in a product-consistent way, for example:
+  * A _Fixed issues_ release note contains a reference to the previous known issue.
+  * A _New features_ and enhancements release note announces fixes that cover multiple known issues and contains references to those issues.
+  * An erratum that contains a fix refers to the previous known issue.
+* A partially resolved issue becomes a fixed issue for the fixed scenario but remains a known issue for the unfixed part.
+
+**Examples of known issue release notes**
+
+* **Inconsistent NVMe device names after reboot**\
+A new kernel feature that enables asynchronous NVMe namespace scans is introduced in RHEL 10 to accelerate NVMe disk detection. As a consequence of the asynchronous scans, the `/dev/nvmeXnY` device files might point to different namespaces after each reboot. This can lead to inconsistent device names.
+
+  No known workaround exists.
+
+  TICKET-REFERENCE
+
+* **SELinux autorelabel in the Rescue Mode might cause reboot loop**\
+Accessing a file system in `rescue` mode triggers SELinux to autorelabel the file system on the next boot, which continues until SELinux runs in the `permissive` mode. Consequently, the system might go into an infinite loop of reboots after exiting the `rescue` mode because it cannot delete the `/.autorelabel` file.
+
+  To work around this problem, switch to the `permissive` mode by adding `enforcing=0` to the kernel command line on the next boot. The system displays a warning message. This message indicates that you might see this problem when accessing the file system in `rescue` mode.
+
+  [RHEL-14005](https://issues.redhat.com/browse/RHEL-14005)
+
+##### Fixed issues
+Fixed issues, also called "bug fixes", list problems that are resolved in the current release.
+
+**Fixed issues engineering template**
+
+```
+Cause – the user action or circumstance that triggered the bug, in the past tense.
+Consequence – what the user experience was when the bug occurred, in the past tense.
+Fix – what has changed to fix the bug; do not include overly technical details, in the present perfect or present simple tense.
+Result – what happens after the patch is applied, in the present tense.
+```
+
+**Fixed issues release note text template**
+
+* **Heading that summarizes the fixed issue**\
+Before this update, _<cause>_. As a consequence, _<consequence>_. With this release, _<fix>_. As a result, _<result>_.
+
+  TICKET-REFERENCE
+
+In addition to general style, follow these guidelines:
+
+* Follow the Cause-Consequence-Fix-Result (CCFR) tense logic: "Before this update, a problem occurred. The current update has fixed the problem. As a result, the problem no longer occurs."
+  * **Cause**\
+  The user action or circumstance that triggered the bug, in the past tense.
+  * **Consequence**\
+  What the user experience was when the bug occurred, in the past tense.
+  * **Fix**\
+  What has changed to fix the bug; do not include overly technical details; do not use the present perfect or present simple tense.
+  * **Result**\
+  What happens after the patch is applied, in the present tense.
+* Use "before this update" instead of "previously" to refer to the past situation. See the [previously](#previously-adverb) glossary entry.
+* Partially fixed issues might require a separate Known issue for the unfixed scenario.
+
+**Example fixed issue release notes**
+
+* **IPsec `ondemand` connections no longer fail to establish**\
 Before this update, when an IPsec connection with the `ondemand` option was configured by using the TCP protocol, the connection failed to establish. With this update, the new Libreswan package makes sure that the initial IKE negotiation completes over TCP. As a result, Libreswan successfully establishes the connection even in TCP mode of IKE negotiation.
 
-link:https://issues.redhat.com/browse/RHEL-51880[RHEL-51880]
---
-```
+  RHEL-51880
+* **Multipath no longer crashes because of errors encountered by the ontap prioritizer**\
+Before this update, `multipathd` failed when it was configured to use the ontap prioritizer on an unsupported path, because the prioritizer only works with NetApp storage arrays. This failure occurred because of a bug in the prioritizer's error logging code, which caused it to overflow the error message buffer. With this update, the error logging code is fixed, and `multipathd` no longer crashes because of errors encountered by the ontap prioritizer.
+
+  RHEL-49747
+* **Infoblox plugin no longer suggests IP addresses already in use**\
+Before this update, when you used the Infoblox plugin as the DHCP provider, it suggested free IP addresses that were already in use. With this fix, you can configure the plugin to check the availability of IP addresses. The availability checks are enabled by default.
+
+  TICKET-REFERENCE

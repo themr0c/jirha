@@ -85,13 +85,62 @@ Template: `<Heading>::` `Before this update, <cause>. As a consequence, <consequ
 - Place the reference on the line directly after the entry.
 - Note: "Some linked Jira tickets are accessible only with Red Hat credentials."
 
-## AsciiDoc formatting
+## AsciiDoc formatting (Renoa format)
+
+Each release note is a description list item. Use open block delimiters (`--`) to attach multi-paragraph content. This format is compatible with the AEM DITA migration.
+
+**Basic template** — single paragraph + Jira link:
 
 ```
 Release note heading::
 Release note text.
 +
-Additional paragraph if necessary.
-+
 link:https://issues.redhat.com/browse/TICKET[TICKET]
+```
+
+**Standard template** — multi-paragraph content (use this for most release notes):
+
+```
+Release note heading::
++
+--
+Release note text paragraph one.
+
+Additional paragraph if necessary.
+
+link:https://issues.redhat.com/browse/TICKET[TICKET]
+--
+```
+
+**Complex template** — content with embedded lists:
+
+```
+Release note heading::
++
+--
+Release note text.
+
+* List item 1
+* List item 2
+
+link:https://issues.redhat.com/browse/TICKET[TICKET]
+--
+```
+
+Guidelines:
+
+- Attach all lines after the first to the description with `+` on a separate line.
+- For multi-paragraph or complex content, wrap in open block delimiters (`--`).
+- The Jira link goes inside the open block, as the last element before `--`.
+
+**Example: fixed issue in Renoa format**
+
+```
+IPsec `ondemand` connections no longer fail to establish::
++
+--
+Before this update, when an IPsec connection with the `ondemand` option was configured by using the TCP protocol, the connection failed to establish. With this update, the new Libreswan package makes sure that the initial IKE negotiation completes over TCP. As a result, Libreswan successfully establishes the connection even in TCP mode of IKE negotiation.
+
+link:https://issues.redhat.com/browse/RHEL-51880[RHEL-51880]
+--
 ```

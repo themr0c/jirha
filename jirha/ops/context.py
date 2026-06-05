@@ -5,8 +5,11 @@ import time
 
 from jirha.api import (
     _assess_pr_sp,
+    _fetch_doc_pr_files,
+    _fetch_repo_file,
     _is_doc_repo,
     _issue_sp,
+    _parse_pr_url,
     _pr_body,
     get_jira,
 )
@@ -292,6 +295,95 @@ def _suggest_sp_range(eng_metrics):
     return low, high
 
 
+def _collect_doc_pr_urls(sibling_epics):
+    """Collect unique doc PR URLs from all sibling epic tasks."""
+    urls = []
+    seen = set()
+    for entry in sibling_epics:
+        for task_entry in entry["tasks"]:
+            for url in task_entry["pr_urls"]:
+                if url not in seen and _is_doc_repo(url):
+                    seen.add(url)
+                    urls.append(url)
+    return urls
+
+
+def _resolve_doc_urls(doc_pr_urls):
+    """Resolve doc PR URLs to {book-link}#anchor entries.
+
+    For each doc PR, fetches changed files and maps AsciiDoc modules
+    to {title-book-link}#module-id format. Returns list of dicts:
+    [{"book_link_attr": "{attr}", "anchor": "module-id", "file": "path"}].
+    """
+    if not doc_pr_urls:
+        return []
+
+    results = []
+    seen_anchors = set()
+    repo = None
+    all_files = []
+
+    for url in doc_pr_urls:
+        parsed = _parse_pr_url(url)
+        if not parsed:
+            continue
+        repo = parsed[0]
+        files = _fetch_doc_pr_files(url)
+        all_files.extend(files)
+
+    if not repo or not all_files:
+        return results
+
+    attrs_content = _fetch_repo_file(repo, "main", "artifacts/attributes.adoc")
+    book_link_map = {}
+    if attrs_content:
+        for line in attrs_content.splitlines():
+            m = re.match(r"^:([a-z0-9-]+-book-link):\s*(.+)", line)
+            if m:
+                attr_name = m.group(1)
+                title_slug = attr_name.replace("-book-link", "")
+                book_link_map[title_slug] = attr_name
+
+    for fpath in all_files:
+        if not fpath.endswith(".adoc"):
+            continue
+        parts = fpath.split("/")
+        title_idx = None
+        for i, p in enumerate(parts):
+            if p == "titles":
+                title_idx = i
+                break
+        if title_idx is None or title_idx + 1 >= len(parts):
+            continue
+
+        title_dir = parts[title_idx + 1]
+        fname = parts[-1]
+        module_id = re.sub(r"^(con|proc|ref|assembly)-", "", fname)
+        module_id = module_id.replace(".adoc", "")
+
+        if module_id in seen_anchors:
+            continue
+        seen_anchors.add(module_id)
+
+        attr_name = book_link_map.get(title_dir)
+        if not attr_name:
+            for slug, attr in book_link_map.items():
+                if slug in title_dir or title_dir in slug:
+                    attr_name = attr
+                    break
+
+        if attr_name:
+            results.append(
+                {
+                    "book_link_attr": f"{{{attr_name}}}",
+                    "anchor": module_id,
+                    "file": fpath,
+                }
+            )
+
+    return results
+
+
 def assemble_context(jira, issue_key):
     """Assemble full hierarchy context for SP estimation.
 
@@ -402,6 +494,11 @@ def assemble_context_json(jira, issue_key, refresh=False):
     else:
         quality = "none"
 
+    doc_pr_urls = _collect_doc_pr_urls(
+        [{"tasks": [{"pr_urls": task_dict.get("pr_urls", [])}]}] + sibling_epics
+    )
+    doc_urls = _resolve_doc_urls(doc_pr_urls)
+
     result = {
         "task": task_dict,
         "epic": epic_dict,
@@ -414,6 +511,7 @@ def assemble_context_json(jira, issue_key, refresh=False):
         ],
         "suggested_sp_range": list(sp_range) if sp_range else None,
         "data_quality": quality,
+        "doc_urls": doc_urls,
         "cache_age": "fresh",
     }
 
@@ -505,6 +603,21 @@ def format_context(ctx):
         lines.append("### Engineering PRs (non-doc)")
         for m in ctx["eng_metrics"]:
             lines.append(f"- PR #{m['number']}: {m['sp']}SP ({m['reason']}) — {m['url']}")
+        lines.append("")
+
+    # Documentation URLs
+    doc_pr_urls = []
+    if ctx["sibling_epics"]:
+        for entry in ctx["sibling_epics"]:
+            for te in entry["tasks"]:
+                for url in te["pr_urls"]:
+                    if _is_doc_repo(url):
+                        doc_pr_urls.append(url)
+    doc_urls = _resolve_doc_urls(doc_pr_urls)
+    if doc_urls:
+        lines.append("### Documentation")
+        for d in doc_urls:
+            lines.append(f"- {d['book_link_attr']}#{d['anchor']}")
         lines.append("")
 
     # Suggestion

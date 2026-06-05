@@ -272,6 +272,53 @@ def _is_doc_repo(pr_url):
     return "red-hat-developers-documentation-" in pr_url
 
 
+def _fetch_doc_pr_files(pr_url):
+    """Fetch changed file paths from a doc repo PR. Returns list of file paths or []."""
+    parsed = _parse_pr_url(pr_url)
+    if not parsed:
+        return []
+    repo, number = parsed
+    try:
+        result = subprocess.run(
+            ["gh", "pr", "view", number, "--repo", repo, "--json", "files"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        if result.returncode != 0:
+            return []
+        data = json.loads(result.stdout)
+    except (subprocess.TimeoutExpired, json.JSONDecodeError):
+        return []
+    return [f["path"] for f in data.get("files", []) if f.get("path")]
+
+
+def _fetch_repo_file(repo, ref, path):
+    """Fetch a file's content from a GitHub repo at a given ref. Returns str or None."""
+    try:
+        result = subprocess.run(
+            [
+                "gh",
+                "api",
+                f"repos/{repo}/contents/{path}",
+                "-q",
+                ".content",
+                "--header",
+                "Accept: application/vnd.github.v3+json",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        import base64
+
+        return base64.b64decode(result.stdout.strip()).decode("utf-8", errors="replace")
+    except (subprocess.TimeoutExpired, Exception):
+        return None
+
+
 def _assess_multi_pr_sp(pr_field):
     """Assess SP from all PRs linked to a Jira.
 

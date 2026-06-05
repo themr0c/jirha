@@ -115,13 +115,17 @@ As agents complete, collect their results. Present them to the user **in tier or
 
 Do NOT present results in FIFO order. If the next item in order hasn't completed yet, present the next available item from the same or lower tier.
 
+**Re-confirmation rule:** When the user provides free-text feedback instead of selecting an option (e.g., corrections, additional context, or changed requirements), incorporate the feedback, present your revised proposal, and ask for confirmation using AskUserQuestion before proceeding. Never push to Jira or move to the next item without explicit user approval. This applies to all tiers.
+
+**Full URLs:** Always display Jira issue keys as full URLs (e.g., `https://redhat.atlassian.net/browse/RHDHPLAN-385`) in all headings and output, so they are clickable in terminal.
+
 ### Tier 1 (review) and Tier 2 (author) items
 
 **1. Present the draft:**
 
 For **author** items:
 ```
-### <KEY> — <summary from checklist>
+### https://redhat.atlassian.net/browse/<KEY> — <summary from checklist>
 **Type:** <PROPOSED_RN_TYPE>  |  **Confidence:** <CONFIDENCE>
 
 <PROPOSED_RN_TEXT>
@@ -131,7 +135,7 @@ For **author** items:
 
 For **review** items, also show what changed:
 ```
-### <KEY> — <summary from checklist>
+### https://redhat.atlassian.net/browse/<KEY> — <summary from checklist>
 **Type:** <PROPOSED_RN_TYPE>  |  **Confidence:** <CONFIDENCE>
 
 <PROPOSED_RN_TEXT>
@@ -150,7 +154,7 @@ Offer: **Accept**, **Edit**, **Skip**, **Stop**
   ```
   Escape quotes and special characters properly for the shell.
 
-- **Edit**: Let the user provide modified text. Then run the update with the user's version.
+- **Edit**: Let the user provide modified text. Present the revised text back and ask for confirmation before pushing.
 
 - **Skip**: Do not update Jira. Move to the next item.
 
@@ -161,14 +165,14 @@ Offer: **Accept**, **Edit**, **Skip**, **Stop**
 **1. Present the classification:**
 
 ```
-### <KEY> — <summary from checklist>
+### https://redhat.atlassian.net/browse/<KEY> — <summary from checklist>
 **Proposed type:** <PROPOSED_RN_TYPE>  |  **Confidence:** <CONFIDENCE>
 **Reasoning:** <NOTES>
 ```
 
 For **Release Note Not Required** proposals:
 ```
-### <KEY> — <summary from checklist>
+### https://redhat.atlassian.net/browse/<KEY> — <summary from checklist>
 **Proposed:** Release Note Not Required
 **Reasoning:** <NOTES>
 ```

@@ -42,7 +42,7 @@ scripts/jirha <command>   # directly from repo root
 ## Key reference
 
 - **Command reference**: `.claude/CLAUDE.md`
-- **Custom field IDs, JQL templates, description templates, sprint status format**: `docs/jira-reference.md`
+- **Custom field IDs, JQL templates, description templates, sprint status format**: `docs/jirha-reference.md`
 - **SP reference, auto-suggest heuristics, threshold methodology**: `docs/sp-heuristics.md`
 
 ## Plugin versioning

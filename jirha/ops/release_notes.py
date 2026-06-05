@@ -5,7 +5,7 @@ import sys
 from jirha.api import get_jira
 from jirha.config import CF_RN_STATUS, CF_RN_TEXT, CF_RN_TYPE, SERVER
 
-_RN_PROJECTS = {"RHDHBUGS", "RHDHPLAN", "RHIDP"}
+_RN_PROJECTS = {"RHDHBUGS", "RHDHPLAN"}
 
 _SECTION_MAP = {
     "Feature": (1, "New features and enhancements"),
@@ -279,11 +279,12 @@ def _fetch_parent(jira, key, cache):
     return cache[key]
 
 
-def _resolve_and_group(jira, raw_items, minor_version):
+def _resolve_and_group(jira, raw_items, minor_version, versions=None):
     """Resolve RHIDP parents, deduplicate, classify, validate, and group by section.
 
     Returns (sections, unclassified, not_required, violations, deduplication, warnings).
     """
+    version_set = set(versions) if versions else set()
     rhidp_issues = []
     rn_targets = {}  # key -> {item, source_keys}
     parent_cache = {}
@@ -300,12 +301,18 @@ def _resolve_and_group(jira, raw_items, minor_version):
                     grandparent_item.setdefault("from_query", item["from_query"])
                     if grandparent_item["project"] not in _RN_PROJECTS:
                         continue
+                    gp_versions = grandparent_item.get("fix_versions", [])
+                    if version_set and not version_set.intersection(gp_versions):
+                        continue
                     resolved_key = grandparent_item["key"]
                     rn_targets.setdefault(
                         resolved_key, {"item": grandparent_item, "source_keys": []}
                     )
                 else:
                     if parent_item["project"] not in _RN_PROJECTS:
+                        continue
+                    p_versions = parent_item.get("fix_versions", [])
+                    if version_set and not version_set.intersection(p_versions):
                         continue
                     resolved_key = parent_item["key"]
                     rn_targets.setdefault(resolved_key, {"item": parent_item, "source_keys": []})
@@ -319,6 +326,8 @@ def _resolve_and_group(jira, raw_items, minor_version):
                 }
             )
         else:
+            if item["issuetype"] == "Sub-task":
+                continue
             if item["key"] not in rn_targets:
                 rn_targets[item["key"]] = {"item": item, "source_keys": []}
 
@@ -422,7 +431,7 @@ def cmd_release_notes(args):
             raw_items.append(item)
 
     sections, unclassified, not_required, violations, deduplication, warnings = _resolve_and_group(
-        jira, raw_items, minor
+        jira, raw_items, minor, versions
     )
 
     action_count = len(unclassified) + len(violations) + len(deduplication)

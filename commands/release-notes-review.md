@@ -29,7 +29,7 @@ Check:
 - Tenses: present default, past for "before this update", no future tense, no "should"/"might"/"now"
 - Apply the type-specific template and guidelines from the type file
 - AsciiDoc format: description list heading (`Heading::`) + open block (`--`)
-- Links: must use `{book-link}` attributes from the RHDH docs `artifacts/attributes.adoc`, never hardcoded URLs. Format: `For more information, see {book-link}#anchor[Section title].` — never append `in _{book-title}_` after the link. If no matching attribute exists, omit the link.
+- Links: use the docs URLs from the context output (Step 1) for `For more information` links. The context provides `{book-link}#anchor` entries resolved from doc PRs. Format: `For more information, see {book-link}#anchor[Section title].` — never append `in _{book-title}_` after the link. Never web-fetch published docs URLs — they may point to older releases. If no docs URL is in the context, omit the link.
 - Product attributes: must use `{product}`, `{product-short}`, `{product-very-short}` — never `{ProductShortName}` or other non-standard attributes
 
 **Step 4:** Present findings to the user.

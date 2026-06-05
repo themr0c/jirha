@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 from jirha.ops.release_notes import (
     _build_fix_version_jql,
     _build_known_issues_jql,
@@ -11,6 +13,7 @@ from jirha.ops.release_notes import (
     _format_section_header,
     _format_summary_table,
     _map_to_section,
+    _resolve_and_group,
     _todo_text,
 )
 
@@ -381,3 +384,214 @@ class TestFormatSummaryTable:
         total_line = [ln for ln in lines if ln.startswith("TOTAL")][0]
         nums = [int(x) for x in total_line.split() if x.isdigit()]
         assert nums == [0, 0, 0, 2, 2]
+
+
+def _raw_item(
+    key,
+    project,
+    issuetype="Feature",
+    rn_type=None,
+    rn_status=None,
+    rn_text=None,
+    fix_versions=None,
+    parent_key=None,
+    from_query=1,
+):
+    """Build a raw item dict matching _extract_rn_fields output."""
+    return {
+        "key": key,
+        "summary": f"Summary for {key}",
+        "status": "Closed",
+        "project": project,
+        "issuetype": issuetype,
+        "rn_text": rn_text,
+        "rn_status": rn_status,
+        "rn_type": rn_type,
+        "security": None,
+        "fix_versions": fix_versions or [],
+        "parent_key": parent_key,
+        "from_query": from_query,
+    }
+
+
+def _mock_jira_for_parents(parent_items):
+    """Build a mock jira client that returns parent items by key."""
+    from jirha.config import CF_RN_STATUS, CF_RN_TEXT, CF_RN_TYPE
+
+    jira = MagicMock()
+
+    def issue_side_effect(key, fields=None):
+        item = parent_items[key]
+        mock_issue = MagicMock()
+        mock_issue.key = key
+        mock_issue.fields.summary = item.get("summary", f"Summary for {key}")
+        mock_issue.fields.status = MagicMock(__str__=lambda s: item.get("status", "Closed"))
+        mock_issue.fields.project.key = item["project"]
+        mock_issue.fields.issuetype = MagicMock(__str__=lambda s: item.get("issuetype", "Feature"))
+        setattr(mock_issue.fields, CF_RN_TEXT, item.get("rn_text"))
+        setattr(mock_issue.fields, CF_RN_STATUS, item.get("rn_status"))
+        setattr(mock_issue.fields, CF_RN_TYPE, item.get("rn_type"))
+        mock_issue.fields.security = None
+
+        class FakeVersion:
+            def __init__(self, name):
+                self.name = name
+
+        mock_issue.fields.fixVersions = [FakeVersion(v) for v in item.get("fix_versions", [])]
+        if item.get("parent_key"):
+            mock_issue.fields.parent = MagicMock()
+            mock_issue.fields.parent.key = item["parent_key"]
+        else:
+            mock_issue.fields.parent = None
+        return mock_issue
+
+    jira.issue = MagicMock(side_effect=issue_side_effect)
+    return jira
+
+
+class TestResolveAndGroupFiltering:
+    def test_subtask_excluded(self):
+        """Sub-tasks in RHDHPLAN should be excluded from RN targets."""
+        raw_items = [
+            _raw_item("RHDHPLAN-990", "RHDHPLAN", issuetype="Sub-task", fix_versions=["1.9.0"]),
+        ]
+        jira = MagicMock()
+        sections, unclassified, not_required, *_ = _resolve_and_group(
+            jira, raw_items, "1.9", ["1.9.0"]
+        )
+        all_keys = {e["key"] for e in unclassified}
+        for sec in sections.values():
+            all_keys.update(it["key"] for it in sec["items"])
+        assert "RHDHPLAN-990" not in all_keys
+
+    def test_rhidp_not_rn_target(self):
+        """RHIDP issues should resolve to their parent, not become RN targets themselves."""
+        raw_items = [
+            _raw_item(
+                "RHIDP-9604",
+                "RHIDP",
+                issuetype="Epic",
+                fix_versions=["1.9.0"],
+                parent_key="RHDHPLAN-667",
+            ),
+        ]
+        parent_items = {
+            "RHDHPLAN-667": {
+                "project": "RHDHPLAN",
+                "issuetype": "Feature",
+                "rn_type": "Developer Preview",
+                "rn_status": "Done",
+                "fix_versions": ["1.9.0"],
+            },
+        }
+        jira = _mock_jira_for_parents(parent_items)
+        sections, unclassified, not_required, *_ = _resolve_and_group(
+            jira, raw_items, "1.9", ["1.9.0"]
+        )
+        all_keys = set()
+        for sec in sections.values():
+            all_keys.update(it["key"] for it in sec["items"])
+        assert "RHIDP-9604" not in all_keys
+        assert "RHDHPLAN-667" in all_keys
+
+    def test_rhidp_parent_wrong_fix_version_excluded(self):
+        """When an RHIDP child resolves to a parent with a different fix version, exclude it."""
+        raw_items = [
+            _raw_item(
+                "RHIDP-7609",
+                "RHIDP",
+                issuetype="Task",
+                fix_versions=["1.9.0"],
+                parent_key="RHDHPLAN-495",
+            ),
+        ]
+        parent_items = {
+            "RHDHPLAN-495": {
+                "project": "RHDHPLAN",
+                "issuetype": "Feature",
+                "rn_type": None,
+                "rn_status": None,
+                "fix_versions": ["1.8.0"],
+            },
+        }
+        jira = _mock_jira_for_parents(parent_items)
+        sections, unclassified, not_required, *_ = _resolve_and_group(
+            jira, raw_items, "1.9", ["1.9.0", "1.9.1"]
+        )
+        all_keys = {e["key"] for e in unclassified}
+        for sec in sections.values():
+            all_keys.update(it["key"] for it in sec["items"])
+        for nr in not_required:
+            all_keys.add(nr["key"])
+        assert "RHDHPLAN-495" not in all_keys
+
+    def test_rhidp_grandparent_wrong_fix_version_excluded(self):
+        """When RHIDP→RHIDP→RHDHPLAN grandparent has wrong fix version, exclude it."""
+        raw_items = [
+            _raw_item(
+                "RHIDP-100",
+                "RHIDP",
+                issuetype="Task",
+                fix_versions=["1.9.0"],
+                parent_key="RHIDP-200",
+            ),
+        ]
+        parent_items = {
+            "RHIDP-200": {
+                "project": "RHIDP",
+                "issuetype": "Epic",
+                "fix_versions": ["1.9.0"],
+                "parent_key": "RHDHPLAN-300",
+            },
+            "RHDHPLAN-300": {
+                "project": "RHDHPLAN",
+                "issuetype": "Feature",
+                "rn_type": "Feature",
+                "rn_status": "Done",
+                "fix_versions": ["1.7.0"],
+            },
+        }
+        jira = _mock_jira_for_parents(parent_items)
+        sections, unclassified, not_required, *_ = _resolve_and_group(
+            jira, raw_items, "1.9", ["1.9.0"]
+        )
+        all_keys = set()
+        for sec in sections.values():
+            all_keys.update(it["key"] for it in sec["items"])
+        for e in unclassified:
+            all_keys.add(e["key"])
+        assert "RHDHPLAN-300" not in all_keys
+
+    def test_non_rhidp_feature_included(self):
+        """Regular RHDHPLAN Features with matching fix version are included."""
+        raw_items = [
+            _raw_item(
+                "RHDHPLAN-100",
+                "RHDHPLAN",
+                issuetype="Feature",
+                rn_type="Feature",
+                rn_status="Done",
+                fix_versions=["1.9.0"],
+            ),
+        ]
+        jira = MagicMock()
+        sections, unclassified, *_ = _resolve_and_group(jira, raw_items, "1.9", ["1.9.0"])
+        sec1_keys = {it["key"] for it in sections.get(1, {}).get("items", [])}
+        assert "RHDHPLAN-100" in sec1_keys
+
+    def test_rhdhbugs_bug_included(self):
+        """RHDHBUGS Bugs with matching fix version are included."""
+        raw_items = [
+            _raw_item(
+                "RHDHBUGS-100",
+                "RHDHBUGS",
+                issuetype="Bug",
+                rn_type="Bug Fix",
+                rn_status="Done",
+                fix_versions=["1.9.0"],
+            ),
+        ]
+        jira = MagicMock()
+        sections, *_ = _resolve_and_group(jira, raw_items, "1.9", ["1.9.0"])
+        sec7_keys = {it["key"] for it in sections.get(7, {}).get("items", [])}
+        assert "RHDHBUGS-100" in sec7_keys

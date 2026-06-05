@@ -21,7 +21,7 @@ CLI for Jira operations. Auto-bootstraps into the workspace venv and loads `.env
 | `jirha estimate [--max N]` | Find issues missing SP or reasoning comments |
 | `jirha release-notes <version> [--all] [--max N]` | Release notes checklist for a version |
 
-For custom field IDs, JQL queries, description templates, and sprint status format, see [docs/jira-reference.md](../docs/jira-reference.md). For SP reference and auto-suggest heuristics, see [docs/sp-heuristics.md](../docs/sp-heuristics.md).
+For custom field IDs, JQL queries, description templates, and sprint status format, see [docs/jirha-reference.md](../docs/jirha-reference.md). For SP reference and auto-suggest heuristics, see [docs/sp-heuristics.md](../docs/sp-heuristics.md).
 
 ## Slash commands
 
@@ -39,4 +39,4 @@ pantheon-cli and visual-diff have moved to their own repository:
 ## After PR create/update
 
 1. `jirha update KEY --pr <PR_URL> --sp auto -c "summary of changes"` — link the PR, auto-assess SP, and comment.
-2. If Jira description is empty or boilerplate, populate using the matching template from [docs/jira-reference.md](../docs/jira-reference.md).
+2. If Jira description is empty or boilerplate, populate using the matching template from [docs/jirha-reference.md](../docs/jirha-reference.md).

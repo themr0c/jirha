@@ -32,7 +32,7 @@ Use the **Renoa AsciiDoc format** (description list heading + open block body) f
 - Heading: sentence case, <120 chars, no gerund, mentions component
 - Tense: present default, no future, no "should"/"might"/"now"
 - Type-specific rules from the style guide
-- Links: use `{book-link}` attributes from the RHDH docs `artifacts/attributes.adoc`, never hardcoded URLs. Format: `For more information, see {book-link}#anchor[Section title].` — never append `in _{book-title}_` after the link. If no matching attribute exists, omit the link.
+- Links: use the docs URLs from the context output (Step 1) for `For more information` links. The context provides `{book-link}#anchor` entries resolved from doc PRs. Format: `For more information, see {book-link}#anchor[Section title].` — never append `in _{book-title}_` after the link. Never web-fetch published docs URLs — they may point to older releases. If no docs URL is in the context, omit the link.
 - Product attributes: use `{product}`, `{product-short}`, `{product-very-short}` — never `{ProductShortName}` or other non-standard attributes
 
 **Step 5:** Present the draft to the user for approval. Do not push without explicit approval.

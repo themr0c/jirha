@@ -2,7 +2,7 @@
 
 Jira workflow helper for RHDH documentation. Automates the repetitive parts of the documentation lifecycle — tracking issues, managing sprints, estimating effort, auditing hygiene, and authoring release notes — so writers spend less time in Jira and more time writing docs.
 
-Works as a standalone CLI (`jirha`) and as a Claude Code plugin (slash commands).
+Works as a standalone CLI (`jirha`) and as a plugin for Claude Code and OpenCode (slash commands).
 
 ## Install
 
@@ -17,6 +17,26 @@ To update:
 ```bash
 claude plugins marketplace update jirha
 claude plugins update jirha@jirha
+```
+
+### As an OpenCode plugin
+
+Add to your `opencode.json` (global `~/.config/opencode/opencode.json` or project-level):
+
+```json
+{
+  "plugin": ["jirha@git+https://github.com/themr0c/jirha.git"]
+}
+```
+
+Restart OpenCode. The plugin installs automatically.
+
+To update, change the ref to a specific version tag:
+
+```json
+{
+  "plugin": ["jirha@git+https://github.com/themr0c/jirha.git#v1.12.0"]
+}
 ```
 
 ### Standalone
@@ -80,7 +100,7 @@ Publication-ready release notes checklist and AI-assisted authoring.
 
 ## Slash commands
 
-Each CLI command has a corresponding Claude Code slash command. Slash commands call the CLI and add AI-assisted interpretation — for example, `/jirha:release-notes-draft` reads the style guide, fetches hierarchy context, and drafts release note text.
+Each CLI command has a corresponding slash command. Slash commands call the CLI and add AI-assisted interpretation — for example, `/jirha:release-notes-batch` fans out parallel agents to draft, review, and classify all actionable release note items.
 
 Run `jirha <command> --help` for detailed options — slash commands accept the same arguments.
 
@@ -111,10 +131,7 @@ Run `jirha <command> --help` for detailed options — slash commands accept the 
 | Slash command | Description |
 |---------------|-------------|
 | `/jirha:release-notes VERSION` | Release notes checklist for a version |
-| `/jirha:release-notes-draft KEY` | Draft release note text following the Red Hat SSG style guide |
-| `/jirha:release-notes-review KEY` | Review an existing draft against the style guide |
-| `/jirha:release-notes-classify KEY` | Classify an issue's release note type |
-| `/jirha:release-notes-batch VERSION` | Batch-author all actionable items via parallel agents |
+| `/jirha:release-notes-batch VERSION` | Batch-author all actionable items via parallel agents (draft, review, classify) |
 
 ### Other
 

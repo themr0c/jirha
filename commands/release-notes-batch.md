@@ -51,7 +51,7 @@ Launching parallel agents...
 
 Read the type mapping:
 ```bash
-cat ${CLAUDE_PLUGIN_ROOT}/commands/release-notes-type-mapping.md
+cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/type-mapping.md
 ```
 
 ## Phase 3: Parallel drafting
@@ -63,7 +63,7 @@ Replace `<PLUGIN_ROOT>` in all prompts with the actual value of `${CLAUDE_PLUGIN
 ### Agent prompt for Tier 1 items (review)
 
 ```
-Read and follow the skill at <PLUGIN_ROOT>/commands/release-notes-review.md for issue <KEY>.
+Read and follow the ## Review section of the skill at <PLUGIN_ROOT>/skills/release-notes/SKILL.md for issue <KEY>.
 
 Do NOT present to the user or push to Jira. Instead, return EXACTLY this format:
 KEY: <KEY>
@@ -81,7 +81,7 @@ NOTES: <any concerns or ambiguities, or "none">
 ### Agent prompt for Tier 2 items (author)
 
 ```
-Read and follow the skill at <PLUGIN_ROOT>/commands/release-notes-draft.md for issue <KEY>.
+Read and follow the ## Draft section of the skill at <PLUGIN_ROOT>/skills/release-notes/SKILL.md for issue <KEY>.
 The Release Note Type is: <RN_TYPE>
 
 Do NOT present to the user or push to Jira. Instead, return EXACTLY this format:
@@ -99,7 +99,7 @@ NOTES: <any concerns or ambiguities, or "none">
 Tier 3 agents **only classify** — they do NOT draft text. Once the user approves the classification, the item is promoted to Tier 2 for authoring.
 
 ```
-Read and follow Steps 1-2 of the skill at <PLUGIN_ROOT>/commands/release-notes-classify.md for issue <KEY>.
+Read and follow Steps 1-2 of the ## Classify section of the skill at <PLUGIN_ROOT>/skills/release-notes/SKILL.md for issue <KEY>.
 
 Do NOT present to the user or update Jira. Instead, return EXACTLY this format:
 KEY: <KEY>

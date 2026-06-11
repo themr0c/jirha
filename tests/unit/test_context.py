@@ -1,9 +1,12 @@
-from jirha.api import _is_doc_repo
+from unittest.mock import MagicMock
+
+from jirha.api import _extract_remote_pr_urls, _is_doc_repo
 from jirha.ops.context import (
     _extract_links,
     _extract_pr_urls,
     _is_eng_task,
     _issue_to_dict,
+    _merge_pr_urls,
     _suggest_sp_range,
     format_context,
 )
@@ -232,3 +235,82 @@ def test_issue_to_dict_with_components():
     issue = _FakeIssue("RHIDP-100", components=[comp])
     result = _issue_to_dict(issue)
     assert result["components"] == ["Documentation"]
+
+
+# --- _extract_remote_pr_urls ---
+
+
+def _fake_remote_link(url):
+    return MagicMock(raw={"object": {"url": url, "title": url}})
+
+
+def test_extract_remote_pr_urls_github_pr():
+    jira = MagicMock()
+    jira.remote_links.return_value = [
+        _fake_remote_link("https://github.com/org/repo/pull/42"),
+    ]
+    assert _extract_remote_pr_urls(jira, "RHDHBUGS-100") == ["https://github.com/org/repo/pull/42"]
+
+
+def test_extract_remote_pr_urls_filters_non_github():
+    jira = MagicMock()
+    jira.remote_links.return_value = [
+        _fake_remote_link("https://github.com/org/repo/pull/1"),
+        _fake_remote_link("https://bugzilla.redhat.com/show_bug.cgi?id=12345"),
+        _fake_remote_link("https://github.com/org/repo/issues/99"),
+    ]
+    result = _extract_remote_pr_urls(jira, "RHDHBUGS-100")
+    assert result == ["https://github.com/org/repo/pull/1"]
+
+
+def test_extract_remote_pr_urls_api_error():
+    jira = MagicMock()
+    jira.remote_links.side_effect = Exception("API error")
+    assert _extract_remote_pr_urls(jira, "RHDHBUGS-100") == []
+
+
+def test_extract_remote_pr_urls_empty():
+    jira = MagicMock()
+    jira.remote_links.return_value = []
+    assert _extract_remote_pr_urls(jira, "RHDHBUGS-100") == []
+
+
+def test_extract_remote_pr_urls_missing_object():
+    jira = MagicMock()
+    jira.remote_links.return_value = [MagicMock(raw={})]
+    assert _extract_remote_pr_urls(jira, "RHDHBUGS-100") == []
+
+
+# --- _merge_pr_urls ---
+
+
+def test_merge_pr_urls_dedup():
+    result = _merge_pr_urls(
+        ["https://github.com/org/repo/pull/1"],
+        ["https://github.com/org/repo/pull/1", "https://github.com/org/repo/pull/2"],
+    )
+    assert result == [
+        "https://github.com/org/repo/pull/1",
+        "https://github.com/org/repo/pull/2",
+    ]
+
+
+def test_merge_pr_urls_preserves_order():
+    result = _merge_pr_urls(
+        ["https://github.com/org/repo/pull/3"],
+        ["https://github.com/org/repo/pull/1"],
+    )
+    assert result == [
+        "https://github.com/org/repo/pull/3",
+        "https://github.com/org/repo/pull/1",
+    ]
+
+
+def test_merge_pr_urls_empty():
+    assert _merge_pr_urls([], []) == []
+    assert _merge_pr_urls() == []
+
+
+def test_merge_pr_urls_single_source():
+    urls = ["https://github.com/org/repo/pull/1"]
+    assert _merge_pr_urls(urls) == urls

@@ -5,6 +5,7 @@ import time
 
 from jirha.api import (
     _assess_pr_sp,
+    _extract_remote_pr_urls,
     _fetch_doc_pr_files,
     _fetch_repo_file,
     _is_doc_repo,
@@ -170,6 +171,10 @@ def _walk_linked_issue(jira, link_info):
         # It's a task — get its PRs, walk up for context
         result["type"] = "task"
         result["issue"] = _issue_to_dict(issue, include_links=True, include_pr=True)
+        remote_pr_urls = _extract_remote_pr_urls(jira, key)
+        result["issue"]["pr_urls"] = _merge_pr_urls(
+            result["issue"].get("pr_urls", []), remote_pr_urls
+        )
         pr_urls = result["issue"].get("pr_urls", [])
         result["issue"]["pr_bodies"] = _fetch_pr_bodies(pr_urls)
         # Walk up
@@ -249,6 +254,18 @@ def _extract_pr_urls(text):
     if not text:
         return []
     return re.findall(r"https://github\.com/[^/]+/[^/]+/pull/\d+", str(text))
+
+
+def _merge_pr_urls(*url_lists):
+    """Merge multiple PR URL lists, deduplicating while preserving order."""
+    seen = set()
+    merged = []
+    for urls in url_lists:
+        for url in urls:
+            if url not in seen:
+                seen.add(url)
+                merged.append(url)
+    return merged
 
 
 def _collect_eng_pr_metrics(sibling_epics):
@@ -439,6 +456,8 @@ def assemble_context_json(jira, issue_key, refresh=False):
     # Fetch issue links at all levels
     task_full = _cached_issue(jira, issue_key, _HIERARCHY_FIELDS + ",issuelinks")
     task_dict = _issue_to_dict(task_full, include_links=True, include_pr=True)
+    remote_pr_urls = _extract_remote_pr_urls(jira, issue_key)
+    task_dict["pr_urls"] = _merge_pr_urls(task_dict.get("pr_urls", []), remote_pr_urls)
     task_dict["pr_bodies"] = _fetch_pr_bodies(task_dict.get("pr_urls", []))
 
     epic_dict = None

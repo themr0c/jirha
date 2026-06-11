@@ -267,6 +267,20 @@ def _parse_pr_url(pr_url):
     return (m.group(1), m.group(2)) if m else None
 
 
+def _extract_remote_pr_urls(jira, issue_key):
+    """Extract GitHub PR URLs from Jira remote links (web links)."""
+    try:
+        remote_links = jira.remote_links(issue_key)
+    except Exception:
+        return []
+    urls = []
+    for link in remote_links:
+        url = (link.raw.get("object") or {}).get("url", "")
+        if re.match(r"https://github\.com/[^/]+/[^/]+/pull/\d+", url):
+            urls.append(url)
+    return urls
+
+
 def _is_doc_repo(pr_url):
     """Return True if the PR URL points to a documentation repo."""
     return "red-hat-developers-documentation-" in pr_url

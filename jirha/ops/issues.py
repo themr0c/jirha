@@ -6,6 +6,7 @@ from jirha.api import (
     SP_TIERS,
     _assess_multi_pr_sp,
     _createmeta,
+    _extract_remote_pr_urls,
     _issue_sp,
     get_jira,
     parse_fields,
@@ -128,6 +129,9 @@ def cmd_show(args):
     sp = getattr(f, CF_STORY_POINTS, None)
     print(f"{'SP:':<{W}}{str(int(sp)) if sp else 'unset'}")
     print(f"{'PR:':<{W}}{getattr(f, CF_GIT_PR, None) or 'unset'}")
+    remote_prs = _extract_remote_pr_urls(jira, issue.key)
+    if remote_prs:
+        print(f"{'Remote PRs:':<{W}}{', '.join(remote_prs)}")
     print(f"{'Links:':<{W}}{_fmt_links(f.issuelinks)}")
 
     # Group 4: Release notes

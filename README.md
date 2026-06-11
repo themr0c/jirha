@@ -2,7 +2,7 @@
 
 Jira workflow helper for RHDH documentation. Automates the repetitive parts of the documentation lifecycle — tracking issues, managing sprints, estimating effort, auditing hygiene, and authoring release notes — so writers spend less time in Jira and more time writing docs.
 
-Works as a standalone CLI (`jirha`) and as a Claude Code plugin (slash commands). OpenCode support is planned.
+Works as a standalone CLI (`jirha`) and as a plugin for Claude Code and OpenCode (slash commands).
 
 ## Install
 
@@ -19,7 +19,7 @@ claude plugins marketplace update jirha
 claude plugins update jirha@jirha
 ```
 
-### Standalone
+### Standalone / OpenCode
 
 ```bash
 git clone git@github.com:themr0c/jirha.git
@@ -27,7 +27,7 @@ cd jirha
 bash scripts/setup.sh
 ```
 
-First use auto-bootstraps: Python venv, dependencies, and Jira credentials at `~/.config/jirha/.env`.
+This bootstraps the Python venv, prompts for Jira credentials, symlinks `~/bin/jirha`, and — if OpenCode is installed — registers all commands (`/jirha-*`) and skills in `~/.config/opencode/`.
 
 **Prerequisites:** Python 3.11+, Red Hat VPN, [GitHub CLI](https://cli.github.com/) (for PR features).
 

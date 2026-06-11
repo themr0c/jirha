@@ -18,6 +18,53 @@ VENV_DIR="$CACHE_DIR/venv"
 CONFIG_DIR="$HOME/.config/jirha"
 ENV_FILE="$CONFIG_DIR/.env"
 
+# --- OpenCode config dir ---
+OPENCODE_CONFIG_DIR="${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}"
+OPENCODE_COMMANDS_DIR="$OPENCODE_CONFIG_DIR/commands"
+OPENCODE_SKILLS_DIR="$OPENCODE_CONFIG_DIR/skills"
+
+# --- OpenCode integration ---
+# Symlink each command as jirha-<name>.md in ~/.config/opencode/commands/
+# and each skill dir into ~/.config/opencode/skills/.
+# Idempotent: skips links that already point to the right target.
+_setup_opencode_links() {
+  if ! command -v opencode &>/dev/null; then
+    return 0
+  fi
+
+  local changed=false
+
+  # Commands: commands/<name>.md → ~/.config/opencode/commands/jirha-<name>.md
+  mkdir -p "$OPENCODE_COMMANDS_DIR"
+  for src in "$PLUGIN_DIR/commands/"*.md; do
+    local base
+    base="$(basename "$src")"
+    local dst="$OPENCODE_COMMANDS_DIR/jirha-${base}"
+    if [[ "$(readlink "$dst" 2>/dev/null)" != "$src" ]]; then
+      ln -sf "$src" "$dst"
+      changed=true
+    fi
+  done
+
+  # Skills: skills/<name>/ → ~/.config/opencode/skills/<name>/
+  mkdir -p "$OPENCODE_SKILLS_DIR"
+  for src in "$PLUGIN_DIR/skills"/*/; do
+    [[ -d "$src" ]] || continue
+    local skill_path="${src%/}"
+    local name
+    name="$(basename "$skill_path")"
+    local dst="$OPENCODE_SKILLS_DIR/$name"
+    if [[ "$(readlink "$dst" 2>/dev/null)" != "$skill_path" ]]; then
+      ln -sf "$skill_path" "$dst"
+      changed=true
+    fi
+  done
+
+  if [[ "$changed" == true ]]; then
+    echo "✓ OpenCode commands and skills linked"
+  fi
+}
+
 # --- Fast exit: already set up? ---
 if [[ -f "$ENV_FILE" ]] && [[ -x "$VENV_DIR/bin/jirha" ]]; then
   # Verify venv works (catches dangling editable installs after cache wipe)
@@ -25,6 +72,7 @@ if [[ -f "$ENV_FILE" ]] && [[ -x "$VENV_DIR/bin/jirha" ]]; then
     # Re-point ~/bin symlink to current cache path (may change on update)
     mkdir -p ~/bin
     ln -sf "$SCRIPT_DIR/jirha" ~/bin/jirha
+    _setup_opencode_links
     exit 0
   fi
 fi
@@ -80,6 +128,9 @@ if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
   echo "    echo 'export PATH=\"\$HOME/bin:\$PATH\"' >> ~/.bashrc && source ~/.bashrc"
   echo "  (Inside Claude Code, jirha works automatically via the plugin.)"
 fi
+
+# --- OpenCode integration ---
+_setup_opencode_links
 
 # --- gh CLI check (warn, don't block) ---
 if ! command -v gh &>/dev/null; then

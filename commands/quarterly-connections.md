@@ -9,7 +9,7 @@ description: Draft quarterly connections response from Jira activity data
 Run the quarterly report command:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha quarterly $ARGUMENTS
+jirha quarterly $ARGUMENTS
 ```
 
 If no issues are found, inform the user and stop.

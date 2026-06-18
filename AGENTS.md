@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code and OpenCode when working with code in this repository.
 
 ## Setup
 
@@ -35,19 +35,30 @@ scripts/jirha <command>   # directly from repo root
 
 **scripts/jirha** is a thin shim: bootstraps the repo venv, then delegates to `venv/bin/jirha`.
 
-**Slash commands** are in `.claude/commands/jirha-*.md` and invoke `jirha <subcommand> $ARGUMENTS`.
+**Slash commands** are in `commands/jirha-*.md` and invoke `jirha <subcommand> $ARGUMENTS`.
+
+**Skills** are in `skills/`.
 
 **Jira conventions skill** is at `skills/jira-workflow.md`.
 
 ## Key reference
 
-- **Command reference**: `.claude/CLAUDE.md`
+- **Command reference**: `AGENTS.md`
 - **Custom field IDs, JQL templates, description templates, sprint status format**: `docs/jirha-reference.md`
 - **SP reference, auto-suggest heuristics, threshold methodology**: `docs/sp-heuristics.md`
 
 ## Plugin versioning
 
 Three files carry the version and must always match: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, and `pyproject.toml`. Bump all three together (patch for fixes, minor for new/changed commands or skills). CI enforces this — PRs with mismatched versions will fail.
+
+## OpenCode integration
+
+When running in OpenCode:
+
+- Project config is in `opencode.json` — registers `skills/` path and uses `AGENTS.md` as instructions
+- Slash commands in `commands/*.md` are loaded from `~/.config/opencode/commands/` (set up by `scripts/setup.sh`)
+- Skills in `skills/` are auto-discovered via `opencode.json` config
+- `jirha` CLI must be on PATH (installed via `pip install -e .` or `scripts/setup.sh`)
 
 ## Inline python-jira (for queries jirha doesn't cover)
 

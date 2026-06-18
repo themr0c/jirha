@@ -7,7 +7,7 @@ description: Release notes checklist for a version — shows what needs authorin
 Run the release notes checklist command. Display the output to the user:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha release-notes $ARGUMENTS
+jirha release-notes $ARGUMENTS
 ```
 
 If `$ARGUMENTS` is empty, ask the user: "Which version? (e.g., `1.10`)"

@@ -13,16 +13,16 @@ If `$ARGUMENTS` is empty, ask the user: "Which issue? (e.g., `RHDHBUGS-1234`)"
 
 **Step 1:** Fetch issue context and hierarchy.
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha context <KEY> --json --refresh
+jirha context <KEY> --json --refresh
 ```
 This provides the full hierarchy (Feature → child Epics → grandchild Tasks) with PR URLs, descriptions, and RN fields (Type, Text, Status) at each level. Use the child/grandchild details to understand what was actually implemented.
 
 **Step 2:** Read the style guide, the type-specific reference for the RN Type, and the AsciiDoc templates.
 ```bash
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/style-guide.md
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/type-mapping.md
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/<TYPE_FILE>
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/asciidoc-templates.md
+cat skills/release-notes/references/style-guide.md
+cat skills/release-notes/references/type-mapping.md
+cat skills/release-notes/references/<TYPE_FILE>
+cat skills/release-notes/references/asciidoc-templates.md
 ```
 Use the type mapping to select the correct `<TYPE_FILE>` for the issue's RN Type.
 
@@ -42,7 +42,7 @@ Use the **Renoa AsciiDoc format** (description list heading + open block body) f
 
 **Step 6:** Once approved, push the RN text and set the status:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-text "<approved text>" --rn-type "<type>" --rn-status "Proposed"
+jirha update <KEY> --rn-text "<approved text>" --rn-type "<type>" --rn-status "Proposed"
 ```
 
 ---
@@ -55,16 +55,16 @@ If `$ARGUMENTS` is empty, ask the user: "Which issue? (e.g., `RHDHBUGS-1234`)"
 
 **Step 1:** Fetch issue context and hierarchy.
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha context <KEY> --json --refresh
+jirha context <KEY> --json --refresh
 ```
 Extract the existing Release Note Type and Release Note Text from the `rn_type`, `rn_text`, and `rn_status` fields. Use the full hierarchy (Feature → child Epics → grandchild Tasks with PRs) to verify the RN text accurately describes what was implemented.
 
 **Step 2:** Read the style guide, the type-specific reference, and the AsciiDoc templates.
 ```bash
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/style-guide.md
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/type-mapping.md
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/<TYPE_FILE>
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/asciidoc-templates.md
+cat skills/release-notes/references/style-guide.md
+cat skills/release-notes/references/type-mapping.md
+cat skills/release-notes/references/<TYPE_FILE>
+cat skills/release-notes/references/asciidoc-templates.md
 ```
 Use the type mapping to select the correct `<TYPE_FILE>` for the issue's RN Type.
 
@@ -82,7 +82,7 @@ If the text needs changes, produce a revised version in the Renoa AsciiDoc forma
 
 **Step 5:** If the user approves the revised text, push it:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-text "<approved text>" --rn-type "<type>" --rn-status "Done"
+jirha update <KEY> --rn-text "<approved text>" --rn-type "<type>" --rn-status "Done"
 ```
 
 ---
@@ -95,7 +95,7 @@ If `$ARGUMENTS` is empty, ask the user: "Which issue? (e.g., `RHDHBUGS-1234`)"
 
 **Step 1:** Fetch issue context.
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha show <KEY>
+jirha show <KEY>
 ```
 
 **Step 2:** Propose an RN Type from this list:
@@ -124,11 +124,11 @@ Classification heuristics:
 
 - **Accept**: Set the RN Type in Jira:
   ```bash
-  ${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-type "<TYPE>"
+  jirha update <KEY> --rn-type "<TYPE>"
   ```
   For "Release Note Not Required":
   ```bash
-  ${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-type "Release Note Not Required" --rn-status "Done"
+  jirha update <KEY> --rn-type "Release Note Not Required" --rn-status "Done"
   ```
 
 - **Change type**: Let the user specify the correct type. Then set it in Jira.

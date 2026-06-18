@@ -7,7 +7,7 @@ description: Show valid issue types and fields for a Jira project
 Run the following command and show its complete output:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha meta $ARGUMENTS
+jirha meta $ARGUMENTS
 ```
 
 If the command fails, show the error.

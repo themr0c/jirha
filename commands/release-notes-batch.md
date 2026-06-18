@@ -9,7 +9,7 @@ description: Batch-author release notes — fan out parallel agents to draft, re
 If the checklist has not been displayed yet, run it first:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha release-notes $ARGUMENTS
+jirha release-notes $ARGUMENTS
 ```
 
 If `$ARGUMENTS` is empty, ask the user: "Which version? (e.g., `1.10`)"
@@ -51,19 +51,19 @@ Launching parallel agents...
 
 Read the type mapping:
 ```bash
-cat ${CLAUDE_PLUGIN_ROOT}/skills/release-notes/references/type-mapping.md
+cat skills/release-notes/references/type-mapping.md
 ```
 
 ## Phase 3: Parallel drafting
 
 Launch **one Agent subagent per actionable item**, all in parallel. Send all Agent tool calls in a single message. Use `subagent_type: "general-purpose"` for each agent.
 
-Replace `<PLUGIN_ROOT>` in all prompts with the actual value of `${CLAUDE_PLUGIN_ROOT}`.
+All skill file paths use relative paths from the project root. Subagent prompts reference the skill file directly.
 
 ### Agent prompt for Tier 1 items (review)
 
 ```
-Read and follow the ## Review section of the skill at <PLUGIN_ROOT>/skills/release-notes/SKILL.md for issue <KEY>.
+Read and follow the ## Review section of the skill at skills/release-notes/SKILL.md for issue <KEY>.
 
 Do NOT present to the user or push to Jira. Instead, return EXACTLY this format:
 KEY: <KEY>
@@ -81,7 +81,7 @@ NOTES: <any concerns or ambiguities, or "none">
 ### Agent prompt for Tier 2 items (author)
 
 ```
-Read and follow the ## Draft section of the skill at <PLUGIN_ROOT>/skills/release-notes/SKILL.md for issue <KEY>.
+Read and follow the ## Draft section of the skill at skills/release-notes/SKILL.md for issue <KEY>.
 The Release Note Type is: <RN_TYPE>
 
 Do NOT present to the user or push to Jira. Instead, return EXACTLY this format:
@@ -99,7 +99,7 @@ NOTES: <any concerns or ambiguities, or "none">
 Tier 3 agents **only classify** — they do NOT draft text. Once the user approves the classification, the item is promoted to Tier 2 for authoring.
 
 ```
-Read and follow Steps 1-2 of the ## Classify section of the skill at <PLUGIN_ROOT>/skills/release-notes/SKILL.md for issue <KEY>.
+Read and follow Steps 1-2 of the ## Classify section of the skill at skills/release-notes/SKILL.md for issue <KEY>.
 
 Do NOT present to the user or update Jira. Instead, return EXACTLY this format:
 KEY: <KEY>
@@ -150,7 +150,7 @@ Offer: **Accept**, **Edit**, **Skip**, **Stop**
 
 - **Accept**: Run the update command:
   ```bash
-  ${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-text "<PROPOSED_RN_TEXT>" --rn-type "<PROPOSED_RN_TYPE>" --rn-status "Proposed"
+  jirha update <KEY> --rn-text "<PROPOSED_RN_TEXT>" --rn-type "<PROPOSED_RN_TYPE>" --rn-status "Proposed"
   ```
   Escape quotes and special characters properly for the shell.
 
@@ -183,7 +183,7 @@ Offer: **Accept type**, **Change type**, **Skip**, **Stop**
 
 - **Accept type**: Set the RN Type in Jira, then **promote to Tier 2** — immediately launch a new Agent subagent to author the text (using the Tier 2 agent prompt with the accepted type). Present the authored draft when the agent completes.
   ```bash
-  ${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-type "<PROPOSED_RN_TYPE>"
+  jirha update <KEY> --rn-type "<PROPOSED_RN_TYPE>"
   ```
 
 - **Change type**: Let the user specify the correct type. Then set it and promote to Tier 2 (same as Accept).
@@ -194,7 +194,7 @@ Offer: **Accept type**, **Change type**, **Skip**, **Stop**
 
 For "Release Note Not Required" acceptances:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/jirha update <KEY> --rn-type "Release Note Not Required" --rn-status "Done"
+jirha update <KEY> --rn-type "Release Note Not Required" --rn-status "Done"
 ```
 (No promotion to Tier 2 — item is done.)
 

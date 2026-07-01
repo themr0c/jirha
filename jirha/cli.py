@@ -144,12 +144,18 @@ def main():
     p = sub.add_parser("quarterly", help="Quarterly activity report for connections review")
     p.add_argument(
         "--quarter",
-        help="Target quarter (e.g., Q1-2026). Default: previous quarter.",
+        help="Target quarter (e.g., Q1-2026). Default: previous quarter in "
+        "month 1 of a quarter, current quarter in months 2-3.",
     )
     p.add_argument(
         "--level",
         type=int,
         help="Job profile level (1-5). Default: from JOB_PROFILE env.",
+    )
+    p.add_argument(
+        "--output-dir",
+        default="data",
+        help="Directory for context file output (default: data/).",
     )
     p.set_defaults(func=cmd_quarterly)
 

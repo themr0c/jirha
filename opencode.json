@@ -3,5 +3,13 @@
   "instructions": ["AGENTS.md"],
   "skills": {
     "paths": ["skills"]
+  },
+  "agent": {
+    "build": {
+      "model": "google-vertex/claude-opus-4-6@default"
+    },
+    "plan": {
+      "model": "google-vertex/claude-opus-4-6@default"
+    }
   }
 }

@@ -75,11 +75,15 @@ def _extract_links(issuelinks):
 
 def _issue_to_dict(issue, include_links=False, include_pr=False):
     """Convert a Jira issue to a serializable dict."""
+    reporter = getattr(issue.fields, "reporter", None)
     result = {
         "key": issue.key,
         "summary": getattr(issue.fields, "summary", "") or "",
         "description": getattr(issue.fields, "description", "") or "",
         "status": str(getattr(issue.fields, "status", "")),
+        "issuetype": str(getattr(issue.fields, "issuetype", "")),
+        "reporter": getattr(reporter, "displayName", "Unknown") if reporter else "Unknown",
+        "reporter_email": getattr(reporter, "emailAddress", None) if reporter else None,
         "sp": _issue_sp(issue) or None,
         "components": [c.name for c in (getattr(issue.fields, "components", None) or [])],
     }
@@ -107,12 +111,15 @@ def _issue_to_dict(issue, include_links=False, include_pr=False):
 
 
 def _fetch_pr_bodies(pr_urls):
-    """Fetch PR description bodies for a list of PR URLs."""
-    bodies = []
+    """Fetch PR description bodies for a list of PR URLs.
+
+    Returns dict mapping URL to body text (only URLs with non-empty bodies).
+    """
+    bodies = {}
     for url in pr_urls:
         body = _pr_body(url)
         if body:
-            bodies.append(body)
+            bodies[url] = body
     return bodies
 
 

@@ -4,9 +4,9 @@ description: Draft quarterly connections response from Jira activity data
 
 **If plan mode is active, exit plan mode first.** This is an operational command, not a code planning task.
 
-**Step 1: Gather quarterly activity data**
+## Step 1: Gather quarterly activity data
 
-Run the quarterly report command:
+Run the quarterly report command with a **45-minute timeout** (the command fetches PR data from GitHub for each issue and can take 15-30 minutes for large quarters):
 
 ```bash
 jirha quarterly $ARGUMENTS
@@ -14,7 +14,14 @@ jirha quarterly $ARGUMENTS
 
 If no issues are found, inform the user and stop.
 
-**Step 2: Read reference documents**
+The command produces three outputs:
+1. **Summary report** (stdout) — structured markdown with stats, issues by epic, open backlog, and unassigned team/component issues
+2. **Context file** (stderr path) — e.g. `Context file written to: data/quarterly-context-Q2-2026.md (140 contexts)`. Per-issue details for resolved issues: description, parent chain, PR URLs, PR bodies, reporter, self-reported flag
+3. **Forward context file** (stderr path) — e.g. `Forward context file written to: data/quarterly-forward-Q3-2026.md (25 contexts)`. Manifest of open issues assigned to you and unassigned team/component issues for forward-looking analysis. Full per-issue data is in cache files at `~/.cache/jirha/contexts/<KEY>.json`
+
+Read the summary report and both context files. The context file is the primary fact source for backward-looking sections. The forward context file is the primary source for forward-looking sections (priorities, goals).
+
+## Step 2: Read reference documents
 
 Extract the job profile level N from the `**Job profile level:** twN` line in the output.
 
@@ -62,83 +69,158 @@ When the user pastes the Workday table content, parse it and create one file per
 
 After creating the files, continue from Step 2 (read the newly created files).
 
-**If the `quarterly-questions.md` file is missing**, ask the user to create it manually at the expected path with their Workday Connections questions. Each section should have a `## Section Title` heading followed by a `**Question:**` line with the full question text. Stop and wait for the user to confirm the file is ready before continuing.
+**If the `quarterly-questions.md` file is missing**, ask the user to create it manually at `~/.config/jirha/quarterly-connections/quarterly-questions.md` with their Workday Connections questions. Each section should have a `## Section Title` heading followed by a `**Question:**` line with the full question text. Stop and wait for the user to confirm the file is ready before continuing.
 
 Now read the reference files:
 
 - Current level: `~/.config/jirha/quarterly-connections/tw<N>-job-profile.md`
 - Next level: `~/.config/jirha/quarterly-connections/tw<N+1>-job-profile.md` (skip if N=5)
 - Template: `~/.config/jirha/quarterly-connections/quarterly-questions.md`
-- Previous draft (if exists): `~/.config/jirha/quarterly-connections/connections-draft.md`
+- Previous draft (if exists): check `docs/quarterly-connections/` first (look for the most recent file), then fall back to `~/.config/jirha/quarterly-connections/connections-draft.md`
 
-**Step 3: Analyze and map data to competencies**
+The `quarterly-questions.md` file defines the sections to address. Each `## ` heading is a section with a `**Question:**` line. Do not assume what sections exist — read them from the file.
 
-Before drafting, analyze the quarterly activity data:
+## Step 3: Identify and confirm themes — one section at a time
 
-1. **Identify 3-5 key accomplishment themes** by examining the epic groupings, issue volumes, and story points. Look for:
-   - High-volume epics (many issues or high SP) — these are major workstreams
+### 3a. Extract sections from template
+
+Read `quarterly-questions.md`. Extract the list of `## ` section headings and their question text. These sections define the structure — do not add, skip, or rename any.
+
+### 3b. Create the themes file
+
+Create `~/.config/jirha/quarterly-connections/themes-<QUARTER>.md` with a header:
+
+```markdown
+# Quarterly Connections Themes — <QUARTER>
+```
+
+### 3c. Process each section sequentially
+
+For each section from 3a, **one at a time in order**:
+
+1. **Analyze** the quarterly data to identify candidate themes for this question. Look for:
+   - High-volume epics (many issues or high SP) — major workstreams
    - Cross-cutting themes that span multiple epics (e.g., quality, tooling, customer issues)
    - Strategically significant work even if low volume (e.g., mentoring, process changes)
-   - **Self-reported issues** (marked `[self-reported]` in the data) — these indicate proactive risk identification rather than reactive work. Highlight this distinction in the narrative, especially for bug fixes: self-reported bugs demonstrate "anticipate and expose risks early" which is a key next-level competency signal
+   - **Self-reported issues** (marked `**[self-reported]**` in the context file) — proactive risk identification
+   - For forward-looking sections (priorities, goals): use the **forward context file** for assigned open work and unassigned team/component issues that could be picked up. Read full cache from `~/.cache/jirha/contexts/<KEY>.json` for untruncated descriptions
 
-2. **Map each theme to current-level (twN) competencies** using the job profile — this is the baseline proof that you're meeting expectations at your level.
+2. **Verify facts** from the context file before presenting:
+   - Issue counts per theme (count actual issues, do not estimate)
+   - SP totals (sum only issues with explicit SP values)
+   - Reporter names (use actual reporter from context)
+   - PR URLs and descriptions (only from context file)
+   - Parent/epic relationships (actual parent chain)
+   - For key issues lacking detail, run `jirha context <KEY>` to fetch full context
 
-3. **Identify next-level (twN+1) evidence** — for each theme, check whether the work also demonstrates competencies from the next level. This signals growth and readiness for advancement.
+3. **Present** proposed themes for **this section only**:
+   - Theme title
+   - Issue count and SP total (verified)
+   - Key Jira issues included
+   - Proposed competency mapping (current + next level)
 
-4. **Note which competencies have strong evidence** and which are underrepresented. Do not fabricate evidence — if a competency lacks support from the data, note it honestly.
+4. **Ask the user** to confirm: merge, split, drop, or add themes. If the question requires personal input the data cannot answer, **ask the user directly** for their input and wait for their response.
 
-**Step 4: Draft the connections response**
+5. **Write confirmed themes** for this section to the themes file. Append:
 
-Produce a draft following this structure:
+   ```markdown
+   ## Section: [Section Title]
 
-### Accomplishments section
+   **Question:** [Full question text from quarterly-questions.md]
 
-For each of the 3-5 themes, write a numbered section:
+   - [ ] **Theme: [title]**
+     Jiras: KEY-1, KEY-2, KEY-3, ...
+     [Brief scope description]
 
-```
-### N. [Theme title — concise, action-oriented]
+   - [ ] **Theme: [title]**
+     Jiras: KEY-4, KEY-5, ...
+     [Brief scope description]
 
-[1-2 paragraph narrative: WHAT was accomplished, with specific issue counts, SP totals, and key Jira links from the data. Be concrete.]
+   - [ ] **User input:** [User's verbatim response, if provided]
+   ```
 
-**How:** [1 paragraph: HOW it was accomplished — working style, strategic approach, methodology. Reference specific patterns visible in the data: sustained delivery cadence, systematic approach, cross-workstream coordination, etc.]
+   The `- [ ]` items are a todo list — Step 4 processes each and marks it `- [x]` when drafted.
 
-**Current level (twN):** [1 sentence mapping to the specific twN competency this demonstrates]
-**Next level (twN+1):** [1 sentence showing where this work reaches into twN+1 expectations, if applicable — omit if no genuine evidence]
-```
+6. **Proceed to the next section.** Do not continue until the current section is confirmed and written to disk.
 
-Guidelines:
-- Lead with the highest-impact accomplishment
-- Use concrete numbers from the activity data (issue counts, SP totals)
-- Include Jira links for key issues — use the full URL format: https://redhat.atlassian.net/browse/KEY
-- Include PR links when available in the data
-- Reference competencies naturally in the narrative, do not force-fit
-- Match the tone of the example: confident but evidence-driven, not boastful
-- Each accomplishment should be 150-250 words
+**Do not proceed to Step 4 until all sections have been confirmed and written to the themes file.**
 
-### Priorities section
+## Step 4: Draft the connections response
 
-Use the "Current Quarter — Open Issues" section from the quarterly report output to identify the major workstreams ahead. Draft 3 forward-looking priorities:
+### Primary input
 
-```
-### N. [Priority title]
+The themes file `~/.config/jirha/quarterly-connections/themes-<QUARTER>.md` is the sole source of structure for drafting. It contains: section headings, question text, confirmed themes with jira lists, and user input. Do not re-read `quarterly-questions.md` — the themes file already embeds the questions.
 
-[1 short paragraph: what, why, and how you will approach it. Reference specific Jira issues from the current backlog.]
-```
+### STRICT FACTUAL ACCURACY RULES
 
-Guidelines:
-- Ground each priority in actual assigned issues from the current quarter backlog, with Jira links
-- Show continuity from accomplishments where applicable (continuing, expanding, or pivoting work)
-- Include at least one priority that targets a next-level competency gap visible in the data
-- Keep each priority to 50-100 words
+These rules are non-negotiable:
 
-**Step 5: Present to the user**
+1. **Never fabricate SP totals** — only sum SP values explicitly present in the data. If an epic has no SP at the epic level, say "N child issues" not "N SP"
+2. **Never fabricate issue counts** — count actual issues, do not round or estimate
+3. **Never fabricate reporter names** — use the actual reporter from the cache files
+4. **Never invent Jira issue keys** — only reference keys that appear in the themes file or cache files
+5. **Never fabricate PR details** — only include PR URLs and descriptions from the cache files
+6. **Never fabricate descriptions or acceptance criteria** — quote or paraphrase only what's in the cache files
+7. **If data is insufficient**, mark with `<!-- UNVERIFIED: [what's missing] -->` and ask the user
+8. **Self-reported vs assigned** — only mark issues as self-reported if the cache file confirms the reporter matches the current user
 
-Present the full draft. Then add:
+### Sequential drafting — one theme at a time
 
-> This is a draft based on your Jira activity data mapped to TW{N} (current) and TW{N+1} (next level) competencies. You should:
-> 1. **Add context** the data cannot capture: informal mentoring, design decisions, cross-team collaboration, strategic choices
+Read the themes file. For each unchecked `- [ ]` item, **sequentially**:
+
+1. **Collect** the Jira keys listed in that theme
+2. **Read full cache files** from `~/.cache/jirha/contexts/<KEY>.json` for each key. Extract from `data.task`: `key`, `summary`, `description`, `sp`, `pr_urls`, `pr_bodies`, `reporter`, `issuetype`, `components`. Extract from `data.epic` / `data.feature`: parent chain context. This gives you the full, untruncated data for each issue.
+3. **Draft** that theme's content using the full cache data and the question text from the themes file. Use this structure for each theme:
+
+   ```
+   ### N. [Theme title — concise, action-oriented]
+
+   [1-2 paragraph narrative: WHAT was accomplished, with specific issue counts, SP totals, and key Jira links. Be concrete — compare what the issue described vs what was delivered.]
+
+   **How:** [1 paragraph: working style, strategic approach, methodology. Reference specific patterns visible in the data.]
+
+   **[Current level name from job profile]:** [1 sentence mapping to the specific competency this demonstrates]
+   **[Next level name from job profile]:** [1 sentence showing where this work reaches into next-level expectations, if applicable — omit if no genuine evidence]
+   ```
+
+4. **Append** the drafted section to the output file
+5. **Mark** the theme as `- [x]` in the themes file
+6. **Continue** to the next unchecked item
+
+For `- [ ] **User input:**` items, incorporate the user's verbatim response from the themes file. If the input is insufficient, mark gaps with `<!-- TODO: Add your input -->`.
+
+### Drafting guidelines
+
+- Lead with the highest-impact themes per section
+- Use concrete numbers from the cache data (issue counts, SP totals, percentages)
+- Include Jira links: `https://redhat.atlassian.net/browse/KEY`
+- Include PR links when available in the cache data
+- Map to competencies using the actual competency names from the job profile files read in Step 2 — do not force-fit
+- Tone: confident, evidence-driven, not boastful
+- Each theme should be 150-250 words
+- Process one theme fully before starting the next — never hold multiple themes' cache data in context simultaneously
+
+### Output
+
+Write the draft to:
+- `docs/quarterly-connections/<YEAR>-q<N>.md` if `docs/quarterly-connections/` exists (running from repo — create the directory if needed, it is gitignored)
+- Otherwise: `~/.config/jirha/quarterly-connections/connections-draft-<QUARTER>.md`
+
+## Step 5: Present and iterate
+
+Present the full draft. Reference the files produced:
+- **Themes file:** `~/.config/jirha/quarterly-connections/themes-<QUARTER>.md` — confirmed themes with jira lists and todo status
+- **Draft file:** the output path from Step 4
+
+Then:
+
+1. **Flag any `<!-- UNVERIFIED -->` or `<!-- TODO -->` markers** and ask the user to provide the missing information
+2. **Highlight which competencies have strong data support** and which rely on the user's additional context
+3. **Ask targeted questions** about sections where the themes file shows gaps or where user input was thin
+
+> This is a draft grounded in your Jira activity data, PR history, and job profile competencies. You should:
+> 1. **Add context** the data cannot capture: informal mentoring, design decisions, cross-team collaboration
 > 2. **Adjust emphasis** based on what matters most to your manager
-> 3. **Strengthen next-level evidence** — the competency mapping shows where you have strong evidence and where you might want to add context
-> 4. **Refine priorities** based on upcoming roadmap items you know about
+> 3. **Strengthen next-level evidence** where competency mapping shows gaps
 >
 > Want me to revise any section?

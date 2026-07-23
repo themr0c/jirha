@@ -99,25 +99,22 @@ Create `~/.config/jirha/quarterly-connections/themes-<QUARTER>.md` with a header
 For each section from 3a, **one at a time in order**:
 
 1. **Analyze** the quarterly data to identify candidate themes for this question. Look for:
-   - High-volume epics (many issues or high SP) — major workstreams
+    - Major workstreams — epics with broad scope or strategic importance
    - Cross-cutting themes that span multiple epics (e.g., quality, tooling, customer issues)
    - Strategically significant work even if low volume (e.g., mentoring, process changes)
    - **Self-reported issues** (marked `**[self-reported]**` in the context file) — proactive risk identification
    - For forward-looking sections (priorities, goals): use the **forward context file** for assigned open work and unassigned team/component issues that could be picked up. Read full cache from `~/.cache/jirha/contexts/<KEY>.json` for untruncated descriptions
 
-2. **Verify facts** from the context file before presenting:
-   - Issue counts per theme (count actual issues, do not estimate)
-   - SP totals (sum only issues with explicit SP values)
-   - Reporter names (use actual reporter from context)
-   - PR URLs and descriptions (only from context file)
-   - Parent/epic relationships (actual parent chain)
-   - For key issues lacking detail, run `jirha context <KEY>` to fetch full context
+ 2. **Verify facts** from the context file before presenting:
+    - Reporter names (use actual reporter from context)
+    - PR URLs and descriptions (only from context file)
+    - Parent/epic relationships (actual parent chain)
+    - For key issues lacking detail, run `jirha context <KEY>` to fetch full context
 
-3. **Present** proposed themes for **this section only**:
-   - Theme title
-   - Issue count and SP total (verified)
-   - Key Jira issues included
-   - Proposed competency mapping (current + next level)
+ 3. **Present** proposed themes for **this section only**:
+    - Theme title and scope description
+    - Key Jira issues included
+    - Proposed competency mapping (current + next level)
 
 4. **Ask the user** to confirm: merge, split, drop, or add themes. If the question requires personal input the data cannot answer, **ask the user directly** for their input and wait for their response.
 
@@ -155,33 +152,37 @@ The themes file `~/.config/jirha/quarterly-connections/themes-<QUARTER>.md` is t
 
 These rules are non-negotiable:
 
-1. **Never fabricate SP totals** — only sum SP values explicitly present in the data. If an epic has no SP at the epic level, say "N child issues" not "N SP"
-2. **Never fabricate issue counts** — count actual issues, do not round or estimate
+1. **Never invent Jira issue keys** — only reference keys that appear in the themes file or cache files
+2. **Never fabricate PR details** — only include PR URLs and descriptions from the cache files
 3. **Never fabricate reporter names** — use the actual reporter from the cache files
-4. **Never invent Jira issue keys** — only reference keys that appear in the themes file or cache files
-5. **Never fabricate PR details** — only include PR URLs and descriptions from the cache files
-6. **Never fabricate descriptions or acceptance criteria** — quote or paraphrase only what's in the cache files
-7. **If data is insufficient**, mark with `<!-- UNVERIFIED: [what's missing] -->` and ask the user
-8. **Self-reported vs assigned** — only mark issues as self-reported if the cache file confirms the reporter matches the current user
+4. **Never fabricate descriptions or acceptance criteria** — quote or paraphrase only what's in the cache files
+5. **If data is insufficient**, mark with `<!-- UNVERIFIED: [what's missing] -->` and ask the user
+6. **Self-reported vs assigned** — only mark issues as self-reported if the cache file confirms the reporter matches the current user
+7. **No SP totals or issue counts in the draft** — the manager has Jira for metrics. The draft is a narrative, not a dashboard.
 
 ### Sequential drafting — one theme at a time
 
 Read the themes file. For each unchecked `- [ ]` item, **sequentially**:
 
 1. **Collect** the Jira keys listed in that theme
-2. **Read full cache files** from `~/.cache/jirha/contexts/<KEY>.json` for each key. Extract from `data.task`: `key`, `summary`, `description`, `sp`, `pr_urls`, `pr_bodies`, `reporter`, `issuetype`, `components`. Extract from `data.epic` / `data.feature`: parent chain context. This gives you the full, untruncated data for each issue.
+2. **Read full cache files** from `~/.cache/jirha/contexts/<KEY>.json` for each key. Extract from `data.task`: `key`, `summary`, `description`, `pr_urls`, `pr_bodies`, `reporter`, `issuetype`, `components`. Extract from `data.epic` / `data.feature`: parent chain context. This gives you the full, untruncated data for each issue.
 3. **Draft** that theme's content using the full cache data and the question text from the themes file. Use this structure for each theme:
 
-   ```
-   ### N. [Theme title — concise, action-oriented]
+    ```
+    ### [Theme title — concise, action-oriented]
 
-   [1-2 paragraph narrative: WHAT was accomplished, with specific issue counts, SP totals, and key Jira links. Be concrete — compare what the issue described vs what was delivered.]
+    [1-2 paragraph narrative: WHAT was accomplished and HOW. Be concrete — reference key Jira issues and PRs, compare what the issue described vs what was delivered. Focus on the story, not metrics — the manager has Jira for SP and issue counts.]
 
-   **How:** [1 paragraph: working style, strategic approach, methodology. Reference specific patterns visible in the data.]
+    **Outcome:**
+    - **Customer:** [concrete impact on end users / customers]
+    - **CCS/Team:** [concrete impact on the team, org, or internal stakeholders]
 
-   **[Current level name from job profile]:** [1 sentence mapping to the specific competency this demonstrates]
-   **[Next level name from job profile]:** [1 sentence showing where this work reaches into next-level expectations, if applicable — omit if no genuine evidence]
-   ```
+    **Competencies demonstrated:**
+    - **[Competency name from job profile]** ([current level]): [specific evidence from this theme]
+    - **[Competency name from job profile]** ([next level]): [specific evidence, if applicable — omit if no genuine match]
+    ```
+
+    The **Outcome** and **Competencies** sections must be scannable — short lines, not buried in prose. Use the actual competency names from the job profile files read in Step 2.
 
 4. **Append** the drafted section to the output file
 5. **Mark** the theme as `- [x]` in the themes file
@@ -192,9 +193,10 @@ For `- [ ] **User input:**` items, incorporate the user's verbatim response from
 ### Drafting guidelines
 
 - Lead with the highest-impact themes per section
-- Use concrete numbers from the cache data (issue counts, SP totals, percentages)
+- Focus on narrative and impact, not metrics — no SP totals, no issue counts. The manager has Jira for that.
 - Include Jira links: `https://redhat.atlassian.net/browse/KEY`
 - Include PR links when available in the cache data
+- Make **Outcome** (customer / CCS / team) and **Competencies demonstrated** scannable and prominent — these are the most important parts for the reader
 - Map to competencies using the actual competency names from the job profile files read in Step 2 — do not force-fit
 - Tone: confident, evidence-driven, not boastful
 - Each theme should be 150-250 words
